@@ -25,9 +25,15 @@
             @Html.DisplayFor(modelItem => item.Type)
         </td>
         <td>
+            <p>
             @Html.DisplayFor(modelItem => item.Description)
-        </td>
-        <td>
+            </p>
+        @foreach (var sizeItem in item.PackageTypeSizes)
+        {
+            <p>
+                (Size: @Html.DisplayFor(modelItem => sizeItem.size); Weight limit: @Html.DisplayFor(modelItem => sizeItem.limit))
+            </p>
+        }
         </td>
     </tr>
 }

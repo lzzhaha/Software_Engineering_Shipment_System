@@ -196,10 +196,12 @@
     <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="App_Start\Startup.Auth.cs" />
     <Compile Include="Controllers\AccountController.cs" />
+    <Compile Include="Controllers\CurrenciesController.cs" />
     <Compile Include="Controllers\DestinationsController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\ManageController.cs" />
     <Compile Include="Controllers\PackageTypesController.cs" />
+    <Compile Include="Controllers\PackageTypeSizesController.cs" />
     <Compile Include="Controllers\ServicePackageFeesController.cs" />
     <Compile Include="Controllers\ServiceTypesController.cs" />
     <Compile Include="Global.asax.cs">
@@ -207,10 +209,12 @@
     </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\AccountViewModels.cs" />
+    <Compile Include="Models\Currency.cs" />
     <Compile Include="Models\Destination.cs" />
     <Compile Include="Models\IdentityModels.cs" />
     <Compile Include="Models\ManageViewModels.cs" />
     <Compile Include="Models\PackageType.cs" />
+    <Compile Include="Models\PackageTypeSize.cs" />
     <Compile Include="Models\ServicePackageFee.cs" />
     <Compile Include="Models\ServiceType.cs" />
     <Compile Include="Models\SinExDatabaseContext.cs" />
@@ -277,7 +281,6 @@
     <Content Include="Views\Manage\VerifyPhoneNumber.cshtml" />
     <Content Include="Views\Shared\Lockout.cshtml" />
     <Content Include="Views\Shared\_LoginPartial.cshtml" />
-    <Content Include="Views\Destinations\Index.cshtml" />
     <Content Include="Views\PackageTypes\Create.cshtml" />
     <Content Include="Views\PackageTypes\Delete.cshtml" />
     <Content Include="Views\PackageTypes\Details.cshtml" />
@@ -293,6 +296,22 @@
     <Content Include="Views\ServicePackageFees\Details.cshtml" />
     <Content Include="Views\ServicePackageFees\Edit.cshtml" />
     <Content Include="Views\ServicePackageFees\Index.cshtml" />
+    <Content Include="Views\Currencies\Create.cshtml" />
+    <Content Include="Views\Currencies\Delete.cshtml" />
+    <Content Include="Views\Currencies\Details.cshtml" />
+    <Content Include="Views\Currencies\Edit.cshtml" />
+    <Content Include="Views\Currencies\Index.cshtml" />
+    <Content Include="Views\Destinations\Create.cshtml" />
+    <Content Include="Views\Destinations\Delete.cshtml" />
+    <Content Include="Views\Destinations\Details.cshtml" />
+    <Content Include="Views\Destinations\Edit.cshtml" />
+    <Content Include="Views\Destinations\Index.cshtml" />
+    <Content Include="Views\PackageTypeSizes\Create.cshtml" />
+    <Content Include="Views\PackageTypeSizes\Delete.cshtml" />
+    <Content Include="Views\PackageTypeSizes\Details.cshtml" />
+    <Content Include="Views\PackageTypeSizes\Edit.cshtml" />
+    <Content Include="Views\PackageTypeSizes\Index.cshtml" />
+    <Content Include="Views\ServicePackageFees\Index - 复制.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

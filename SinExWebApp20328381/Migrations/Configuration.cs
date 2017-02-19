@@ -38,6 +38,17 @@ namespace SinExWebApp20328381.Migrations
                 new PackageType { PackageTypeID = 5, Type = "Customer", Description = "for packaging provided by customer" }
                 );
 
+            context.PackageTypeSizes.AddOrUpdate(
+                p => p.PackageTypeSizeID,
+                new PackageTypeSize { size = "250x350mm", limit = "Not Applicable", PackageTypeID = 1 },
+                new PackageTypeSize { size = "350x400mm", limit = "5kg", PackageTypeID = 2 },
+                new PackageTypeSize { size = "450x500mm", limit = "5kg", PackageTypeID = 2 },
+                new PackageTypeSize { size = "1000x80mm", limit = "Not Applicable", PackageTypeID = 3 },
+                new PackageTypeSize { size = "small - 300x250x150mm", limit = "10kg", PackageTypeID = 4 },
+                new PackageTypeSize { size = "medium - 400x350x250mm", limit = "20kg", PackageTypeID = 4 },
+                new PackageTypeSize { size = "large - 500x450x350mm", limit = "30kg", PackageTypeID = 4 }
+                );
+            //context.Currencies.AddOrUpdate()
             // Add service type data.
             context.ServiceTypes.AddOrUpdate(
                 p => p.ServiceTypeID,
@@ -88,6 +99,58 @@ namespace SinExWebApp20328381.Migrations
                 new ServicePackageFee { ServicePackageFeeID = 28, Fee = 25, MinimumFee = 25, ServiceTypeID = 6, PackageTypeID = 3 }, // Tube
                 new ServicePackageFee { ServicePackageFeeID = 29, Fee = 30, MinimumFee = 30, ServiceTypeID = 6, PackageTypeID = 4 }, // Box
                 new ServicePackageFee { ServicePackageFeeID = 30, Fee = 30, MinimumFee = 30, ServiceTypeID = 6, PackageTypeID = 5 }  // Customer
+                );
+
+            context.Currencies.AddOrUpdate(
+                p => p.CurrencyCode,
+                new Currency { CurrencyCode = "CNY", ExchangeRate = 1.00 },
+                new Currency { CurrencyCode = "HKD", ExchangeRate = 1.13 },
+                new Currency { CurrencyCode = "MOP", ExchangeRate = 1.16 },
+                new Currency { CurrencyCode = "TWD", ExchangeRate = 4.56 }
+                );
+
+            context.Destinations.AddOrUpdate(
+                p => p.DestinationKey,
+                new Destination { City = "Beijing", ProvinceCode = "BJ", CurrencyCode = "CNY" },
+                new Destination { City = "Changchun", ProvinceCode = "JL", CurrencyCode = "CNY" },
+                new Destination { City = "Changsha", ProvinceCode = "HN", CurrencyCode = "CNY" },
+                new Destination { City = "Chengdu", ProvinceCode = "SC", CurrencyCode = "CNY"  },
+                new Destination { City = "Chongqing", ProvinceCode = "CQ", CurrencyCode = "CNY" },
+                new Destination { City = "Fuzhou", ProvinceCode = "JX", CurrencyCode = "CNY" },
+                new Destination { City = "Golmud", ProvinceCode = "QH", CurrencyCode = "CNY" },
+                new Destination { City = "Guangzhou", ProvinceCode = "GD", CurrencyCode = "CNY" },
+                new Destination { City = "Guiyang", ProvinceCode = "GZ", CurrencyCode = "CNY" },
+                new Destination { City = "Haikou", ProvinceCode = "HI", CurrencyCode = "CNY" },
+                new Destination { City = "Hailar", ProvinceCode = "NM", CurrencyCode = "CNY" },
+                new Destination { City = "Hangzhou", ProvinceCode = "ZJ", CurrencyCode = "CNY" },
+                new Destination { City = "Harbin", ProvinceCode = "HL", CurrencyCode = "CNY" },
+                new Destination { City = "Hefei", ProvinceCode = "AH", CurrencyCode = "CNY" },
+                new Destination { City = "Hohhot", ProvinceCode = "NM", CurrencyCode = "CNY" },
+                new Destination { City = "Hong Kong", ProvinceCode = "HK", CurrencyCode = "HKD" },
+                new Destination { City = "Hulun Buir", ProvinceCode = "NM", CurrencyCode = "CNY" },
+                new Destination { City = "Jinan", ProvinceCode = "SD", CurrencyCode = "CNY" },
+                new Destination { City = "Kashi", ProvinceCode = "XJ", CurrencyCode = "CNY" },
+                new Destination { City = "Kunming", ProvinceCode = "YN", CurrencyCode = "CNY" },
+                new Destination { City = "Lanzhou", ProvinceCode = "GS", CurrencyCode = "CNY" },
+                new Destination { City = "Lhasa", ProvinceCode = "XZ", CurrencyCode = "CNY" },
+                new Destination { City = "Macau", ProvinceCode = "MC", CurrencyCode = "MOP" },
+                new Destination { City = "Nanchang", ProvinceCode = "JX", CurrencyCode = "CNY" },
+                new Destination { City = "Nanjing", ProvinceCode = "JS", CurrencyCode = "CNY" },
+                new Destination { City = "Nanning", ProvinceCode = "JX", CurrencyCode = "CNY" },
+                new Destination { City = "Qiqihar", ProvinceCode = "HL", CurrencyCode = "CNY" },
+                new Destination { City = "Shanghai", ProvinceCode = "SH", CurrencyCode = "CNY" },
+                new Destination { City = "Shenyang", ProvinceCode = "LN", CurrencyCode = "CNY" },
+                new Destination { City = "Shijiazhuang", ProvinceCode = "HE", CurrencyCode = "CNY" },
+                new Destination { City = "Taipei", ProvinceCode = "TW", CurrencyCode = "TWD" },
+                new Destination { City = "Taiyuan", ProvinceCode = "SX", CurrencyCode = "CNY" },
+                new Destination { City = "Tianjin", ProvinceCode = "HE", CurrencyCode = "CNY" },
+                new Destination { City = "Urumqi", ProvinceCode = "XJ", CurrencyCode = "CNY" },
+                new Destination { City = "Wuhan", ProvinceCode = "HB", CurrencyCode = "CNY" },
+                new Destination { City = "Xi'an", ProvinceCode = "SN", CurrencyCode = "CNY" },
+                new Destination { City = "Xining", ProvinceCode = "QH", CurrencyCode = "CNY" },
+                new Destination { City = "Yinchuan", ProvinceCode = "NX", CurrencyCode = "CNY" },
+                new Destination { City = "Yumen", ProvinceCode = "GS", CurrencyCode = "CNY" },
+                new Destination { City = "Zhengzhou", ProvinceCode = "HA", CurrencyCode = "CNY" }
                 );
 
         }

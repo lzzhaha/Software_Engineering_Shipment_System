@@ -1,15 +1,18 @@
 ﻿@model IEnumerable<SinExWebApp20328381.Models.Destination>
 
 @{
-    ViewBag.Title = "View";
+    ViewBag.Title = "Destinations";
 }
 
-<h2>View</h2>
+<h2>Destinations</h2>
 
 <p>
 </p>
 <table class="table">
     <tr>
+        <th>
+            @Html.DisplayNameFor(model => model.Currency.CurrencyCode)
+        </th>
         <th>
             @Html.DisplayNameFor(model => model.City)
         </th>
@@ -21,6 +24,9 @@
 
 @foreach (var item in Model) {
     <tr>
+        <td>
+            @Html.DisplayFor(modelItem => item.Currency.CurrencyCode)
+        </td>
         <td>
             @Html.DisplayFor(modelItem => item.City)
         </td>
