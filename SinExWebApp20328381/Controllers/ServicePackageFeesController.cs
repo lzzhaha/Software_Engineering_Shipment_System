@@ -20,6 +20,11 @@ namespace SinExWebApp20328381.Controllers
             var servicePackageFees = db.ServicePackageFees.Include(s => s.PackageType).Include(s => s.ServiceType);
             return View(servicePackageFees.ToList());
         }
+        public ActionResult Index2()
+        {
+            var servicePackageFees = db.ServicePackageFees.Include(s => s.PackageType).Include(s => s.ServiceType);
+            return View(servicePackageFees.ToList());
+        }
 
         // GET: ServicePackageFees/Details/5
         public ActionResult Details(int? id)

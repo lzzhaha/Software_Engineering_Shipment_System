@@ -311,7 +311,7 @@
     <Content Include="Views\PackageTypeSizes\Details.cshtml" />
     <Content Include="Views\PackageTypeSizes\Edit.cshtml" />
     <Content Include="Views\PackageTypeSizes\Index.cshtml" />
-    <Content Include="Views\ServicePackageFees\Index - 复制.cshtml" />
+    <Content Include="Views\ServicePackageFees\Index2.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
