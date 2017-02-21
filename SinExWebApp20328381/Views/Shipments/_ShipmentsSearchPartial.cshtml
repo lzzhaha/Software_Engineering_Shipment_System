@@ -1,0 +1,9 @@
+﻿@model SinExWebApp20328381.ViewModels.ShipmentsSearchViewModel
+
+@using (Html.BeginForm("GenerateHistoryReport", "Shipments", FormMethod.Get))
+{
+    @Html.LabelFor(a => a.ShippingAccountId, "Shipment Account: ")
+    @Html.DropDownListFor(a => a.ShippingAccountId, Model.ShippingAccounts, "Please Select")
+    <input type="submit" value="Search" />
+}
+
