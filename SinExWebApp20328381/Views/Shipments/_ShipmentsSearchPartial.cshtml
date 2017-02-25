@@ -3,7 +3,8 @@
 @using (Html.BeginForm("GenerateHistoryReport", "Shipments", FormMethod.Get))
 {
     @Html.LabelFor(a => a.ShippingAccountId, "Shipment Account: ")
-    @Html.DropDownListFor(a => a.ShippingAccountId, Model.ShippingAccounts, "Please Select")
+    @Html.DropDownListFor(a => a.ShippingAccountId, Model.ShippingAccounts, "Please Select", htmlAttributes: new { @Value = ViewBag.CurrentShippingAccountId as string })
     <input type="submit" value="Search" />
 }
 
+    

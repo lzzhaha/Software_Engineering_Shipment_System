@@ -11,28 +11,25 @@
                 @Html.DisplayNameFor(model => model.WaybillId)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.ServiceType)
+                @Html.ActionLink("Service Type", "GenerateHistoryReport", new { sortOrder = ViewBag.ServiceTypeParm, CurrentShippingAccountId = ViewBag.CurrentShippingAccountId })
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.ShippedDate)
+                @Html.ActionLink("Shipped Date", "GenerateHistoryReport", new { sortOrder = ViewBag.ShippedDateParm, CurrentShippingAccountId = ViewBag.CurrentShippingAccountId })
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.DeliveredDate)
+                @Html.ActionLink("Delivered Date", "GenerateHistoryReport", new { sortOrder = ViewBag.DeliveredDateParm, CurrentShippingAccountId = ViewBag.CurrentShippingAccountId })
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.RecipientName)
+                @Html.ActionLink("Recipent Name", "GenerateHistoryReport", new { sortOrder = ViewBag.RecipentNameParm, CurrentShippingAccountId = ViewBag.CurrentShippingAccountId })
             </th>
             <th>
                 @Html.DisplayNameFor(model => model.NumberOfPackages)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Origin)
+                @Html.ActionLink("Origin", "GenerateHistoryReport", new { sortOrder = ViewBag.OriginParm, CurrentShippingAccountId = ViewBag.CurrentShippingAccountId })
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Destination)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.ShippingAccountId)
+                @Html.ActionLink("Destination", "GenerateHistoryReport", new { sortOrder = ViewBag.DestinationParm, CurrentShippingAccountId = ViewBag.CurrentShippingAccountId })
             </th>
             <th></th>
         </tr>

@@ -322,6 +322,7 @@ C:\Users\atmosphere\Dropbox\COMP3111\lab\sinex\SinExWebApp20328381\bin\Microsoft
 C:\Users\atmosphere\Dropbox\COMP3111\lab\sinex\SinExWebApp20328381\bin\Microsoft.Owin.Security.Google.xml
 C:\Users\atmosphere\Dropbox\COMP3111\lab\sinex\SinExWebApp20328381\bin\Microsoft.Owin.Security.Twitter.xml
 C:\Users\atmosphere\Dropbox\COMP3111\lab\sinex\SinExWebApp20328381\bin\Microsoft.Owin.Security.MicrosoftAccount.xml
-C:\Users\atmosphere\Dropbox\COMP3111\lab\sinex\SinExWebApp20328381\obj\Debug\SinExWebApp20328381.csprojResolveAssemblyReference.cache
 C:\Users\atmosphere\Dropbox\COMP3111\lab\sinex\SinExWebApp20328381\obj\Debug\SinExWebApp20328381.dll
 C:\Users\atmosphere\Dropbox\COMP3111\lab\sinex\SinExWebApp20328381\obj\Debug\SinExWebApp20328381.pdb
+C:\Users\atmosphere\Dropbox\COMP3111\lab\sinex\SinExWebApp20328381\bin\X.PagedList.dll
+C:\Users\atmosphere\Dropbox\COMP3111\lab\sinex\SinExWebApp20328381\bin\X.PagedList.Mvc.dll
