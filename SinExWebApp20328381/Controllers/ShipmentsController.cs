@@ -95,6 +95,7 @@ namespace SinExWebApp20328381.Controllers
                 ViewBag.DestinationParm = sortOrder == "Destination" ? "Destination_dest" : "Destination";
                 switch (sortOrder)
                 {
+                    case null:
                     case "":
                         shipmentQuery = shipmentQuery.OrderBy(s => s.WaybillId);
                         break;
@@ -153,7 +154,7 @@ namespace SinExWebApp20328381.Controllers
             else
             {
                 // Return an empty result if no shipping account id has been selected.
-                shipmentSearch.Shipments = new ShipmentsListViewModel[0].ToPagedList(0, 0);
+                shipmentSearch.Shipments = (new ShipmentsListViewModel[0]).ToPagedList(pageNumber, pageSize);
             }
             
             return View(shipmentSearch);

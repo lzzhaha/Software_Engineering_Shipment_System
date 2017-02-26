@@ -334,6 +334,7 @@
     <Content Include="Views\Shipments\GenerateHistoryReport.cshtml" />
     <Content Include="Views\Shipments\_ShipmentsSearchPartial.cshtml" />
     <Content Include="Views\Shipments\_ShipmentsListPartial.cshtml" />
+    <Content Include="Views\Shipments\_ShipmentsPagingPartial.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

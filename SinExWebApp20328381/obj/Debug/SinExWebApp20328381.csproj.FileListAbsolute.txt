@@ -326,3 +326,6 @@ C:\Users\atmosphere\Dropbox\COMP3111\lab\sinex\SinExWebApp20328381\obj\Debug\Sin
 C:\Users\atmosphere\Dropbox\COMP3111\lab\sinex\SinExWebApp20328381\obj\Debug\SinExWebApp20328381.pdb
 C:\Users\atmosphere\Dropbox\COMP3111\lab\sinex\SinExWebApp20328381\bin\X.PagedList.dll
 C:\Users\atmosphere\Dropbox\COMP3111\lab\sinex\SinExWebApp20328381\bin\X.PagedList.Mvc.dll
+C:\Users\atmosphere\Dropbox\COMP3111\lab\sinex\SinExWebApp20328381\obj\Debug\SinExWebApp20328381.csprojResolveAssemblyReference.cache
+D:\Dropbox\COMP3111\lab\sinex\SinExWebApp20328381\bin\X.PagedList.dll
+D:\Dropbox\COMP3111\lab\sinex\SinExWebApp20328381\bin\X.PagedList.Mvc.dll
