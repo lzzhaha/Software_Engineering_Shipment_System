@@ -95,11 +95,6 @@ namespace SinExWebApp20328381.Controllers
                 ViewBag.DestinationParm = sortOrder == "Destination" ? "Destination_dest" : "Destination";
                 switch (sortOrder)
                 {
-                    case null:
-                    case "":
-                        shipmentQuery = shipmentQuery.OrderBy(s => s.WaybillId);
-                        break;
-
                     case "ServiceType":
                         shipmentQuery = shipmentQuery.OrderBy(s => s.ServiceType);
                         break;
@@ -147,6 +142,11 @@ namespace SinExWebApp20328381.Controllers
                     case "Destination_dest":
                         shipmentQuery = shipmentQuery.OrderByDescending(s => s.Destination);
                         break;
+
+                    default:
+                        shipmentQuery = shipmentQuery.OrderBy(s => s.WaybillId);
+                        break;
+
 
                 }
                 shipmentSearch.Shipments = shipmentQuery.ToPagedList(pageNumber, pageSize);
