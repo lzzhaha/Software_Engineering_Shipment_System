@@ -171,3 +171,6 @@ C:\Users\atmosphere\Dropbox\COMP3111\lab\sinex\SinExWebApp20328381.Tests\bin\Deb
 C:\Users\atmosphere\Dropbox\COMP3111\lab\sinex\SinExWebApp20328381.Tests\bin\Debug\EntityFramework.xml
 C:\Users\atmosphere\Dropbox\COMP3111\lab\sinex\SinExWebApp20328381.Tests\bin\Debug\Microsoft.Owin.Host.SystemWeb.xml
 C:\Users\atmosphere\Dropbox\COMP3111\lab\sinex\SinExWebApp20328381.Tests\bin\Debug\zh-Hans\Microsoft.VisualStudio.QualityTools.UnitTestFramework.resources.dll
+D:\Dropbox\COMP3111\lab\sinex\SinExWebApp20328381.Tests\bin\Debug\X.PagedList.dll
+D:\Dropbox\COMP3111\lab\sinex\SinExWebApp20328381.Tests\bin\Debug\X.PagedList.Mvc.dll
+D:\Dropbox\COMP3111\lab\sinex\SinExWebApp20328381.Tests\bin\Debug\Microsoft.VisualStudio.QualityTools.UnitTestFramework.xml

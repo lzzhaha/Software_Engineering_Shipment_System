@@ -240,7 +240,6 @@ D:\Dropbox\COMP3111\lab\sinex\SinExWebApp20328381\bin\Microsoft.Owin.Security.OA
 D:\Dropbox\COMP3111\lab\sinex\SinExWebApp20328381\bin\Microsoft.Owin.Security.Google.xml
 D:\Dropbox\COMP3111\lab\sinex\SinExWebApp20328381\bin\Microsoft.Owin.Security.Twitter.xml
 D:\Dropbox\COMP3111\lab\sinex\SinExWebApp20328381\bin\Microsoft.Owin.Security.MicrosoftAccount.xml
-D:\Dropbox\COMP3111\lab\sinex\SinExWebApp20328381\obj\Debug\SinExWebApp20328381.csprojResolveAssemblyReference.cache
 D:\Dropbox\COMP3111\lab\sinex\SinExWebApp20328381\obj\Debug\SinExWebApp20328381.dll
 D:\Dropbox\COMP3111\lab\sinex\SinExWebApp20328381\obj\Debug\SinExWebApp20328381.pdb
 C:\Users\atmosphere\Dropbox\COMP3111\lab\sinex\SinExWebApp20328381\bin\ApplicationInsights.config
@@ -329,3 +328,4 @@ C:\Users\atmosphere\Dropbox\COMP3111\lab\sinex\SinExWebApp20328381\bin\X.PagedLi
 C:\Users\atmosphere\Dropbox\COMP3111\lab\sinex\SinExWebApp20328381\obj\Debug\SinExWebApp20328381.csprojResolveAssemblyReference.cache
 D:\Dropbox\COMP3111\lab\sinex\SinExWebApp20328381\bin\X.PagedList.dll
 D:\Dropbox\COMP3111\lab\sinex\SinExWebApp20328381\bin\X.PagedList.Mvc.dll
+D:\Dropbox\COMP3111\lab\sinex\SinExWebApp20328381\obj\Debug\SinExWebApp20328381.csprojResolveAssemblyReference.cache
