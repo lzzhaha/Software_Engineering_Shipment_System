@@ -10,10 +10,11 @@ namespace SinExWebApp20328381.Models
     {
         [Required]
         [StringLength(35)]
-
+        [Display(Name = "First Name", Order = 1)]
         public virtual string FirstName { get; set; }
         [Required]
         [StringLength(35)]
+        [Display(Name = "Last Name", Order = 2)]
         public virtual string LastName { get; set; }
 
     }

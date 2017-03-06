@@ -2,9 +2,13 @@
 
 @using (Html.BeginForm("GenerateHistoryReport", "Shipments", FormMethod.Get))
 {
-    @Html.LabelFor(a => a.ShippingAccountId, "Shipment Account: ")
-    @Html.DropDownListFor(a => a.ShippingAccountId, Model.ShippingAccounts, "Please Select", htmlAttributes: new { @Value = ViewBag.CurrentShippingAccountId as string })
-    <input type="submit" value="Search" />
+    <div class="form-group">
+        @Html.LabelFor(a => a.ShippingAccountId, "Shipment Account: ", htmlAttributes: new { @Class = "" })
+        @Html.DropDownListFor(a => a.ShippingAccountId, Model.ShippingAccounts, "Please Select", htmlAttributes: new { @Value = ViewBag.CurrentShippingAccountId as string, @Class = "dropdown" })
+        <br />
+        <br />
+        <input class="btn btn-default" type="submit" value="Search" />
+    </div>
 }
 
     

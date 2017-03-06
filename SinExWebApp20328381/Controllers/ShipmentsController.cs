@@ -81,7 +81,7 @@ namespace SinExWebApp20328381.Controllers
                                     Destination = s.Destination,
                                     ShippingAccountId = s.ShippingAccountId
                                 };
-
+            //shipmentQuery.Where()
             // Add the condition to select a spefic shipping account if shipping account id is not null.
             if (ShippingAccountId != null)
             {

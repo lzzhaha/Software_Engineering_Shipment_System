@@ -204,6 +204,7 @@
     <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="App_Start\Startup.Auth.cs" />
     <Compile Include="Controllers\AccountController.cs" />
+    <Compile Include="Controllers\BusinessShippingAccounts1Controller.cs" />
     <Compile Include="Controllers\CurrenciesController.cs" />
     <Compile Include="Controllers\DestinationsController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
@@ -344,6 +345,11 @@
     <Content Include="Views\PersonalShippingAccounts\Details.cshtml" />
     <Content Include="Views\PersonalShippingAccounts\Edit.cshtml" />
     <Content Include="Views\PersonalShippingAccounts\Index.cshtml" />
+    <Content Include="Views\BusinessShippingAccounts1\Create.cshtml" />
+    <Content Include="Views\BusinessShippingAccounts1\Delete.cshtml" />
+    <Content Include="Views\BusinessShippingAccounts1\Details.cshtml" />
+    <Content Include="Views\BusinessShippingAccounts1\Edit.cshtml" />
+    <Content Include="Views\BusinessShippingAccounts1\Index.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
