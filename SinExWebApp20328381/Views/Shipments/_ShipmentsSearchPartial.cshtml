@@ -6,6 +6,19 @@
         @Html.LabelFor(a => a.ShippingAccountId, "Shipment Account: ", htmlAttributes: new { @Class = "" })
         @Html.DropDownListFor(a => a.ShippingAccountId, Model.ShippingAccounts, "Please Select", htmlAttributes: new { @Value = ViewBag.CurrentShippingAccountId as string, @Class = "dropdown" })
         <br />
+        @Html.LabelFor(a => a.ShippedStartDate, "Start of Shipped Time:")
+        @Html.TextBoxFor(a => a.ShippedStartDate, htmlAttributes: new { @value = ViewBag.CurrentShippedStartDate, Type = "date" })
+        <br />
+        @Html.LabelFor(a => a.ShippedEndDate, "End of Shipped Time:")
+        @Html.TextBoxFor(a => a.ShippedEndDate, htmlAttributes: new { @value = ViewBag.CurrentShippedEndDate, Type = "date" })
+        <br />
+        <!--
+        @Html.LabelFor(a => a.DeliveredStartDate, "Start of Delivered Time:")
+        @Html.TextBoxFor(a => a.ShippedStartDate, htmlAttributes: new { @value = ViewBag.CurrentDeliveredStartDate, Type = "date" })
+        <br />
+        @Html.LabelFor(a => a.DeliveredEndDate, "End of Delivered Time:")
+        @Html.TextBoxFor(a => a.DeliveredEndDate, htmlAttributes: new { @Value = ViewBag.CurrentDeliveredEndDate, Type = "date" })
+        -->
         <br />
         <input class="btn btn-default" type="submit" value="Search" />
     </div>

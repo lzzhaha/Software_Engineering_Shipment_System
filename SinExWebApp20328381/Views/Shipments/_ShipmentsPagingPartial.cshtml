@@ -10,8 +10,10 @@
          {
              page,
              sortOrder = ViewBag.CurrentSort,
-             CurrentShippingAccountId = ViewBag.CurrentShippingAccountId
-            }))
+             CurrentShippingAccountId = ViewBag.CurrentShippingAccountId,
+             ViewBag.CurrentShippedStartDate,
+             CurrentShippedEndDate = ViewBag.CurrentShippedEndDate
+         }))
         Page @Model.PageNumber of @Model.PageCount
     </div>
 }

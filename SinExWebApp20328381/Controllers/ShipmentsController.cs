@@ -44,7 +44,7 @@ namespace SinExWebApp20328381.Controllers
         }
 
         // GET: Shipments/GenerateHistoryReport
-        public ActionResult GenerateHistoryReport(int? ShippingAccountId, string sortOrder, int? CurrentShippingAccountId, int? page)
+        public ActionResult GenerateHistoryReport(int? ShippingAccountId, string sortOrder, int? CurrentShippingAccountId, int? page, DateTime? ShippedStartDate, DateTime? ShippedEndDate, DateTime? CurrentShippedStartDate, DateTime? CurrentShippedEndDate)
         {
             // Instantiate an instance of the ShipmentsReportViewModel and the ShipmentsSearchViewModel.
             var shipmentSearch = new ShipmentsReportViewModel();
@@ -67,6 +67,10 @@ namespace SinExWebApp20328381.Controllers
             }
             ViewBag.CurrentShippingAccountId = ShippingAccountId;
 
+            ShippedStartDate = ShippedStartDate == null ? CurrentShippedStartDate : ShippedStartDate;
+            ShippedEndDate = ShippedEndDate == null ? CurrentShippedEndDate : ShippedEndDate;
+            ViewBag.CurrentShippedStartDate = ShippedStartDate;
+            ViewBag.CurrentShippedEndDate = ShippedEndDate;
             // Initialize the query to retrieve shipments using the ShipmentsListViewModel.
             var shipmentQuery = from s in db.Shipments
                                 select new ShipmentsListViewModel
@@ -83,10 +87,15 @@ namespace SinExWebApp20328381.Controllers
                                 };
             //shipmentQuery.Where()
             // Add the condition to select a spefic shipping account if shipping account id is not null.
-            if (ShippingAccountId != null)
+            if (ShippingAccountId != null || ShippedStartDate != null || ShippedEndDate != null)
             {
                 // TODO: Construct the LINQ query to retrive only the shipments for the specified shipping account id.
-                shipmentQuery = shipmentQuery.Where(c => c.ShippingAccountId == ShippingAccountId);
+                if (ShippingAccountId != null)
+                    shipmentQuery = shipmentQuery.Where(c => c.ShippingAccountId == ShippingAccountId);
+                if (ShippedStartDate != null)
+                    shipmentQuery = shipmentQuery.Where(c => c.ShippedDate >= ShippedStartDate);
+                if (ShippedEndDate != null)
+                    shipmentQuery = shipmentQuery.Where(c => c.ShippedDate <= ShippedEndDate);
                 ViewBag.ServiceTypeParm = sortOrder == "ServiceType" ? "ServiceType_dest" : "ServiceType";
                 ViewBag.ShippedDateParm = sortOrder == "ShippedDate" ? "ShippedDate_dest" : "ShippedDate";
                 ViewBag.DeliveredDateParm = sortOrder == "DeliveredDate" ? "DeliveredDate_dest" : "DeliveredDate";

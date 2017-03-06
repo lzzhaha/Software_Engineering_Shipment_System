@@ -11,25 +11,25 @@
                 @Html.DisplayNameFor(model => model.WaybillId)
             </th>
             <th>
-                @Html.ActionLink("Service Type", "GenerateHistoryReport", new { sortOrder = ViewBag.ServiceTypeParm, CurrentShippingAccountId = ViewBag.CurrentShippingAccountId })
+                @Html.ActionLink("Service Type", "GenerateHistoryReport", new { sortOrder = ViewBag.ServiceTypeParm, CurrentShippingAccountId = ViewBag.CurrentShippingAccountId, CurrentShippedStartDate = ViewBag.CurrentShippedStartDate, CurrentShippedEndDate = ViewBag.CurrentShippedEndDate })
             </th>
             <th>
-                @Html.ActionLink("Shipped Date", "GenerateHistoryReport", new { sortOrder = ViewBag.ShippedDateParm, CurrentShippingAccountId = ViewBag.CurrentShippingAccountId })
+                @Html.ActionLink("Shipped Date", "GenerateHistoryReport", new { sortOrder = ViewBag.ShippedDateParm, CurrentShippingAccountId = ViewBag.CurrentShippingAccountId, CurrentShippedStartDate = ViewBag.CurrentShippedStartDate, CurrentShippedEndDate = ViewBag.CurrentShippedEndDate })
             </th>
             <th>
-                @Html.ActionLink("Delivered Date", "GenerateHistoryReport", new { sortOrder = ViewBag.DeliveredDateParm, CurrentShippingAccountId = ViewBag.CurrentShippingAccountId })
+                @Html.ActionLink("Delivered Date", "GenerateHistoryReport", new { sortOrder = ViewBag.DeliveredDateParm, CurrentShippingAccountId = ViewBag.CurrentShippingAccountId, CurrentShippedStartDate = ViewBag.CurrentShippedStartDate, CurrentShippedEndDate = ViewBag.CurrentShippedEndDate })
             </th>
             <th>
-                @Html.ActionLink("Recipent Name", "GenerateHistoryReport", new { sortOrder = ViewBag.RecipentNameParm, CurrentShippingAccountId = ViewBag.CurrentShippingAccountId })
+                @Html.ActionLink("Recipent Name", "GenerateHistoryReport", new { sortOrder = ViewBag.RecipentNameParm, CurrentShippingAccountId = ViewBag.CurrentShippingAccountId, CurrentShippedStartDate = ViewBag.CurrentShippedStartDate, CurrentShippedEndDate = ViewBag.CurrentShippedEndDate })
             </th>
             <th>
                 @Html.DisplayNameFor(model => model.NumberOfPackages)
             </th>
             <th>
-                @Html.ActionLink("Origin", "GenerateHistoryReport", new { sortOrder = ViewBag.OriginParm, CurrentShippingAccountId = ViewBag.CurrentShippingAccountId })
+                @Html.ActionLink("Origin", "GenerateHistoryReport", new { sortOrder = ViewBag.OriginParm, CurrentShippingAccountId = ViewBag.CurrentShippingAccountId, CurrentShippedStartDate = ViewBag.CurrentShippedStartDate, CurrentShippedEndDate = ViewBag.CurrentShippedEndDate })
             </th>
             <th>
-                @Html.ActionLink("Destination", "GenerateHistoryReport", new { sortOrder = ViewBag.DestinationParm, CurrentShippingAccountId = ViewBag.CurrentShippingAccountId })
+                @Html.ActionLink("Destination", "GenerateHistoryReport", new { sortOrder = ViewBag.DestinationParm, CurrentShippingAccountId = ViewBag.CurrentShippingAccountId, CurrentShippedStartDate = ViewBag.CurrentShippedStartDate, CurrentShippedEndDate = ViewBag.CurrentShippedEndDate })
             </th>
             <th></th>
         </tr>
