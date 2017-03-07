@@ -10,7 +10,7 @@ using SinExWebApp20328381.Models;
 
 namespace SinExWebApp20328381.Controllers
 {
-    public class PersonalShippingAccountsController : Controller
+    public class BusinessShippingAccountsController : Controller
     {
         private SinExDatabaseContext db = new SinExDatabaseContext();
 
@@ -62,8 +62,8 @@ namespace SinExWebApp20328381.Controllers
         {
             if (ModelState.IsValid)
             {
-                db.Entry(personalShippingAccount).State = EntityState.Modified;
-                db.SaveChanges();
+                //db.Entry(personalShippingAccount).State = EntityState.Modified;
+                //db.SaveChanges();
                 return RedirectToAction("Index", "Home");
             }
             return View(personalShippingAccount);

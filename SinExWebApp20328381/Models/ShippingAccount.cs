@@ -69,46 +69,4 @@ namespace SinExWebApp20328381.Models
         [Display(Name = "Expiry Year", Order = 15)]
         public virtual string CreditCardExpiryYear { get; set; }
     }
-    /*
-    public class MailingAddress
-    {
-        [StringLength(50)]
-        public virtual string Building { get; set; }
-        [Required]
-        [StringLength(35)]
-        public virtual string Street { get; set; }
-        [Required]
-        [StringLength(25)]
-        public virtual string City { get; set; }
-        [Required]
-        [StringLength(2, MinimumLength = 2)]
-        [RegularExpression(@"^[a-zA-Z]*$", ErrorMessage = "Please enter valid province code!")]
-        public virtual string ProvinceCode { get; set; }
-        [StringLength(6, MinimumLength = 5)]
-        [RegularExpression(@"^[0-9]*$", ErrorMessage = "Please enter valid postal code!")]
-        public virtual string PostalCode { get; set; }
-    }
-
-    public class CreditCard
-    {
-        [Required]
-        [RegularExpression(@"^American Express$|^Diners Club$|^Discover$|^MasterCard$|^UnionPay$|^Visa$|", ErrorMessage = "Please enter valid card type.")]
-        public virtual string CardType { get; set; }
-        [Required]
-        [StringLength(19, MinimumLength = 14)]
-        public virtual string CardNumber { get; set; }
-        [Required]
-        [StringLength(4, MinimumLength = 3)]
-        public virtual string SecurityNumber { get; set; }
-        [Required]
-        [StringLength(70)]
-        public virtual string CardHolderName { get; set; }
-        [Required]
-        [Range(1,12)]
-        public virtual int ExpiryMonth { get; set; }
-        [Required]
-        [RegularExpression(@"^[0-9]{4}$", ErrorMessage = "Please enter valid year.")]
-        public virtual string ExpiryYear { get; set; }
-    }
-    */
 }
