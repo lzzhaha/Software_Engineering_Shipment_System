@@ -42,7 +42,7 @@ namespace SinExWebApp20328381.Models
         [Display(Name = "Email", Order = 4)]
         public virtual string EmailAddress { get; set; }
         [Required]
-        [RegularExpression(@"^American Express$|^Diners Club$|^Discover$|^MasterCard$|^UnionPay$|^Visa$|", ErrorMessage = "Please enter valid card type.")]
+        [RegularExpression(@"^American Express$|^Diners Club$|^Discover$|^MasterCard$|^UnionPay$|^Visa$", ErrorMessage = "Please enter valid card type.")]
         [Display(Name = "Type", Order = 10)]
         public virtual string CreditCardType { get; set; }
         [Required]
@@ -68,5 +68,9 @@ namespace SinExWebApp20328381.Models
         [RegularExpression(@"^[0-9]{4}$", ErrorMessage = "The field Expiry Year must be a number.")]
         [Display(Name = "Expiry Year", Order = 15)]
         public virtual string CreditCardExpiryYear { get; set; }
+        [StringLength(10, MinimumLength = 6)]
+        public virtual string UserName { get; set; }
+        public virtual ICollection<Shipment> Shipments { get; set; }
+
     }
 }

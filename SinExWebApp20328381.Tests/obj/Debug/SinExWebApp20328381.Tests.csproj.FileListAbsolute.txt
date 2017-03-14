@@ -233,3 +233,4 @@ C:\Users\atmosphere\Google 云端硬盘\Dropbox\COMP3111\lab\sinex\SinExWebApp20
 C:\Users\atmosphere\Google 云端硬盘\Dropbox\COMP3111\lab\sinex\SinExWebApp20328381.Tests\obj\Debug\SinExWebApp20328381.Tests.csprojResolveAssemblyReference.cache
 C:\Users\atmosphere\Google 云端硬盘\Dropbox\COMP3111\lab\sinex\SinExWebApp20328381.Tests\obj\Debug\SinExWebApp20328381.Tests.dll
 C:\Users\atmosphere\Google 云端硬盘\Dropbox\COMP3111\lab\sinex\SinExWebApp20328381.Tests\obj\Debug\SinExWebApp20328381.Tests.pdb
+C:\Users\Atmosphere\Dropbox\COMP3111\lab\sinex\SinExWebApp20328381.Tests\bin\Debug\Microsoft.VisualStudio.QualityTools.UnitTestFramework.xml
