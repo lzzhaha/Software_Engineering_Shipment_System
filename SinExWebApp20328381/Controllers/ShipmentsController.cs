@@ -12,6 +12,7 @@ using X.PagedList;
 
 namespace SinExWebApp20328381.Controllers
 {
+    [Authorize(Roles = "Employee, Customer")]
     public class ShipmentsController : Controller
     {
         private SinExDatabaseContext db = new SinExDatabaseContext();
@@ -49,6 +50,22 @@ namespace SinExWebApp20328381.Controllers
             // Instantiate an instance of the ShipmentsReportViewModel and the ShipmentsSearchViewModel.
             var shipmentSearch = new ShipmentsReportViewModel();
             shipmentSearch.Shipment = new ShipmentsSearchViewModel();
+
+            //Check the role
+            if (System.Web.HttpContext.Current.User.IsInRole("Customer"))
+            {
+                string userName = System.Web.HttpContext.Current.User.Identity.Name;
+                if (userName == null)
+                {
+                    return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+                }
+                ShippingAccount shippingAccount = db.ShippingAccounts.SingleOrDefault(s => s.UserName == userName);
+                if (shippingAccount == null)
+                {
+                    return HttpNotFound("There is no shipment with user name " + userName + ".");
+                }
+                ShippingAccountId = shippingAccount.ShippingAccountId;
+            }
 
             // Populate the ShippingAccountId dropdown list.
             shipmentSearch.Shipment.ShippingAccounts = PopulateShippingAccountsDropdownList().ToList();

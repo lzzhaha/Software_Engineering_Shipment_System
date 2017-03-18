@@ -3,9 +3,12 @@
 @using (Html.BeginForm("GenerateHistoryReport", "Shipments", FormMethod.Get))
 {
     <div class="form-group">
-        @Html.LabelFor(a => a.ShippingAccountId, "Shipment Account: ", htmlAttributes: new { @Class = "" })
-        @Html.DropDownListFor(a => a.ShippingAccountId, Model.ShippingAccounts, "Please Select", htmlAttributes: new { @Value = ViewBag.CurrentShippingAccountId as string, @Class = "dropdown" })
-        <br />
+        @if (User.IsInRole("Employee"))
+        {
+            @Html.LabelFor(a => a.ShippingAccountId, "Shipment Account: ", htmlAttributes: new { @Class = "" })
+            @Html.DropDownListFor(a => a.ShippingAccountId, Model.ShippingAccounts, "Please Select", htmlAttributes: new { @Value = ViewBag.CurrentShippingAccountId as string, @Class = "dropdown" })
+            <br />
+        }
         @Html.LabelFor(a => a.ShippedStartDate, "Start of Shipped Time:")
         @Html.TextBoxFor(a => a.ShippedStartDate, htmlAttributes: new { @value = ViewBag.CurrentShippedStartDate, Type = "date" })
         <br />
