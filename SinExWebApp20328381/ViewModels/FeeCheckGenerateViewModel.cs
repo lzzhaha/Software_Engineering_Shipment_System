@@ -19,7 +19,7 @@ namespace SinExWebApp20328381.ViewModels
         public virtual string ServiceType { get; set; }
         public virtual string PackageType { get; set; }
         public virtual string Size { get; set; }
-        public virtual ArrayList Fees { get; set; }
-        public virtual ArrayList Exchange { get; set; }
+        public virtual List<Decimal> Fees { get; set; }
+        public virtual IEnumerable<Currency> Exchange { get; set; }
     }
 }

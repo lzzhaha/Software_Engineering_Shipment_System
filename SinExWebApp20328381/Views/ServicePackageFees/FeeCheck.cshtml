@@ -36,8 +36,11 @@
             //data = JSON.stringify(data);
             $.post("/ServicePackageFees/GetSizeOfPackage", postdata, function (data, status) {
                 $(CurrentPostingObject).next().empty();
-                //var data = JSON.parse(data);
-                console.log(data);
+                if (data.length != 0)
+                    $(CurrentPostingObject).next().attr("required", "required");
+                else {
+                    $(CurrentPostingObject).next().removeAttr("required");
+                }
                 for (var size in data) {
                     $(CurrentPostingObject).next().append($('<option></option').text(data[size]));
                 }
@@ -52,17 +55,20 @@
 {
     @Html.LabelFor(a => a.Origin, "Origin: ");
     @Html.DropDownListFor(a => a.Origin, Model.Destinations, "Please Select", htmlAttributes: new { @Value = ViewBag.CurrentOrigin as string, @Class = "dropdown" })
-     
+    @: &nbsp;
     @Html.LabelFor(a => a.Origin, "Destination: ");
     @Html.DropDownListFor(a => a.Destination, Model.Destinations, "Please Select", htmlAttributes: new { @Value = ViewBag.CurrentDestination as string, @Class = "dropdown" })
-     
+    @: &nbsp;
     @Html.LabelFor(a => a.Origin, "ServiceType: ");
-    @Html.DropDownListFor(a => a.ServiceType, Model.ServiceTypes, "Please Select", htmlAttributes: new { @Value = ViewBag.CurrentServiceType as string, @Class = "dropdown" })
+    @Html.DropDownListFor(a => a.ServiceType, Model.ServiceTypes, "Please Select", htmlAttributes: new { @Value = ViewBag.CurrentServiceType as string, @Class = "dropdown", @required = "required" })
     <br />
-    <label id="label0">Package Type, Size, Weight: </label>
-    @Html.DropDownListFor(a => a.PackageType, Model.PackageTypes, "Please Select", htmlAttributes: new { @Class = "dropdown", @Name = "Packages[0].PackageType", @id = "dropdown0", @onchange = "getval(this);" })
-    <select id="size0" name="Packages[0].Size" class="dropdown"><option>Please Select</option></select>
-    <input type="text" name="Packages[0].Weight" id="text0" />
+    <label id="label0" required ="required">Package Type, Size, Weight(KG): </label>
+    @: &nbsp;
+    @Html.DropDownListFor(a => a.PackageType, Model.PackageTypes, "Please Select", htmlAttributes: new { @Class = "dropdown", @Name = "Packages[0].PackageType", @id = "dropdown0", @onchange = "getval(this);", @required = "required" })
+    @: &nbsp;
+    <select id="size0" name="Packages[0].Size" class="dropdown" required ="required"><option>Please Select</option></select>
+    @: &nbsp;
+    <input type="text" name="Packages[0].Weight" id="text0" required ="required" />
     <br id="br0" />
     <br />
     <input type="button" value="Add Package" onclick="ap()" />
@@ -74,7 +80,23 @@
     var count = Model.Fees.Count;
     for (var i = 1; i <= count - 1; i++)
     {
-        <p>Package @i Fee: @Model.Fees[i - 1]</p>
+        <p>Package @i Fee: 
+        @foreach (var j in Model.Exchange)
+        {
+            @j.CurrencyCode
+            @: :
+            @((double)Model.Fees[i - 1] * j.ExchangeRate)
+            @:&nbsp;&nbsp;
+        }
+        </p>
     }
-    <p>Total: @Model.Fees[count - 1]</p>
+    <p>Total:
+    @foreach (var j in Model.Exchange)
+    {
+        @j.CurrencyCode
+        @: :
+        @((double)Model.Fees[count - 1] * j.ExchangeRate)
+        @:&nbsp;&nbsp;
+        }
+    </p>
 }

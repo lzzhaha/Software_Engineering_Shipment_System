@@ -33,6 +33,7 @@
                             <li>@Html.ActionLink("Package Types", "Index", "PackageTypes")</li>
                             <li>@Html.ActionLink("Service Types", "Index", "ServiceTypes")</li>
                             <li>@Html.ActionLink("Fees", "Index", "ServicePackageFees")</li>
+                            <li>@Html.ActionLink("Calculate your fee", "FeeCheck", "ServicePackageFees")</li>
                         </ul>
                     </li>
                     @if (User.IsInRole("Employee") || User.IsInRole("Customer")) { 

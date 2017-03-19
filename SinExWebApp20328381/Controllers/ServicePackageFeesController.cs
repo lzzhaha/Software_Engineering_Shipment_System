@@ -140,10 +140,12 @@ namespace SinExWebApp20328381.Controllers
             FeeCheckInput.Destinations = PopulateDestinationsDropdownList().ToList();
             FeeCheckInput.ServiceTypes = PopulateServiceTypesDropdownList().ToList();
             FeeCheckInput.PackageTypes = PopulatePackageTypesDropdownList().ToList();
+            //ArrayList Exchange = new ArrayList();
+            FeeCheckInput.Exchange = db.Currencies.Select(s => s);
             if (Packages != null)
             {
                 var ServiceTypeID = db.ServiceTypes.SingleOrDefault(s => s.Type == ServiceType).ServiceTypeID;
-                ArrayList fees = new ArrayList();
+                List<Decimal> fees = new List<Decimal>();
                 int PackageTypeID;
                 ServicePackageFee servicePackageFee;
                 string packageTypelimit;
