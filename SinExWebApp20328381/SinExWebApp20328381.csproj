@@ -236,10 +236,9 @@
     <Compile Include="Models\SinExDatabaseContext.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Startup.cs" />
-    <Compile Include="ViewModels\FeeCheckListViewModel.cs" />
+    <Compile Include="ViewModels\FeeCheckInputViewModel.cs" />
     <Compile Include="ViewModels\FeeCheckGenerateViewModel.cs" />
     <Compile Include="ViewModels\FeeCheckPackageJson.cs" />
-    <Compile Include="ViewModels\FeeCheckReportViewModel.cs" />
     <Compile Include="ViewModels\RegisterCustomerViewModel.cs" />
     <Compile Include="ViewModels\ShipmentsListViewModel.cs" />
     <Compile Include="ViewModels\ShipmentsReportViewModel.cs" />

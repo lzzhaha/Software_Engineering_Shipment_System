@@ -134,7 +134,7 @@ namespace SinExWebApp20328381.Controllers
         }
 
         //Get
-        public ActionResult FeeCheck(string ServiceType, ICollection<FeeCheckListViewModel> Packages)
+        public ActionResult FeeCheck(string ServiceType, ICollection<FeeCheckInputViewModel> Packages)
         {
             var FeeCheckInput = new FeeCheckGenerateViewModel();
             FeeCheckInput.Destinations = PopulateDestinationsDropdownList().ToList();

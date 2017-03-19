@@ -6,7 +6,7 @@ using System.Web.Mvc;
 
 namespace SinExWebApp20328381.ViewModels
 {
-    public class FeeCheckListViewModel
+    public class FeeCheckInputViewModel
     {
         public virtual List<SelectListItem> PackageTypes { get; set; }
         public virtual string PackageType { get; set; }
