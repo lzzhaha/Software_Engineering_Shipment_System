@@ -7,6 +7,9 @@ using System.Net;
 using System.Web;
 using System.Web.Mvc;
 using SinExWebApp20328381.Models;
+using SinExWebApp20328381.ViewModels;
+using Newtonsoft.Json;
+using System.Collections;
 
 namespace SinExWebApp20328381.Controllers
 {
@@ -129,6 +132,61 @@ namespace SinExWebApp20328381.Controllers
             return RedirectToAction("Index");
         }
 
+        //Get
+        public ActionResult FeeCheck(string ServiceType, ICollection<FeeCheckListViewModel> Packages)
+        {
+            if (Packages.Count == 0)
+            {
+                var FeeCheckInput = new FeeCheckGenerateViewModel();
+                FeeCheckInput.Destinations = PopulateDestinationsDropdownList().ToList();
+                FeeCheckInput.ServiceTypes = PopulateServiceTypesDropdownList().ToList();
+                FeeCheckInput.PackageTypes = PopulatePackageTypesDropdownList().ToList();
+
+                return View(FeeCheckInput);
+            }
+            else
+            {
+                var ServiceTypeID = db.ServiceTypes.SingleOrDefault(s => s.Type == ServiceType).ServiceTypeID;
+                ArrayList fees = new ArrayList();
+                int PackageTypeID;
+                ServicePackageFee servicePackageFee;
+                foreach (var i in Packages)
+                {
+                    PackageTypeID = db.PackageTypes.SingleOrDefault(s => s.Type == i.PackageType).PackageTypeID;
+                    servicePackageFee = db.ServicePackageFees.SingleOrDefault(s => (s.PackageTypeID == PackageTypeID && s.ServiceTypeID == ServiceTypeID));
+                    fees.Add((i.Weight * servicePackageFee.Fee < servicePackageFee.MinimumFee ? i.Weight * servicePackageFee.Fee : servicePackageFee.MinimumFee));
+
+                }
+            }
+        }
+
+        private SelectList PopulatePackageTypesDropdownList()
+        {
+            var PackageTypeQuery = db.PackageTypes.Select(s => s.Type).Distinct().OrderBy(s => s);
+            return new SelectList(PackageTypeQuery);
+        }
+
+        private SelectList PopulateServiceTypesDropdownList()
+        {
+            var ServiceTypeQuery = db.ServiceTypes.Select(s => s.Type).Distinct().OrderBy(s => s);
+            return new SelectList(ServiceTypeQuery);
+        }
+
+        private SelectList PopulateDestinationsDropdownList()
+        {
+            var DestinationQuery = db.Destinations.Select(s => s.City).Distinct().OrderBy(s => s);
+            return new SelectList(DestinationQuery);
+        }
+
+        [HttpPost]
+        public JsonResult GetSizeOfPackage(FeeCheckPackageJson jsonPackageName)
+        {
+            //var PackageName = JsonConvert.DeserializeObject(jsonPackageName);
+            PackageType package = db.PackageTypes.SingleOrDefault(s => s.Type == jsonPackageName.PackageName);
+            if (package == null ) return Json(0);
+            var sizeQuery = db.PackageTypeSizes.Where(s => s.PackageTypeID == package.PackageTypeID).Select(s => s.size).Distinct();
+            return Json(sizeQuery.ToArray());
+        }
         protected override void Dispose(bool disposing)
         {
             if (disposing)

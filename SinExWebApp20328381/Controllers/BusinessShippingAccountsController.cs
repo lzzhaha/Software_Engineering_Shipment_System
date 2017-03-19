@@ -13,71 +13,67 @@ namespace SinExWebApp20328381.Controllers
     public class BusinessShippingAccountsController : Controller
     {
         private SinExDatabaseContext db = new SinExDatabaseContext();
-
-        // GET: PersonalShippingAccounts
-
+        
+        // GET: BusinessShippingAccounts/Create
         public ActionResult Create()
         {
             return View();
         }
 
-        // POST: PersonalShippingAccounts/Create
-        // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
-        // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
+        // POST: BusinessShippingAccounts/Create
+        // 为了防止“过多发布”攻击，请启用要绑定到的特定属性，有关 
+        // 详细信息，请参阅 http://go.microsoft.com/fwlink/?LinkId=317598。
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create([Bind(Include = "ShippingAccountId,MailingAddressBuilding,MailingAddressStreet,MailingAddressCity,MailingAddressProvinceCode,MailingAddressPostalCode,PhoneNumber,EmailAddress,CreditCardType,CreditCardNumber,CreditCardSecurityNumber,CreditCardHolderName,CreditCardExpiryMonth,CreditCardExpiryYear,FirstName,LastName")] PersonalShippingAccount personalShippingAccount)
+        public ActionResult Create([Bind(Include = "ShippingAccountId,MailingAddressBuilding,MailingAddressStreet,MailingAddressCity,MailingAddressProvinceCode,MailingAddressPostalCode,PhoneNumber,EmailAddress,CreditCardType,CreditCardNumber,CreditCardSecurityNumber,CreditCardHolderName,CreditCardExpiryMonth,CreditCardExpiryYear,UserName,ContactPersonName,CompanyName,DepartmentName")] BusinessShippingAccount businessShippingAccount)
         {
             if (ModelState.IsValid)
             {
-                //db.ShippingAccounts.Add(personalShippingAccount);
+                //db.ShippingAccounts.Add(businessShippingAccount);
                 //db.SaveChanges();
                 return RedirectToAction("Index", "Home");
             }
 
-            return View(personalShippingAccount);
+            return View(businessShippingAccount);
         }
 
-        // GET: PersonalShippingAccounts/Edit/5
-        public ActionResult Edit(int? id)
+        // GET: BusinessShippingAccounts/Edit/5
+        public ActionResult Edit()
         {
+            ShippingAccount shippingAccount = db.ShippingAccounts.SingleOrDefault(s => s.UserName == System.Web.HttpContext.Current.User.Identity.Name);
+            if (shippingAccount is PersonalShippingAccount)
+            {
+                return RedirectToAction("Edit", "PersonalShippingAccounts");
+            }
+            /*
             if (id == null)
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            PersonalShippingAccount personalShippingAccount = (PersonalShippingAccount)db.ShippingAccounts.Find(id);
-            if (personalShippingAccount == null)
+            */
+            BusinessShippingAccount businessShippingAccount = (BusinessShippingAccount)shippingAccount;
+            if (businessShippingAccount == null)
             {
                 return HttpNotFound();
             }
-            return View(personalShippingAccount);
+            return View(businessShippingAccount);
         }
 
-        // POST: PersonalShippingAccounts/Edit/5
-        // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
-        // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
+        // POST: BusinessShippingAccounts/Edit/5
+        // 为了防止“过多发布”攻击，请启用要绑定到的特定属性，有关 
+        // 详细信息，请参阅 http://go.microsoft.com/fwlink/?LinkId=317598。
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit([Bind(Include = "ShippingAccountId,MailingAddressBuilding,MailingAddressStreet,MailingAddressCity,MailingAddressProvinceCode,MailingAddressPostalCode,PhoneNumber,EmailAddress,CreditCardType,CreditCardNumber,CreditCardSecurityNumber,CreditCardHolderName,CreditCardExpiryMonth,CreditCardExpiryYear,FirstName,LastName")] PersonalShippingAccount personalShippingAccount)
+        public ActionResult Edit([Bind(Include = "ShippingAccountId,MailingAddressBuilding,MailingAddressStreet,MailingAddressCity,MailingAddressProvinceCode,MailingAddressPostalCode,PhoneNumber,EmailAddress,CreditCardType,CreditCardNumber,CreditCardSecurityNumber,CreditCardHolderName,CreditCardExpiryMonth,CreditCardExpiryYear,UserName,ContactPersonName,CompanyName,DepartmentName")] BusinessShippingAccount businessShippingAccount)
         {
+            businessShippingAccount.UserName = System.Web.HttpContext.Current.User.Identity.Name;
             if (ModelState.IsValid)
             {
-                //db.Entry(personalShippingAccount).State = EntityState.Modified;
-                //db.SaveChanges();
+                db.Entry(businessShippingAccount).State = EntityState.Modified;
+                db.SaveChanges();
                 return RedirectToAction("Index", "Home");
             }
-            return View(personalShippingAccount);
-        }
-
-        // POST: PersonalShippingAccounts/Delete/5
-        [HttpPost, ActionName("Delete")]
-        [ValidateAntiForgeryToken]
-        public ActionResult DeleteConfirmed(int id)
-        {
-            PersonalShippingAccount personalShippingAccount = (PersonalShippingAccount)db.ShippingAccounts.Find(id);
-            db.ShippingAccounts.Remove(personalShippingAccount);
-            db.SaveChanges();
-            return RedirectToAction("Index");
+            return View(businessShippingAccount);
         }
 
         protected override void Dispose(bool disposing)

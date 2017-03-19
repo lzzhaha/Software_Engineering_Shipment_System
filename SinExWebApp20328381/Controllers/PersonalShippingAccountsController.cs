@@ -39,13 +39,20 @@ namespace SinExWebApp20328381.Controllers
         }
 
         // GET: PersonalShippingAccounts/Edit/5
-        public ActionResult Edit(int? id)
+        public ActionResult Edit()
         {
+            ShippingAccount shippingAccount = db.ShippingAccounts.SingleOrDefault(s => s.UserName == System.Web.HttpContext.Current.User.Identity.Name);
+            if (shippingAccount is BusinessShippingAccount)
+            {
+                return RedirectToAction("Edit", "BusinessShippingAccounts");
+            }
+            /*
             if (id == null)
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            PersonalShippingAccount personalShippingAccount = (PersonalShippingAccount)db.ShippingAccounts.Find(id);
+            */
+            PersonalShippingAccount personalShippingAccount = (PersonalShippingAccount)shippingAccount;
             if (personalShippingAccount == null)
             {
                 return HttpNotFound();
@@ -60,6 +67,7 @@ namespace SinExWebApp20328381.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult Edit([Bind(Include = "ShippingAccountId,MailingAddressBuilding,MailingAddressStreet,MailingAddressCity,MailingAddressProvinceCode,MailingAddressPostalCode,PhoneNumber,EmailAddress,CreditCardType,CreditCardNumber,CreditCardSecurityNumber,CreditCardHolderName,CreditCardExpiryMonth,CreditCardExpiryYear,FirstName,LastName")] PersonalShippingAccount personalShippingAccount)
         {
+            personalShippingAccount.UserName = System.Web.HttpContext.Current.User.Identity.Name;
             if (ModelState.IsValid)
             {
                 db.Entry(personalShippingAccount).State = EntityState.Modified;

@@ -1,0 +1,73 @@
+﻿@model SinExWebApp20328381.ViewModels.FeeCheckGenerateViewModel
+
+@{
+    ViewBag.Title = "FeeCheck";
+}
+
+@section CustomScripts{
+    <script>
+        var Packages = 0;
+        var CurrentPostingObject;
+        $(document).ready(function () {
+
+        });
+        
+        function ap() {
+            $("#label" + Packages).clone().attr("id", 'label' + (1 + Packages)).insertAfter("#br" + Packages);
+            $("#dropdown" + Packages).clone().attr("id", "dropdown" + (Packages + 1)).attr("name", "Packages[" + (Packages + 1) + "].PackageType").insertAfter("#label" + (Packages + 1));
+            $("#size" + Packages).clone().attr("id", "size" + (Packages + 1)).attr("name", "Packages[" + (Packages + 1) + "].Size").insertAfter("#dropdown" + (Packages + 1));
+            $("#text" + Packages).clone().attr("id", "text" + (Packages + 1)).attr("name", "Packages[" + (Packages + 1) + "].Weight").insertAfter("#size" + (Packages + 1));
+            $("#br" + Packages).clone().attr("id", 'br' + (1 + Packages)).insertAfter("#text" + (Packages + 1));
+            Packages++;
+        }
+        /*
+        function ap() {
+            $("#userInput tr:eq(" + (Packages + 1) + ")").clone().insertAfter("#userInput tr:eq(" + (Packages + 1) + ")");
+            Packages++;
+        }
+        */
+        function getval(sel) {
+            if ($(sel).val() == "Please Select")
+                return;
+            CurrentPostingObject = sel;
+            var data = $(sel).val();
+            var postdata = new Object();
+            postdata = { PackageName: data };
+            //data = JSON.stringify(data);
+            $.post("/ServicePackageFees/GetSizeOfPackage", postdata, function (data, status) {
+                $(CurrentPostingObject).next().empty();
+                //var data = JSON.parse(data);
+                console.log(data);
+                for (var size in data) {
+                    $(CurrentPostingObject).next().append($('<option></option').text(data[size]));
+                }
+            });
+        }
+    </script>
+}
+
+<h2>FeeCheck</h2>
+
+@using (Html.BeginForm("FeeCheck", "ServicePackageFees", FormMethod.Get))
+{
+    @Html.LabelFor(a => a.PackageNumber, "Package Number: ");
+    @Html.TextBoxFor(a => a.PackageNumber, htmlAttributes: new { @value = ViewBag.CurrentPackageNumber })
+    <br />
+    @Html.LabelFor(a => a.Origin, "Origin: ");
+    @Html.DropDownListFor(a => a.Origin, Model.Destinations, "Please Select", htmlAttributes: new { @Value = ViewBag.CurrentOrigin as string, @Class = "dropdown" })
+    <br />
+    @Html.LabelFor(a => a.Origin, "Destination: ");
+    @Html.DropDownListFor(a => a.Destination, Model.Destinations, "Please Select", htmlAttributes: new { @Value = ViewBag.CurrentDestination as string, @Class = "dropdown" })
+    <br />
+    @Html.LabelFor(a => a.Origin, "ServiceType: ");
+    @Html.DropDownListFor(a => a.ServiceType, Model.ServiceTypes, "Please Select", htmlAttributes: new { @Value = ViewBag.CurrentServiceType as string, @Class = "dropdown" })
+    <br />
+    <label id="label0">Package Type: </label>
+    @Html.DropDownListFor(a => a.PackageType, Model.PackageTypes, "Please Select", htmlAttributes: new { @Class = "dropdown", @Name = "Packages[0].PackageType", @id = "dropdown0", @onchange = "getval(this);" })
+    <select id="size0" name="Packages[1].Size" class="dropdown"><option>Please Select</option></select>
+    <input type="text" name="Packages[0].Weight" id="text0" />
+    <br id="br0" />
+    <br />
+    <input type="submit" value="sub" />
+    <input type="button" value="click" onclick="ap()" />
+}
