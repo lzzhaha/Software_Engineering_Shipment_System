@@ -1,5 +1,6 @@
 ﻿using SinExWebApp20328381.Models;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
@@ -18,5 +19,7 @@ namespace SinExWebApp20328381.ViewModels
         public virtual string ServiceType { get; set; }
         public virtual string PackageType { get; set; }
         public virtual string Size { get; set; }
+        public virtual ArrayList Fees { get; set; }
+        public virtual ArrayList Exchange { get; set; }
     }
 }

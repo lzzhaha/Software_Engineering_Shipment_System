@@ -10,6 +10,7 @@ using SinExWebApp20328381.Models;
 using SinExWebApp20328381.ViewModels;
 using Newtonsoft.Json;
 using System.Collections;
+using System.Text.RegularExpressions;
 
 namespace SinExWebApp20328381.Controllers
 {
@@ -135,29 +136,41 @@ namespace SinExWebApp20328381.Controllers
         //Get
         public ActionResult FeeCheck(string ServiceType, ICollection<FeeCheckListViewModel> Packages)
         {
-            if (Packages.Count == 0)
-            {
-                var FeeCheckInput = new FeeCheckGenerateViewModel();
-                FeeCheckInput.Destinations = PopulateDestinationsDropdownList().ToList();
-                FeeCheckInput.ServiceTypes = PopulateServiceTypesDropdownList().ToList();
-                FeeCheckInput.PackageTypes = PopulatePackageTypesDropdownList().ToList();
-
-                return View(FeeCheckInput);
-            }
-            else
+            var FeeCheckInput = new FeeCheckGenerateViewModel();
+            FeeCheckInput.Destinations = PopulateDestinationsDropdownList().ToList();
+            FeeCheckInput.ServiceTypes = PopulateServiceTypesDropdownList().ToList();
+            FeeCheckInput.PackageTypes = PopulatePackageTypesDropdownList().ToList();
+            if (Packages != null)
             {
                 var ServiceTypeID = db.ServiceTypes.SingleOrDefault(s => s.Type == ServiceType).ServiceTypeID;
                 ArrayList fees = new ArrayList();
                 int PackageTypeID;
                 ServicePackageFee servicePackageFee;
+                string packageTypelimit;
+                Decimal fee, TotalFee;
+                TotalFee = 0;
                 foreach (var i in Packages)
                 {
                     PackageTypeID = db.PackageTypes.SingleOrDefault(s => s.Type == i.PackageType).PackageTypeID;
                     servicePackageFee = db.ServicePackageFees.SingleOrDefault(s => (s.PackageTypeID == PackageTypeID && s.ServiceTypeID == ServiceTypeID));
-                    fees.Add((i.Weight * servicePackageFee.Fee < servicePackageFee.MinimumFee ? i.Weight * servicePackageFee.Fee : servicePackageFee.MinimumFee));
-
+                    fee = (i.Weight * servicePackageFee.Fee < servicePackageFee.MinimumFee ? servicePackageFee.MinimumFee : i.Weight * servicePackageFee.Fee);
+                    Regex reg = new Regex(@"([0-9]*).*");
+                    if (i.Size != null)
+                    {
+                        packageTypelimit = db.PackageTypeSizes.SingleOrDefault(s => s.size == i.Size).limit;
+                        var result = reg.Match(packageTypelimit).Groups;
+                        if (result[1].Value != "" && i.Weight > decimal.Parse(result[1].Value))
+                        {
+                            fee += 500;
+                        }
+                    }
+                    TotalFee += fee;
+                    fees.Add(fee);
                 }
+                fees.Add(TotalFee);
+                FeeCheckInput.Fees = fees;
             }
+            return View(FeeCheckInput);
         }
 
         private SelectList PopulatePackageTypesDropdownList()
