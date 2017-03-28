@@ -1,0 +1,72 @@
+﻿@model SinExWebApp20328381.ViewModels.SelectCurrency
+
+@{
+    ViewBag.Title = "Service Package Fees";
+}
+
+@{ 
+    Dictionary<string, Dictionary<string, string>> tableDic = new Dictionary<string, Dictionary<string, string>>();
+    string PIndex, SIndex, content;
+    foreach (var item in Model.ServicePackageFees)
+    {
+        //1st index:S, 2nd P
+        PIndex = item.PackageType.Type;
+        SIndex = item.ServiceType.Type;
+        content = item.Fee.ToString() + " (" + item.MinimumFee.ToString() + " min.)";
+        if (!tableDic.ContainsKey(SIndex))
+        {
+            tableDic.Add(SIndex, new Dictionary<string, string>());
+        }
+        if (!tableDic[SIndex].ContainsKey(PIndex))
+        {
+            tableDic[SIndex].Add(PIndex, content);
+        }
+    }
+}
+<h2>Service Package Fees</h2>
+
+@using (Html.BeginForm("Index3", "ServicePackageFees", FormMethod.Get))
+{
+    @Html.LabelFor(a => a.CurrencyCode, "Currency: ", htmlAttributes: new { @Class = "" })
+    @Html.DropDownListFor(a => a.CurrencyCode, Model.Currencies, "Please Select", htmlAttributes: new { @Class = "dropdown" })
+    <br />
+    <input class="btn btn-default" type="submit" value="Search" />
+}
+<p>
+</p>
+<table class="table">
+    <tr>
+        <th rowspan="2">
+            @Html.DisplayNameFor(model => model.ServicePackageFee.ServiceType)
+        </th>
+        <th colspan="@tableDic.Count">
+            @Html.DisplayNameFor(model => model.ServicePackageFee.PackageType)
+        </th>
+    </tr>
+    <tr>
+        @foreach (var SKey in tableDic.Keys)
+        {
+            foreach (var PKey in tableDic[SKey].Keys)
+            {
+                <th>
+                    @PKey
+                </th>
+            }
+            break;
+        }
+    </tr>
+    @foreach (var SKey in tableDic.Keys)
+    {
+        <tr>
+            <td>
+                @SKey
+            </td>
+            @foreach (var PValue in tableDic[SKey].Values)
+            {
+                <td>
+                    @PValue
+                </td>
+            }
+        </tr>
+    }
+</table>

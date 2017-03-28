@@ -14,7 +14,7 @@ using System.Text.RegularExpressions;
 
 namespace SinExWebApp20328381.Controllers
 {
-    public class ServicePackageFeesController : Controller
+    public class ServicePackageFeesController : BaseController
     {
         private SinExDatabaseContext db = new SinExDatabaseContext();
 
@@ -30,6 +30,28 @@ namespace SinExWebApp20328381.Controllers
             return View(servicePackageFees.ToList());
         }
 
+        public ActionResult Index3(string CurrencyCode)
+        {
+            SelectCurrency sc = new SelectCurrency();
+            sc.Currencies = PopulateCurrenciesDropdownList().ToList();
+            if (CurrencyCode == null)
+            {
+                if (Session["LastCurrency"] == null)
+                    Session["LastCurrency"] = "CNY";
+            }
+            else
+            {
+                Session["LastCurrency"] = CurrencyCode;
+            }
+            var servicePackageFees = db.ServicePackageFees.Include(s => s.PackageType).Include(s => s.ServiceType);
+            sc.ServicePackageFees = servicePackageFees.ToList();
+            foreach (var servicePackageFee in sc.ServicePackageFees)
+            {
+                servicePackageFee.Fee = ConvertCurrency((string)Session["LastCurrency"], servicePackageFee.Fee);
+                servicePackageFee.MinimumFee = ConvertCurrency((string)Session["LastCurrency"], servicePackageFee.MinimumFee);
+            }
+            return View(sc);
+        }
         // GET: ServicePackageFees/Details/5
         public ActionResult Details(int? id)
         {
@@ -192,7 +214,11 @@ namespace SinExWebApp20328381.Controllers
             var DestinationQuery = db.Destinations.Select(s => s.City).Distinct().OrderBy(s => s);
             return new SelectList(DestinationQuery);
         }
-
+        private SelectList PopulateCurrenciesDropdownList()
+        {
+            var CurrencyQuery = db.Currencies.Select(s => s.CurrencyCode).Distinct().OrderBy(s => s);
+            return new SelectList(CurrencyQuery);
+        }
         [HttpPost]
         public JsonResult GetSizeOfPackage(FeeCheckPackageJson jsonPackageName)
         {

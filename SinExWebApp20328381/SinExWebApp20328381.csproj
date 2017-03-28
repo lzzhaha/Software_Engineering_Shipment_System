@@ -204,6 +204,7 @@
     <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="App_Start\Startup.Auth.cs" />
     <Compile Include="Controllers\AccountController.cs" />
+    <Compile Include="Controllers\BaseController.cs" />
     <Compile Include="Controllers\BusinessShippingAccountsController.cs" />
     <Compile Include="Controllers\CurrenciesController.cs" />
     <Compile Include="Controllers\DestinationsController.cs" />
@@ -240,6 +241,7 @@
     <Compile Include="ViewModels\FeeCheckGenerateViewModel.cs" />
     <Compile Include="ViewModels\FeeCheckPackageJson.cs" />
     <Compile Include="ViewModels\RegisterCustomerViewModel.cs" />
+    <Compile Include="ViewModels\SelectCurrency.cs" />
     <Compile Include="ViewModels\ShipmentsListViewModel.cs" />
     <Compile Include="ViewModels\ShipmentsReportViewModel.cs" />
     <Compile Include="ViewModels\ShipmentsSearchViewModel.cs" />
@@ -360,6 +362,7 @@
     <Content Include="Views\BusinessShippingAccounts\_BusinessInformationPartial.cshtml" />
     <Content Include="Views\Shared\_RegisterLoginPartial.cshtml" />
     <Content Include="Views\ServicePackageFees\FeeCheck.cshtml" />
+    <Content Include="Views\ServicePackageFees\Index3.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
