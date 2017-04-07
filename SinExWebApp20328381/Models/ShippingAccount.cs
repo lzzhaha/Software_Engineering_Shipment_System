@@ -71,6 +71,8 @@ namespace SinExWebApp20328381.Models
         [StringLength(10, MinimumLength = 6)]
         public virtual string UserName { get; set; }
         public virtual ICollection<Shipment> Shipments { get; set; }
+        public virtual ICollection<Address> RecipientAddresses { get; set; }
+        public virtual ICollection<Address> PickupLocations { get; set; }
 
     }
 }

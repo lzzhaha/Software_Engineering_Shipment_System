@@ -14,14 +14,26 @@ namespace SinExWebApp20328381.Models
         public virtual int WaybillId { get; set; }
         public virtual string ReferenceNumber { get; set; }
         public virtual string ServiceType { get; set; }
+        public virtual string PickupType { get; set; }
         public virtual DateTime ShippedDate { get; set; }
         public virtual DateTime DeliveredDate { get; set; }
         public virtual string RecipientName { get; set; }
         public virtual int NumberOfPackages { get; set; }
+        public virtual List<decimal> PackageWeights { get; set; }
+        public virtual ICollection<PackageType> PackageTypes { get; set; } /* Don't know whether this association can work properly */
         public virtual string Origin { get; set; }
         public virtual string Destination { get; set; }
         public virtual string Status { get; set; }
         public virtual int ShippingAccountId { get; set; }
+        public virtual int AddressId { get; set; }
+        public virtual string TaxAndDutyShippingAccountId { get; set; }
+        public virtual string ShipmentShippingAccountId { get; set; }
+        public virtual bool EmailWhenPickup { get; set; }
+        public virtual bool EmailWhenDeliver { get; set; }
+        public virtual string RecipientPhoneNumber { get; set; }
+        public virtual string RecipientCompanyName { get; set; }
+        public virtual string RecipientDepartmentName { get; set; }
+        public virtual ICollection<ShipmentStatusHistory> ShipmentStatusHistory { get; set; }
         public virtual ShippingAccount ShippingAccount { get; set; }
     }
 }

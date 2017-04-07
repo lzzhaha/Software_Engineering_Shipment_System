@@ -222,6 +222,7 @@
     <Compile Include="Migrations\AspIdentityConfiguration.cs" />
     <Compile Include="Migrations\SinExConfiguration.cs" />
     <Compile Include="Models\AccountViewModels.cs" />
+    <Compile Include="Models\Address.cs" />
     <Compile Include="Models\BusinessShippingAccount.cs" />
     <Compile Include="Models\Currency.cs" />
     <Compile Include="Models\Destination.cs" />
@@ -233,6 +234,7 @@
     <Compile Include="Models\ServicePackageFee.cs" />
     <Compile Include="Models\ServiceType.cs" />
     <Compile Include="Models\Shipment.cs" />
+    <Compile Include="Models\ShipmentStatusHistory.cs" />
     <Compile Include="Models\ShippingAccount.cs" />
     <Compile Include="Models\SinExDatabaseContext.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
