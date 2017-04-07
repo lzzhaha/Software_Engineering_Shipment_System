@@ -9,6 +9,7 @@ namespace SinExWebApp20328381.Models
         public virtual int ServicePackageFeeID { get; set; }
         public virtual decimal Fee { get; set; }
         public virtual decimal MinimumFee { get; set; }
+        public virtual decimal Penalty { get; set; }
         public virtual int PackageTypeID { get; set; }
         public virtual int ServiceTypeID { get; set; }
         public virtual PackageType PackageType { get; set; }

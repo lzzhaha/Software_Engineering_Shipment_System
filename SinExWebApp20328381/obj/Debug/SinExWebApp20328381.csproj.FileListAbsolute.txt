@@ -494,6 +494,6 @@ C:\Users\Atmosphere\Dropbox\COMP3111\TeamSinex\SinExWebApp20328381\bin\Microsoft
 C:\Users\Atmosphere\Dropbox\COMP3111\TeamSinex\SinExWebApp20328381\bin\Microsoft.Owin.Security.Google.xml
 C:\Users\Atmosphere\Dropbox\COMP3111\TeamSinex\SinExWebApp20328381\bin\Microsoft.Owin.Security.Twitter.xml
 C:\Users\Atmosphere\Dropbox\COMP3111\TeamSinex\SinExWebApp20328381\bin\Microsoft.Owin.Security.MicrosoftAccount.xml
-C:\Users\Atmosphere\Dropbox\COMP3111\TeamSinex\SinExWebApp20328381\obj\Debug\SinExWebApp20328381.csprojResolveAssemblyReference.cache
 C:\Users\Atmosphere\Dropbox\COMP3111\TeamSinex\SinExWebApp20328381\obj\Debug\SinExWebApp20328381.dll
 C:\Users\Atmosphere\Dropbox\COMP3111\TeamSinex\SinExWebApp20328381\obj\Debug\SinExWebApp20328381.pdb
+C:\Users\atmosphere\Dropbox\COMP3111\TeamSinex\SinExWebApp20328381\obj\Debug\SinExWebApp20328381.csprojResolveAssemblyReference.cache
