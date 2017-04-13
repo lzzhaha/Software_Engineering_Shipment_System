@@ -15,6 +15,7 @@ namespace SinExWebApp20328381.Models
         public virtual string ReferenceNumber { get; set; }
         public virtual string ServiceType { get; set; }
         public virtual string PickupType { get; set; }
+        public virtual DateTime PickupDate {get; set;}
         public virtual DateTime ShippedDate { get; set; }
         public virtual DateTime DeliveredDate { get; set; }
         public virtual string RecipientName { get; set; }
