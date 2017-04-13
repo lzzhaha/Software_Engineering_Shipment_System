@@ -33,7 +33,6 @@
             var data = $(sel).val();
             var postdata = new Object();
             postdata = { PackageName: data };
-            //data = JSON.stringify(data);
             $.post("/ServicePackageFees/GetSizeOfPackage", postdata, function (data, status) {
                 $(CurrentPostingObject).next().empty();
                 if (data.length != 0)
