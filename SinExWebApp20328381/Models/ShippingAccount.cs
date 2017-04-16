@@ -38,7 +38,7 @@ namespace SinExWebApp20328381.Models
         public virtual string PhoneNumber { get; set; }
         [Required]
         [StringLength(30)]
-        [RegularExpression(@"^.*[@].*[.].*$", ErrorMessage = "Please enter a valid Email address.")]
+        [EmailAddress(ErrorMessage = "Please enter a valid Email address.")]
         [Display(Name = "Email", Order = 4)]
         public virtual string EmailAddress { get; set; }
         [Required]
