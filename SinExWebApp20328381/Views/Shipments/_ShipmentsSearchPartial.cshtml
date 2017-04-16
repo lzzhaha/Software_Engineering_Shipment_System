@@ -1,27 +1,33 @@
 ﻿@model SinExWebApp20328381.ViewModels.ShipmentsSearchViewModel
 
+@if (ViewBag.ErrorMessage != null)
+{
+    <p style="color:red">@ViewBag.ErrorMessage</p>
+}
 @using (Html.BeginForm("GenerateHistoryReport", "Shipments", FormMethod.Get))
 {
     <div class="form-group">
         @if (User.IsInRole("Employee"))
         {
             @Html.LabelFor(a => a.ShippingAccountId, "Shipment Account: ", htmlAttributes: new { @Class = "" })
-            @Html.DropDownListFor(a => a.ShippingAccountId, Model.ShippingAccounts, "Please Select", htmlAttributes: new { @Value = ViewBag.CurrentShippingAccountId as string, @Class = "dropdown" })
+            @Html.DropDownListFor(a => a.ShippingAccountId, Model.ShippingAccounts, "Please Select", htmlAttributes: new { @Value = ViewBag.CurrentShippingAccountId as string, @Class = "dropdown", @Required = "required" })
             <br />
         }
         @Html.LabelFor(a => a.ShippedStartDate, "Start of Shipped Time:")
-        @Html.TextBoxFor(a => a.ShippedStartDate, htmlAttributes: new { @value = ViewBag.CurrentShippedStartDate, Type = "date" })
+        @if (ViewBag.CurrentShippedStartDate == Convert.ToDateTime(null) || ViewBag.CurrentShippedStartDate == null)
+        {
+            ViewBag.CurrentShippedStartDate = DateTime.Now;
+        }
+        @Html.TextBoxFor(a => a.ShippedStartDate, htmlAttributes: new { @Value = ViewBag.CurrentShippedStartDate.ToString("yyyy-MM-dd"), Type = "date" })
         <br />
         @Html.LabelFor(a => a.ShippedEndDate, "End of Shipped Time:")
-        @Html.TextBoxFor(a => a.ShippedEndDate, htmlAttributes: new { @value = ViewBag.CurrentShippedEndDate, Type = "date" })
+        @if (ViewBag.CurrentShippedEndDate == Convert.ToDateTime(null) || ViewBag.CurrentShippedEndDate == null)
+        {
+            ViewBag.CurrentShippedEndDate = DateTime.Now;
+        }
+        @Html.TextBoxFor(a => a.ShippedEndDate, htmlAttributes: new { @Value = ViewBag.CurrentShippedEndDate.ToString("yyyy-MM-dd"), Type = "date" })
         <br />
-        <!--
-        @Html.LabelFor(a => a.DeliveredStartDate, "Start of Delivered Time:")
-        @Html.TextBoxFor(a => a.ShippedStartDate, htmlAttributes: new { @value = ViewBag.CurrentDeliveredStartDate, Type = "date" })
-        <br />
-        @Html.LabelFor(a => a.DeliveredEndDate, "End of Delivered Time:")
-        @Html.TextBoxFor(a => a.DeliveredEndDate, htmlAttributes: new { @Value = ViewBag.CurrentDeliveredEndDate, Type = "date" })
-        -->
+
         <br />
         <input class="btn btn-default" type="submit" value="Search" />
     </div>
