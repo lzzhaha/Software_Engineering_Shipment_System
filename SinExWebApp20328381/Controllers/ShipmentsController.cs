@@ -38,12 +38,6 @@ namespace SinExWebApp20328381.Controllers
             return View(shipment);
         }
 
-        // GET: Shipments/Create
-        public ActionResult Create()
-        {
-            return View();
-        }
-
         // GET: Shipments/GenerateHistoryReport
         public ActionResult GenerateHistoryReport(int? ShippingAccountId, string sortOrder, int? CurrentShippingAccountId, int? page, DateTime? ShippedStartDate, DateTime? ShippedEndDate, DateTime? CurrentShippedStartDate, DateTime? CurrentShippedEndDate)
         {
@@ -192,7 +186,7 @@ namespace SinExWebApp20328381.Controllers
                 // Return an empty result if no shipping account id has been selected.
                 shipmentSearch.Shipments = (new ShipmentsListViewModel[0]).ToPagedList(pageNumber, pageSize);
             }
-            
+
             return View(shipmentSearch);
         }
 
@@ -203,12 +197,52 @@ namespace SinExWebApp20328381.Controllers
             return new SelectList(shippingAccountQuery);
         }
 
+        // GET: Shipments/Create
+        public ActionResult Create()
+        {
+            var result = new CreateShipmentInputViewModel();
+            result.ShipmentInformation = new ServicePackageFeesController().ProcessFeeCheck(null, null);
+            return View(result);
+        }
+
+        [HttpPost]
+        public ActionResult Create(string ShipmentPayer, string DaTPayer, string PickupEmail, string DeliverEmail, CreateShipmentInputViewModel NewShipment)
+        {
+            bool InputError = false;
+
+            if (ShipmentPayer == "recipient" || DaTPayer == "recipient")
+            {
+                if (NewShipment.RecipientAccountId == null)
+                {
+                    InputError = true;
+                }
+            }
+            else if ((NewShipment.RecipientCompanyName == null && NewShipment.RecipientDepartmentName != null) || (NewShipment.RecipientCompanyName != null && NewShipment.RecipientDepartmentName == null))
+            {
+                ModelState.AddModelError("RecipientCompanyName", "You must either leave company name and department name empty or fill in both of them.");
+                InputError = true;
+            }
+
+            if (!ModelState.IsValid || InputError == true)
+            {
+                NewShipment.ShipmentInformation = new ServicePackageFeesController().ProcessFeeCheck(null, null);
+                return View(NewShipment);
+            }
+            
+            NewShipment.ShipmentInformation = new ServicePackageFeesController().ProcessFeeCheck(null, null);
+
+            var emptyItems = Enumerable.Range(1, 5 - NewShipment.Packages.Count).Select(x => new PackageInputViewModel());
+            NewShipment.Packages = NewShipment.Packages.Concat(emptyItems).ToList();
+            return View(NewShipment);
+        }
+
         // POST: Shipments/Create
         // 为了防止“过多发布”攻击，请启用要绑定到的特定属性，有关 
         // 详细信息，请参阅 http://go.microsoft.com/fwlink/?LinkId=317598。
+        /*
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create([Bind(Include = "WaybillId,ReferenceNumber,ServiceType,ShippedDate,DeliveredDate,RecipientName,NumberOfPackages,Origin,Destination,Status,ShippingAccountId")] Shipment shipment)
+        public ActionResult Create([Bind(Include = "WaybillId,ReferenceNumber,ServiceType,ShippedDate,DeliveredDate,RecipientName,NumberOfPackages,Origin,Destination,Status,ShippingAccountId,Packages")] Shipment shipment)
         {
             if (ModelState.IsValid)
             {
@@ -219,7 +253,8 @@ namespace SinExWebApp20328381.Controllers
 
             return View(shipment);
         }
-
+        */
+        
         // GET: Shipments/Edit/5
         public ActionResult Edit(int? id)
         {

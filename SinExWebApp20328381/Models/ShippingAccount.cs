@@ -33,7 +33,7 @@ namespace SinExWebApp20328381.Models
         public virtual string MailingAddressPostalCode { get; set; }
         [Required]
         [StringLength(14, MinimumLength = 8)]
-        [RegularExpression(@"^[0-9]*$", ErrorMessage = "Phone number must be numeric.")]
+        [DataType("PhoneNumber", ErrorMessage = "Please enter a valid phone number.")]
         [Display(Name = "Phonenumber", Order = 3)]
         public virtual string PhoneNumber { get; set; }
         [Required]
@@ -47,7 +47,7 @@ namespace SinExWebApp20328381.Models
         public virtual string CreditCardType { get; set; }
         [Required]
         [StringLength(19, MinimumLength = 14)]
-        [RegularExpression(@"^[0-9]*$", ErrorMessage = "The field Number must be numeric.")]
+        [DataType("CreditCard", ErrorMessage = "Please enter a valid credit card number.")]
         [Display(Name = "Number", Order = 11)]
         public virtual string CreditCardNumber { get; set; }
         [Required]

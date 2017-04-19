@@ -156,7 +156,7 @@ namespace SinExWebApp20328381.Controllers
         }
 
         //Get
-        public ActionResult FeeCheck(string ServiceType, ICollection<FeeCheckInputViewModel> Packages)
+        public FeeCheckGenerateViewModel ProcessFeeCheck (string ServiceType, ICollection<PackageInputViewModel> Packages)
         {
             var FeeCheckInput = new FeeCheckGenerateViewModel();
             FeeCheckInput.Destinations = PopulateDestinationsDropdownList().ToList();
@@ -171,13 +171,14 @@ namespace SinExWebApp20328381.Controllers
                 int PackageTypeID;
                 ServicePackageFee servicePackageFee;
                 string packageTypelimit;
-                Decimal fee, TotalFee;
+                Decimal fee, TotalFee, decimalweight;
                 TotalFee = 0;
                 foreach (var i in Packages)
                 {
                     PackageTypeID = db.PackageTypes.SingleOrDefault(s => s.Type == i.PackageType).PackageTypeID;
                     servicePackageFee = db.ServicePackageFees.SingleOrDefault(s => (s.PackageTypeID == PackageTypeID && s.ServiceTypeID == ServiceTypeID));
-                    fee = (i.Weight * servicePackageFee.Fee < servicePackageFee.MinimumFee ? servicePackageFee.MinimumFee : i.Weight * servicePackageFee.Fee);
+                    decimalweight = decimal.Round((decimal)i.Weight, 1);
+                    fee = (decimalweight * servicePackageFee.Fee < servicePackageFee.MinimumFee ? servicePackageFee.MinimumFee : decimalweight * servicePackageFee.Fee);
                     Regex reg = new Regex(@"([0-9]*).*");
                     if (i.Size != null)
                     {
@@ -198,7 +199,12 @@ namespace SinExWebApp20328381.Controllers
                 fees.Add(TotalFee);
                 FeeCheckInput.Fees = fees;
             }
-            return View(FeeCheckInput);
+            return FeeCheckInput;
+        }
+        public ActionResult FeeCheck(string ServiceType, ICollection<PackageInputViewModel> Packages)
+        {
+            
+            return View(ProcessFeeCheck(ServiceType, Packages));
         }
 
         private SelectList PopulatePackageTypesDropdownList()

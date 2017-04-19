@@ -13,6 +13,7 @@ namespace SinExWebApp20328381.Models
         public virtual int WaybillId { get; set; }
         public virtual decimal Weight { get; set; } // to 0.1 decimal place
         public virtual int PackageTypeID { get; set; }
+        public virtual int PackageTypeSizeID { get; set; }
         public virtual decimal Value { get; set; } // stored in CNY
         public virtual string Description { get; set; }
     }
