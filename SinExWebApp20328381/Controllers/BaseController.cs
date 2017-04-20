@@ -23,5 +23,11 @@ namespace SinExWebApp20328381.Controllers
             }
             return OriginValue * decimal.Parse(Session[ToCurrency].ToString());
         }
+        protected string joinAddress(Address address)
+        {
+
+            return address.Building + "," + address.City + "," + address.ProvinceCode;
+        }
     }
+
 }

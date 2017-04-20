@@ -366,6 +366,14 @@
     <Content Include="Views\Shared\_RegisterLoginPartial.cshtml" />
     <Content Include="Views\ServicePackageFees\FeeCheck.cshtml" />
     <Content Include="Views\ServicePackageFees\Index3.cshtml" />
+    <Content Include="Views\PersonalShippingAccounts\AddRecipientAddress.cshtml" />
+    <Content Include="Views\PersonalShippingAccounts\ManageRecipientAddress.cshtml" />
+    <Content Include="Views\PersonalShippingAccounts\AddPickupLocation.cshtml" />
+    <Content Include="Views\PersonalShippingAccounts\ManagePickupLocation.cshtml" />
+    <Content Include="Views\PersonalShippingAccounts\EditPickupLocation.cshtml" />
+    <Content Include="Views\PersonalShippingAccounts\EditRecipientAddress.cshtml" />
+    <Content Include="Views\PersonalShippingAccounts\DeleteRecipientAddress.cshtml" />
+    <Content Include="Views\PersonalShippingAccounts\DeletePickupLocation.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
