@@ -1,0 +1,20 @@
+﻿@model SinExWebApp20328381.Models.ShipmentStatusHistory
+
+@{
+    ViewBag.Title = "Search";
+}
+
+<h2>Shipment Tracking</h2>
+
+<p>Enter the 16-digit shipment waybill number to track the shipment</p>
+
+@using (Html.BeginForm("Index", "ShipmentStatusHistories", FormMethod.Get)) {
+    <div class="form-group">
+        @Html.LabelFor(a => a.WaybillId, "Waybill number")
+        @Html.TextBoxFor(a =>a.WaybillId,"Enter Waybill number");
+        <br />
+        <input class="btn-default", type="submit" value="Search" />
+    </div>
+}
+
+

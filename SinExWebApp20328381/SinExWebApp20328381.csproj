@@ -216,6 +216,7 @@
     <Compile Include="Controllers\ServicePackageFeesController.cs" />
     <Compile Include="Controllers\ServiceTypesController.cs" />
     <Compile Include="Controllers\ShipmentsController.cs" />
+    <Compile Include="Controllers\ShipmentStatusHistoriesController.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
@@ -369,6 +370,12 @@
     <Content Include="Views\ServicePackageFees\Index3.cshtml" />
     <Content Include="Views\Shipments\Create-backup.cshtml" />
     <Content Include="Views\Shared\EditorTemplates\Packages.cshtml" />
+    <Content Include="Views\ShipmentStatusHistories\Create.cshtml" />
+    <Content Include="Views\ShipmentStatusHistories\Delete.cshtml" />
+    <Content Include="Views\ShipmentStatusHistories\Details.cshtml" />
+    <Content Include="Views\ShipmentStatusHistories\Edit.cshtml" />
+    <Content Include="Views\ShipmentStatusHistories\Index.cshtml" />
+    <Content Include="Views\ShipmentStatusHistories\Search.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
