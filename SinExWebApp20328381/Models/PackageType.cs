@@ -14,5 +14,6 @@ namespace SinExWebApp20328381.Models
         public virtual string Description { get; set; }
         public virtual ICollection<ServicePackageFee> ServicePackageFees { get; set; }
         public virtual ICollection<PackageTypeSize>  PackageTypeSizes { get; set; }
+        public virtual ICollection<Package> Packages { get; set; }
     }
 }

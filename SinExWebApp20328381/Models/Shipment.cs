@@ -11,12 +11,16 @@ namespace SinExWebApp20328381.Models
     public class Shipment
     {
         [Key]
-        public virtual int WaybillId { get; set; }
+        [Range(1000000000000000L, 9999999999999999L, ErrorMessage = "Please enter a valid Waybill number")]
+        public virtual long WaybillId { get; set; }
+        [StringLength(10),MinLength(10)]
+        [RegularExpression("^[a - zA - Z0 - 9] *$")]
         public virtual string ReferenceNumber { get; set; }
         public virtual string ServiceType { get; set; }
         public virtual string PickupType { get; set; }
         public virtual DateTime ShippedDate { get; set; }
         public virtual DateTime DeliveredDate { get; set; }
+        public virtual string DeliveredPlace { get; set; }
         public virtual string RecipientName { get; set; }
         public virtual int NumberOfPackages { get; set; }
         

@@ -7,7 +7,7 @@ namespace SinExWebApp20328381.ViewModels
 {
     public class ShipmentsListViewModel
     {
-        public virtual int WaybillId { get; set; }
+        public virtual long WaybillId { get; set; }
         public virtual string ServiceType { get; set; }
         public virtual DateTime ShippedDate { get; set; }
         public virtual DateTime DeliveredDate { get; set; }

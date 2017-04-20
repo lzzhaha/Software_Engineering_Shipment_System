@@ -34,6 +34,7 @@
                             <li>@Html.ActionLink("Service Types", "Index", "ServiceTypes")</li>
                             <li>@Html.ActionLink("Fees", "Index", "ServicePackageFees")</li>
                             <li>@Html.ActionLink("Calculate your fee", "FeeCheck", "ServicePackageFees")</li>
+                            <li>@Html.ActionLink("Track Shipment", "Index", "ShipmentStatusHistories")</li>
                         </ul>
                     </li>
                     @if (User.IsInRole("Employee") || User.IsInRole("Customer")) { 
@@ -44,6 +45,7 @@
                             </ul>
                         </li>
                     }
+                    
                 </ul>
                 @Html.Partial("_LoginPartial")
             </div>

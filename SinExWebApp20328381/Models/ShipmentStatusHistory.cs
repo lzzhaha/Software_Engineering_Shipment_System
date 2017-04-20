@@ -7,7 +7,7 @@ namespace SinExWebApp20328381.Models
     {
         [Key]
         public virtual int ShipmentStatusHistoryId { get; set; }
-        public virtual int WaybillId { get; set; }
+        public virtual long WaybillId { get; set; }
         public virtual string Status { get; set; }
         public virtual DateTime DateAndTime { get; set; }
         public virtual string Description { get; set; }

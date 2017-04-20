@@ -15,5 +15,7 @@ namespace SinExWebApp20328381.Models
         public virtual int PackageTypeID { get; set; }
         public virtual decimal Value { get; set; } // stored in CNY
         public virtual string Description { get; set; }
+
+        public PackageType PackageType { get; set; }
     }
 }
