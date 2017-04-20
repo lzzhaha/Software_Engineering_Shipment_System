@@ -1,0 +1,77 @@
+﻿@model IEnumerable<SinExWebApp20328381.Models.Address>
+
+<p>
+    @Html.ActionLink("Add New One", "AddPickupLocation")
+</p>
+@if (ViewBag.addressCount == "Empty")
+{
+    @:You havn't save any pickup Locations
+}
+else
+{
+    <table class="table">
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.NickName)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.ShippingAccountId)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Building)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Street)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.City)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.ProvinceCode)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.PostalCode)
+            </th>
+            <th></th>
+        </tr>
+
+        @foreach (var item in Model)
+        {
+            if (item.AddressType == "Pickup Location")
+            {
+                <tr>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.NickName)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.ShippingAccountId)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Building)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Street)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.City)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.ProvinceCode)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.PostalCode)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.AddressType)
+                    </td>
+                    <td>
+                        @Html.ActionLink("Edit", "EditPickupLocation", new { id = item.AddressId }) |
+                        @Html.ActionLink("Details", "Details", new { id = item.AddressId }) |
+                        @Html.ActionLink("Delete", "DeletePickupLocation", new { id = item.AddressId })
+                    </td>
+                </tr>
+            }
+        }
+
+    </table>
+}

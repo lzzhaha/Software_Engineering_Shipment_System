@@ -35,5 +35,6 @@ namespace SinExWebApp20328381.Models
         public System.Data.Entity.DbSet<SinExWebApp20328381.Models.ShippingAccount> ShippingAccounts { get; set; }
 
         public System.Data.Entity.DbSet<SinExWebApp20328381.Models.ShipmentStatusHistory> ShipmentStatusHistories { get; set; }
+        public System.Data.Entity.DbSet<SinExWebApp20328381.Models.Address> Addresses { get; set; }
     }
 }

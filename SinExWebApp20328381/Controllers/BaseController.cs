@@ -32,6 +32,13 @@ namespace SinExWebApp20328381.Controllers
                 throw new Exception("You're not a valid user.");
             }
             return db.ShippingAccounts.AsNoTracking().SingleOrDefault(s => s.UserName == UserName);
+		}
+		
+        protected string joinAddress(Address address)
+        {
+
+            return address.Building + "," + address.City + "," + address.ProvinceCode;
         }
     }
+
 }
