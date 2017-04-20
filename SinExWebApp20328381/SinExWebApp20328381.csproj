@@ -216,7 +216,6 @@
     <Compile Include="Controllers\ServicePackageFeesController.cs" />
     <Compile Include="Controllers\ServiceTypesController.cs" />
     <Compile Include="Controllers\ShipmentsController.cs" />
-    <Compile Include="Controllers\ShipmentStatusHistoriesController.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
@@ -241,7 +240,8 @@
     <Compile Include="Models\SinExDatabaseContext.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Startup.cs" />
-    <Compile Include="ViewModels\FeeCheckInputViewModel.cs" />
+    <Compile Include="ViewModels\CreateShipmentInputViewModel.cs" />
+    <Compile Include="ViewModels\PackageInputViewModel.cs" />
     <Compile Include="ViewModels\FeeCheckGenerateViewModel.cs" />
     <Compile Include="ViewModels\FeeCheckPackageJson.cs" />
     <Compile Include="ViewModels\RegisterCustomerViewModel.cs" />
@@ -367,12 +367,8 @@
     <Content Include="Views\Shared\_RegisterLoginPartial.cshtml" />
     <Content Include="Views\ServicePackageFees\FeeCheck.cshtml" />
     <Content Include="Views\ServicePackageFees\Index3.cshtml" />
-    <Content Include="Views\ShipmentStatusHistories\Create.cshtml" />
-    <Content Include="Views\ShipmentStatusHistories\Delete.cshtml" />
-    <Content Include="Views\ShipmentStatusHistories\Details.cshtml" />
-    <Content Include="Views\ShipmentStatusHistories\Edit.cshtml" />
-    <Content Include="Views\ShipmentStatusHistories\Index.cshtml" />
-    <Content Include="Views\ShipmentStatusHistories\Search.cshtml" />
+    <Content Include="Views\Shipments\Create-backup.cshtml" />
+    <Content Include="Views\Shared\EditorTemplates\Packages.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

@@ -13,6 +13,9 @@
         });
         
         function ap() {
+            if (Packages == 9) {
+                return;
+            }
             $("#label" + Packages).clone().attr("id", 'label' + (1 + Packages)).insertAfter("#br" + Packages);
             $("#dropdown" + Packages).clone().attr("id", "dropdown" + (Packages + 1)).attr("name", "Packages[" + (Packages + 1) + "].PackageType").insertAfter("#label" + (Packages + 1));
             $("#size" + Packages).clone().attr("id", "size" + (Packages + 1)).attr("name", "Packages[" + (Packages + 1) + "].Size").insertAfter("#dropdown" + (Packages + 1));
@@ -20,12 +23,7 @@
             $("#br" + Packages).clone().attr("id", 'br' + (1 + Packages)).insertAfter("#text" + (Packages + 1));
             Packages++;
         }
-        /*
-        function ap() {
-            $("#userInput tr:eq(" + (Packages + 1) + ")").clone().insertAfter("#userInput tr:eq(" + (Packages + 1) + ")");
-            Packages++;
-        }
-        */
+
         function getval(sel) {
             if ($(sel).val() == "Please Select")
                 return;
@@ -74,7 +72,7 @@
     <input type="submit" value="Calculate Total Cost" />
 }
 <br />
-@if (Model.Fees != null)
+@if (Model.Fees != null && Model.Fees.Count != 0)
 {
     var count = Model.Fees.Count;
     for (var i = 1; i <= count - 1; i++)

@@ -53,7 +53,12 @@ namespace SinExWebApp20328381.Controllers
                 _userManager = value;
             }
         }
+        [AllowAnonymous]
+        public JsonResult ValidateAccountId(string RecipientAccountId)
+        {
 
+            return Json(true, JsonRequestBehavior.AllowGet);
+        }
         //
         // GET: /Account/Login
         [AllowAnonymous]
