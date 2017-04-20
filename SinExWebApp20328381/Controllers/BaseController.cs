@@ -23,5 +23,15 @@ namespace SinExWebApp20328381.Controllers
             }
             return OriginValue * decimal.Parse(Session[ToCurrency].ToString());
         }
+
+        public ShippingAccount GetCurrentShippingAccount()
+        {
+            string UserName = System.Web.HttpContext.Current.User.Identity.Name;
+            if (UserName == null)
+            {
+                throw new Exception("You're not a valid user.");
+            }
+            return db.ShippingAccounts.AsNoTracking().SingleOrDefault(s => s.UserName == UserName);
+        }
     }
 }

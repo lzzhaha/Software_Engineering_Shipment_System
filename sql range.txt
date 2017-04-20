@@ -1,0 +1,3 @@
+sql date range 1753/1/1->9999/12/31
+sql decimal range (18,2) 18 is total number of digits allowed and 2 is number digits to the right of decimal point 
+sql会自动把小数点后的超位小数化简（x.11111..1111->x.00）

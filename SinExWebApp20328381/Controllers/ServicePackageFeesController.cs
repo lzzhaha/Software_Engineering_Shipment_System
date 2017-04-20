@@ -156,18 +156,12 @@ namespace SinExWebApp20328381.Controllers
         }
 
         //Get
-        public FeeCheckGenerateViewModel ProcessFeeCheck (string ServiceType, ICollection<PackageInputViewModel> Packages)
+        public List<Decimal> ProcessFeeCheck (string ServiceType, ICollection<PackageInputViewModel> Packages)
         {
-            var FeeCheckInput = new FeeCheckGenerateViewModel();
-            FeeCheckInput.Destinations = PopulateDestinationsDropdownList().ToList();
-            FeeCheckInput.ServiceTypes = PopulateServiceTypesDropdownList().ToList();
-            FeeCheckInput.PackageTypes = PopulatePackageTypesDropdownList().ToList();
-            //ArrayList Exchange = new ArrayList();
-            FeeCheckInput.Exchange = db.Currencies.Select(s => s);
+            List<Decimal> fees = new List<Decimal>();
             if (Packages != null)
             {
                 var ServiceTypeID = db.ServiceTypes.SingleOrDefault(s => s.Type == ServiceType).ServiceTypeID;
-                List<Decimal> fees = new List<Decimal>();
                 int PackageTypeID;
                 ServicePackageFee servicePackageFee;
                 string packageTypelimit;
@@ -175,38 +169,50 @@ namespace SinExWebApp20328381.Controllers
                 TotalFee = 0;
                 foreach (var i in Packages)
                 {
-                    PackageTypeID = db.PackageTypes.SingleOrDefault(s => s.Type == i.PackageType).PackageTypeID;
-                    servicePackageFee = db.ServicePackageFees.SingleOrDefault(s => (s.PackageTypeID == PackageTypeID && s.ServiceTypeID == ServiceTypeID));
-                    decimalweight = decimal.Round((decimal)i.Weight, 1);
-                    fee = (decimalweight * servicePackageFee.Fee < servicePackageFee.MinimumFee ? servicePackageFee.MinimumFee : decimalweight * servicePackageFee.Fee);
-                    Regex reg = new Regex(@"([0-9]*).*");
-                    if (i.Size != null)
+                    if (i.PackageType != null)
                     {
-                        packageTypelimit = db.PackageTypeSizes.SingleOrDefault(s => s.size == i.Size).limit;
-                        var result = reg.Match(packageTypelimit).Groups;
-                        if (result[1].Value == "")
+                        PackageTypeID = db.PackageTypes.SingleOrDefault(s => s.Type == i.PackageType).PackageTypeID;
+                        servicePackageFee = db.ServicePackageFees.SingleOrDefault(s => (s.PackageTypeID == PackageTypeID && s.ServiceTypeID == ServiceTypeID));
+                        decimalweight = decimal.Round((decimal)i.Weight, 1);
+                        fee = (decimalweight * servicePackageFee.Fee < servicePackageFee.MinimumFee ? servicePackageFee.MinimumFee : decimalweight * servicePackageFee.Fee);
+                        Regex reg = new Regex(@"([0-9]*).*");
+                        if (i.Size != null)
                         {
-                            fee = servicePackageFee.Fee;
+                            packageTypelimit = db.PackageTypeSizes.SingleOrDefault(s => s.size == i.Size).limit;
+                            var result = reg.Match(packageTypelimit).Groups;
+                            if (result[1].Value == "")
+                            {
+                                fee = servicePackageFee.Fee;
+                            }
+                            else if (i.Weight > decimal.Parse(result[1].Value))
+                            {
+                                fee += 500;
+                            }
                         }
-                        else if (i.Weight > decimal.Parse(result[1].Value))
-                        {
-                            fee += 500;
-                        }
+                        TotalFee += fee;
+                        fees.Add(fee);
                     }
-                    TotalFee += fee;
-                    fees.Add(fee);
                 }
                 fees.Add(TotalFee);
-                FeeCheckInput.Fees = fees;
             }
-            return FeeCheckInput;
+            return fees;
         }
         public ActionResult FeeCheck(string ServiceType, ICollection<PackageInputViewModel> Packages)
         {
-            
-            return View(ProcessFeeCheck(ServiceType, Packages));
+            var FeeCheckInput = new FeeCheckGenerateViewModel();
+            FeeCheckInput = FetchDataFromDatabase(FeeCheckInput);
+            FeeCheckInput.Fees = ProcessFeeCheck(ServiceType, Packages);
+            return View(FeeCheckInput);
         }
 
+        public FeeCheckGenerateViewModel FetchDataFromDatabase(FeeCheckGenerateViewModel FeeCheckInput)
+        {
+            FeeCheckInput.Destinations = PopulateDestinationsDropdownList().ToList();
+            FeeCheckInput.ServiceTypes = PopulateServiceTypesDropdownList().ToList();
+            FeeCheckInput.PackageTypes = PopulatePackageTypesDropdownList().ToList();
+            FeeCheckInput.Exchange = db.Currencies.Select(s => s);
+            return FeeCheckInput;
+        }
         private SelectList PopulatePackageTypesDropdownList()
         {
             var PackageTypeQuery = db.PackageTypes.Select(s => s.Type).Distinct().OrderBy(s => s);

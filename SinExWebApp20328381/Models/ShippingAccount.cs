@@ -10,7 +10,7 @@ namespace SinExWebApp20328381.Models
     [Table("ShippingAccount")]
     public abstract class ShippingAccount
     {
-        public virtual int ShippingAccountId { get; set; }
+        public virtual long ShippingAccountId { get; set; }
         [StringLength(50)]
         [Display(Name = "Building", Order = 5)]
         public virtual string MailingAddressBuilding { get; set; }
@@ -34,6 +34,7 @@ namespace SinExWebApp20328381.Models
         [Required]
         [StringLength(14, MinimumLength = 8)]
         [DataType("PhoneNumber", ErrorMessage = "Please enter a valid phone number.")]
+        [RegularExpression(@"[+]?\d*", ErrorMessage = "Please enter a valid phone number.")]
         [Display(Name = "Phonenumber", Order = 3)]
         public virtual string PhoneNumber { get; set; }
         [Required]

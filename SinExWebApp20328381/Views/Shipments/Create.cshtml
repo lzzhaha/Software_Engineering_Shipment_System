@@ -5,20 +5,16 @@
 
 @section CustomScripts{
     <script>
-        var Packages = 0;
+        var Packages = @Model.NumberOfPackages;
         var CurrentPostingObject;
-        var RecipientAccountStatus = 0; //0 hide 1 show
-        $(document).ready(function () {
-            $("#RecipientOptional").hide();
-            $("#RecipientDepartmentName").change(function () {
-                $("#RecipientCompanyName").valid();
-            });
-        });
+        var RecipientAccountStatus = 1; //0 hide 1 show
+
 
         function displayRecipientAccountId() {
             if (!RecipientAccountStatus && ($("#ShipmentPayer2").prop("checked") == true || $("#DaTPayer2").prop("checked") == true))
             {
                 $("#RecipientOptional").show();
+                $("#RecipientAccountId").attr("required", "required");
                 RecipientAccountStatus = 1;
             }
         }
@@ -26,31 +22,97 @@
         function hideRecipientAccountId() {
             if (RecipientAccountStatus && $("#ShipmentPayer1").prop("checked") == true && $("#DaTPayer1").prop("checked") == true)
             {
-                $("#RecipientAccountId").val("");
+                $("#RecipientAccountId").val("").removeAttr("required");
                 $("#RecipientOptional").hide();
                 RecipientAccountStatus = 0;
             }
         }
 
-        function getval(sel) {
+        function AddPackage() {
+            if (Packages == 10){
+                return;
+            }
+            $("#dropdown" + Packages).show().attr("required", "required");
+            $("#size" + Packages).show().attr("required", "required");
+            $("#weight" + Packages).show().attr("required", "required");
+            $("#value" + Packages).show().attr("required", "required");
+            $("#currencydropdown" + Packages).show().attr("required", "required");
+            $("#description" + Packages).show().attr("required", "required");
+            Packages++;
+            $("#NumberOfPackages").val(Packages);
+        }
+
+        function UpdateSize(sel) {
             if ($(sel).val() == "Please Select")
                 return;
             CurrentPostingObject = sel;
             var data = $(sel).val();
             var postdata = new Object();
             postdata = { PackageName: data };
-            $.post("/ServicePackageFees/GetSizeOfPackage", postdata, function (data, status) {
-                $(CurrentPostingObject).next().empty();
-                if (data.length != 0)
-                    $(CurrentPostingObject).next().attr("required", "required");
-                else {
-                    $(CurrentPostingObject).next().removeAttr("required");
-                }
-                for (var size in data) {
-                    $(CurrentPostingObject).next().append($('<option></option').text(data[size]));
-                }
+            $.ajax({
+                type: 'POST',
+                url: '/ServicePackageFees/GetSizeOfPackage',
+                data: postdata,
+                success: UpdateSizeReturn,
+                async:false
             });
         }
+
+        function UpdateSizeReturn(data, status){
+            $(CurrentPostingObject).next().empty();
+            if (data.length != 0)
+                $(CurrentPostingObject).next().attr("required", "required");
+            else {
+                $(CurrentPostingObject).next().removeAttr("required");
+            }
+            for (var size in data) {
+                $(CurrentPostingObject).next().append($('<option></option').text(data[size]));
+            }
+        }
+        $(document).ready(function () {
+            //recipient account id field
+            @if (Model.ShipmentPayer == "sender" && Model.DaTPayer == "sender")
+            {
+                @:hideRecipientAccountId();
+             }
+            //radio field
+            $("input:radio[name=ShipmentPayer]").filter("[value=@(Model.ShipmentPayer)]").prop("checked","true");
+            $("input:radio[name=DaTPayer]").filter("[value=@(Model.DaTPayer)]").prop("checked","true");
+            $("input:radio[name=PickupEmail]").filter("[value=@(Model.PickupEmail)]").prop("checked","true");
+            $("input:radio[name=DeliverEmail]").filter("[value=@(Model.DeliverEmail)]").prop("checked","true");
+            //packages field
+            $("#NumberOfPackages").val(Packages);
+            for (var i = 0; i < Packages; i++)
+            {
+                $("#dropdown" + i).attr("required", "required");
+                $("#size" + i).attr("required", "required");
+                $("#weight" + i).attr("required", "required");
+                $("#value" + i).attr("required", "required");
+                $("#description" + i).attr("required", "required");
+                UpdateSize("#dropdown" + i);
+            }
+            @for (int i = 0; i < Model.NumberOfPackages; i++)
+            {
+                if (Model.Packages != null) {
+                    if (Model.Packages[i].Size != null)
+                    {
+                        @: $("#size@(i)").val("@(Model.Packages[i].Size)");
+                    }
+                    if (Model.Packages[i].ValueCurrency != null)
+                    {
+                        @: $("#currencydropdown@(i)").val("@(Model.Packages[i].ValueCurrency)");
+                    }
+                }
+            }
+            for (var i = Packages; i < 10; i++) {
+                $("#dropdown" + i).hide();
+                $("#size" + i).hide();
+                $("#weight" + i).hide();
+                $("#value" + i).hide();
+                $("#currencydropdown" + i).hide();
+                $("#description" + i).hide();
+            }
+        });
     </script>
 }
 
@@ -96,17 +158,23 @@
                 </div>
         </div>
     </div>
-    <br />
-    <!--
-    @Html.LabelFor(a => a.ShipmentInformation.Origin, "Destination: ");
-    @Html.DropDownListFor(a => a.ShipmentInformation.Destination, Model.ShipmentInformation.Destinations, "Please Select", htmlAttributes: new { @Value = ViewBag.CurrentDestination as string, @Class = "dropdown" })
-    -->
-    <div class="col-md-12">
-        @Html.LabelFor(a => a.ServiceType, "ServiceType: ")
-        @Html.DropDownListFor(a => a.ServiceType, Model.ShipmentInformation.ServiceTypes, "Please Select", htmlAttributes: new { @Value = ViewBag.CurrentServiceType as string, @Class = "dropdown", @required = "required" })
-        @Html.ValidationMessageFor(a => a.ServiceType, "", new { @Class = "text-danger" })
+    <div class="form-group">
+        <h3>Shipment Information</h3>
+        <div class="row">
+            <div class="col-md-4">
+                @Html.LabelFor(a => a.ReferenceNumber, "Reference Number:(Optional)")
+                @Html.TextBoxFor(a => a.ReferenceNumber)
+                @Html.ValidationMessageFor(a => a.ReferenceNumber, "", new { @Class = "text-danger" })
+            </div>
+            <div class="col-md-4">
+                @Html.LabelFor(a => a.ServiceType, "ServiceType: ")
+                @Html.DropDownListFor(a => a.ServiceType, Model.SystemOutputSource.ServiceTypes, "Please Select", htmlAttributes: new { @Value = ViewBag.CurrentServiceType as string, @Class = "dropdown", @required = "required" })
+                @Html.ValidationMessageFor(a => a.ServiceType, "", new { @Class = "text-danger" })
+            </div>
+        </div>
     </div>
     <div class="form-group">
+        <h3>Package Information</h3>
         <div class="row">
             <div class="col-md-3">
                 <b>Shipment Payer:</b>
@@ -129,10 +197,10 @@
                 <input type="radio" name="DaTPayer" id="DaTPayer1" value="sender" onclick="hideRecipientAccountId();" checked /> Sender
             </div>
             <div class="col-md-3">
-                <input type="radio" name="PickupEmail" value="NoPickupMail" checked /> Disable
+                <input type="radio" name="PickupEmail" value="0" checked /> Disable
             </div>
             <div class="col-md-3">
-                <input type="radio" name="DeliverEmail" value="NoDeliverMail" checked /> Disable
+                <input type="radio" name="DeliverEmail" value="0" checked /> Disable
             </div>
         </div>
         <div class="row">
@@ -143,16 +211,16 @@
                 <input type="radio" name="DaTPayer" id="DaTPayer2" onclick="displayRecipientAccountId();" value="recipient" /> Recipient
             </div>
             <div class="col-md-3">
-                <input type="radio" name="PickupEmail" value="PickupMail" /> Enable
+                <input type="radio" name="PickupEmail" value="1" /> Enable
             </div>
             <div class="col-md-3">
-                <input type="radio" name="DeliverEmail" value="DeliverMail" /> Enable
+                <input type="radio" name="DeliverEmail" value="1" /> Enable
             </div>
         </div>
     </div>
     <div class="row" id="RecipientOptional">
         @Html.LabelFor(a => a.RecipientAccountId, "Recipient's account ID:")
-        @Html.TextBoxFor(a => a.RecipientAccountId, new { @Id = "RecipientAccountId" })
+        @Html.TextBoxFor(a => a.RecipientAccountId, new { @Id = "RecipientAccountId", @Required = "required" })
         @Html.ValidationMessageFor(a => a.RecipientAccountId, "", new { @Class = "text-danger" })
     </div>
     <div class="form-group">
@@ -174,11 +242,12 @@
         @for (int i = 0; i < 10; i++)
         {
             @:<div class="row">
-            @Html.DropDownListFor(a => a.ShipmentInformation.PackageType, Model.ShipmentInformation.PackageTypes, "Please Select", htmlAttributes: new { @Class = "dropdown col-md-2", @Name = "Packages["+ i + "].PackageType", @id = "dropdown"+ i +"", @onchange = "getval(this);", @required = "required" })
-            <select id="size@(i)" name="Packages[@(i)].Size" class="dropdown col-md-2" required="required"><option>Please Select</option></select>
-            @Html.TextBoxFor(a => a.Packages[i].Weight, new { @Class = "col-md-2" })
-            @Html.TextBoxFor(a => a.Packages[i].Value, new { @Class = "col-md-2" })
-            @Html.TextBoxFor(a => a.Packages[i].Description, new { @Class = "col-md-4" })
+            @Html.DropDownListFor(a => a.Packages[i].PackageType, Model.SystemOutputSource.PackageTypes, "Please Select", htmlAttributes: new { @Class = "dropdown col-md-2", @id = "dropdown"+ i, @onchange = "UpdateSize(this);" })
+            <select id="size@(i)" name="Packages[@(i)].Size" class="dropdown col-md-2"><option>Please Select</option></select>
+            @Html.TextBoxFor(a => a.Packages[i].Weight, new { @Class = "col-md-2", @Id = "weight"+ i })
+            @Html.TextBoxFor(a => a.Packages[i].Value, new { @Class = "col-md-1", @Id = "value" + i })
+            @Html.DropDownListFor(a => a.Packages[i].ValueCurrency, new SelectList(Model.SystemOutputSource.Exchange.Select(x => x.CurrencyCode)).ToList(), new { @Class = "dropdown col-md-1", @Id = "currencydropdown" + i })
+            @Html.TextBoxFor(a => a.Packages[i].Description, new { @Class = "col-md-4", @Id = "description" + i })
             @:</div>
             @:<div class="row">
             @Html.ValidationMessageFor(a => a.Packages[i].Weight, "", new { @Class = "col-md-offset-4 col-md-2 text-danger" })
@@ -187,34 +256,36 @@
             @:</div>
         }
     </div>
+    @Html.HiddenFor(a=> a.NumberOfPackages, new {@Id = "NumberOfPackages" })
     <div class="row">
+        <input type="button" class="btn" value="Add Package" onclick="AddPackage()"/>
         <input type="submit" class="btn" value="Submit" />
     </div>
 }
 <br />
-@if (Model.ShipmentInformation.Fees != null)
+@if (Model.SystemOutputSource.Fees != null && Model.SystemOutputSource.Fees.Count != 0)
             {
-                var count = Model.ShipmentInformation.Fees.Count;
+                var count = Model.SystemOutputSource.Fees.Count;
                 for (var i = 1; i <= count - 1; i++)
                 {
         <p>
             Package @i Fee:
-            @foreach (var j in Model.ShipmentInformation.Exchange)
+            @foreach (var j in Model.SystemOutputSource.Exchange)
                         {
                         @j.CurrencyCode
                 @: :
-                @((double)Model.ShipmentInformation.Fees[i - 1] * j.ExchangeRate)
+                @((double)Model.SystemOutputSource.Fees[i - 1] * j.ExchangeRate)
                 @:&nbsp;&nbsp;
         }
         </p>
     }
     <p>
         Total:
-        @foreach (var j in Model.ShipmentInformation.Exchange)
+        @foreach (var j in Model.SystemOutputSource.Exchange)
         {
             @j.CurrencyCode
             @: :
-            @((double)Model.ShipmentInformation.Fees[count - 1] * j.ExchangeRate)
+            @((double)Model.SystemOutputSource.Fees[count - 1] * j.ExchangeRate)
             @:&nbsp;&nbsp;
         }
     </p>

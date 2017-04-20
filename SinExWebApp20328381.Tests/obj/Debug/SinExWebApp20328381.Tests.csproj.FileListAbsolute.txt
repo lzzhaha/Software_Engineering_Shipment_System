@@ -352,3 +352,4 @@ F:\Comp3111_Project\Back_up\SinExWebApp20328381.Tests\bin\Debug\Microsoft.Owin.H
 F:\Comp3111_Project\Back_up\SinExWebApp20328381.Tests\obj\Debug\SinExWebApp20328381.Tests.csprojResolveAssemblyReference.cache
 F:\Comp3111_Project\Back_up\SinExWebApp20328381.Tests\obj\Debug\SinExWebApp20328381.Tests.dll
 F:\Comp3111_Project\Back_up\SinExWebApp20328381.Tests\obj\Debug\SinExWebApp20328381.Tests.pdb
+C:\Users\atmosphere\Dropbox\COMP3111\TeamSinex\SinExWebApp20328381.Tests\bin\Debug\Microsoft.VisualStudio.QualityTools.UnitTestFramework.xml

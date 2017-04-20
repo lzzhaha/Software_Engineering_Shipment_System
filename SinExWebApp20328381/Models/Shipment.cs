@@ -13,7 +13,7 @@ namespace SinExWebApp20328381.Models
     public class Shipment
     {
         [Key]
-        public virtual int WaybillId { get; set; }
+        public virtual long WaybillId { get; set; }
         public virtual string ReferenceNumber { get; set; }
         public virtual string ServiceType { get; set; }
         public virtual string PickupType { get; set; }
@@ -25,9 +25,7 @@ namespace SinExWebApp20328381.Models
         public virtual string Origin { get; set; }
         public virtual string Destination { get; set; }
         public virtual string Status { get; set; } // 4 status: Saved, PickedUp, Delivered, Cancelled
-        public virtual int ShippingAccountId { get; set; }
-        public virtual int AddressId { get; set; }//may be not necessary
-        public virtual string Address { get; set; }
+        public virtual long? ShippingAccountId { get; set; }
         public virtual string TaxAndDutyShippingAccountId { get; set; }
         public virtual string ShipmentShippingAccountId { get; set; }
         public virtual bool EmailWhenPickup { get; set; }
@@ -39,5 +37,12 @@ namespace SinExWebApp20328381.Models
         public virtual string RecipientEmailAddress { get; set; }
         public virtual ICollection<ShipmentStatusHistory> ShipmentStatusHistory { get; set; }
         public virtual ShippingAccount ShippingAccount { get; set; }
+
+        public Shipment()
+        {
+            ShippedDate = new DateTime(1900, 1, 1, 0, 0, 0);
+            DeliveredDate = new DateTime(1900, 1, 1, 0, 0, 0);
+            ReferenceNumber = "";
+        }
     }
 }
