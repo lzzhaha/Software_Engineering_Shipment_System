@@ -78,16 +78,25 @@ namespace SinExWebApp20328381.Controllers
                 page = 1;
             }
             ViewBag.CurrentShippingAccountId = ShippingAccountId;
-
             ShippedStartDate = ShippedStartDate == null ? CurrentShippedStartDate : ShippedStartDate;
             ShippedEndDate = ShippedEndDate == null ? CurrentShippedEndDate : ShippedEndDate;
-            ViewBag.CurrentShippedStartDate = Convert.ToDateTime(ShippedStartDate);
-            ViewBag.CurrentShippedEndDate = Convert.ToDateTime(ShippedEndDate);
-            if (ViewBag.CurrentShippedStartDate.Date == DateTime.Now.Date && ViewBag.CurrentShippedEndDate.Date == DateTime.Now.Date)
+            if (ShippedStartDate == null)
             {
-                ShippedEndDate = ShippedStartDate = null;
+                ViewBag.CurrentShippedStartDate = null;
             }
-            if (ViewBag.CurrentShippedStartDate.Date > ViewBag.CurrentShippedEndDate.Date)
+            else
+            {
+                ViewBag.CurrentShippedStartDate = Convert.ToDateTime(ShippedStartDate);
+            }
+            if (ShippedEndDate == null)
+            {
+                ViewBag.CurrentShippedEndDate = null;
+            }
+            else
+            {
+                ViewBag.CurrentShippedEndDate = Convert.ToDateTime(ShippedEndDate);
+            }
+            if ((Convert.ToDateTime(ShippedStartDate) > Convert.ToDateTime(ShippedEndDate)) || (ShippedStartDate == null && ShippedEndDate != null) || (ShippedStartDate != null && ShippedEndDate == null))
             {
                 ViewBag.ErrorMessage = "Date range is invalid.";
                 shipmentSearch.Shipments = (new ShipmentsListViewModel[0]).ToPagedList(pageNumber, pageSize);

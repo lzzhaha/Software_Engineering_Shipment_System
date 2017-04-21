@@ -25,7 +25,7 @@ namespace SinExWebApp20328381.Controllers
             IEnumerable<Shipment> shipment = db.Shipments.Where(s => s.WaybillId == WaybillId);
             //Pass the property of the shipment to ViewData
 
-            ViewData["WaybillNumber"] = shipment.ElementAt(0).WaybillId;
+             ViewData["WaybillNumber"] = shipment.ElementAt(0).WaybillId;
 
             ViewData["RecipientName"] = shipment.ElementAt(0).RecipientName;
 
