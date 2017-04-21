@@ -1,4 +1,4 @@
-﻿@model SinExWebApp20328381.ViewModels.CreateShipmentInputViewModel
+﻿@model SinExWebApp20328381.ViewModels.ShipmentInputViewModel
 @{
     ViewBag.Title = "Create Waybill";
 }
@@ -64,6 +64,7 @@
                 $(CurrentPostingObject).next().attr("required", "required");
             else {
                 $(CurrentPostingObject).next().removeAttr("required");
+                return;
             }
             for (var size in data) {
                 $(CurrentPostingObject).next().append($('<option></option').text(data[size]));

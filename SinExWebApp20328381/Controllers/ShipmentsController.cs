@@ -210,7 +210,7 @@ namespace SinExWebApp20328381.Controllers
         // GET: Shipments/Create
         public ActionResult Create()
         {
-            var result = new CreateShipmentInputViewModel();
+            var result = new ShipmentInputViewModel();
             result.NumberOfPackages = 1;
             result.ShipmentPayer = "sender";
             result.DaTPayer = "sender";
@@ -223,7 +223,7 @@ namespace SinExWebApp20328381.Controllers
         }
 
         [HttpPost]
-        public ActionResult Create(CreateShipmentInputViewModel NewShipment)
+        public ActionResult Create(ShipmentInputViewModel NewShipment)
         {
             bool InputError = false;
             var OutputGenerater = new ServicePackageFeesController();
@@ -255,7 +255,7 @@ namespace SinExWebApp20328381.Controllers
             return RedirectToAction("Index");
         }
 
-        private Shipment ShipmentViewModelToShipment(CreateShipmentInputViewModel input)
+        private Shipment ShipmentViewModelToShipment(ShipmentInputViewModel input)
         {
             var Shipment = new Shipment();
             Shipment.ReferenceNumber = input.ReferenceNumber;

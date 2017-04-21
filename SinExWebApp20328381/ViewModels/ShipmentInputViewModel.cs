@@ -8,11 +8,11 @@ using System.Web.Mvc;
 
 namespace SinExWebApp20328381.ViewModels
 {
-    public class CreateShipmentInputViewModel
+    public class ShipmentInputViewModel
     {
         public virtual ShippingAccount CurrentShippingAccount { get; set; }
         public virtual FeeCheckGenerateViewModel SystemOutputSource { get; set; }
-        [RegularExpression("^[0-9a-zA-Z]*$", ErrorMessage = "Please enter a valid number.")]
+        [RegularExpression("^[0-9a-zA-Z]*$", ErrorMessage = "Please enter alphanumeric string.(10 characters at most)")]
         [StringLength(10)]
         public virtual string ReferenceNumber { get; set; }
         [Required]
