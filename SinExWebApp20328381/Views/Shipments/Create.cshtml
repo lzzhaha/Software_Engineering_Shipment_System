@@ -90,7 +90,7 @@
             @if (Model.ShipmentPayer == "sender" && Model.DaTPayer == "sender")
             {
                 @:hideRecipientAccountId();
-             }
+                         }
             //radio field
             $("input:radio[name=ShipmentPayer]").filter("[value=@(Model.ShipmentPayer)]").prop("checked","true");
             $("input:radio[name=DaTPayer]").filter("[value=@(Model.DaTPayer)]").prop("checked","true");
@@ -110,14 +110,19 @@
             @for (int i = 0; i < Model.NumberOfPackages; i++)
             {
                 if (Model.Packages != null) {
+                    if (Model.Packages[i].PackageType != null)
+                    {
+                        @: $("#dropdown@(i)").val("@(Model.Packages[i].PackageType)");
+                    }
+                    @: UpdateSize("#dropdown@(i)");
                     if (Model.Packages[i].Size != null)
                     {
                         @: $("#size@(i)").val("@(Model.Packages[i].Size)");
-                    }
+                                }
                     if (Model.Packages[i].ValueCurrency != null)
                     {
                         @: $("#currencydropdown@(i)").val("@(Model.Packages[i].ValueCurrency)");
-                    }
+                                }
                 }
             }
             for (var i = Packages; i < 10; i++) {
@@ -132,10 +137,6 @@
     </script>
 }
 
-@if (ViewBag.Message != null)
-{
-    <p class="text-danger">@ViewBag.Message</p>
-}
 <h2>Create Waybill</h2>
 <!-- display current account information here-->
 @using (Html.BeginForm("Create", "Shipments", FormMethod.Post))

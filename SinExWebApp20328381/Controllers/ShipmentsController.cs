@@ -237,7 +237,7 @@ namespace SinExWebApp20328381.Controllers
                     InputError = true;
                 }
             }
-            else if ((NewShipment.RecipientCompanyName == null && NewShipment.RecipientDepartmentName != null) || (NewShipment.RecipientCompanyName != null && NewShipment.RecipientDepartmentName == null))
+            if ((NewShipment.RecipientCompanyName == null && NewShipment.RecipientDepartmentName != null) || (NewShipment.RecipientCompanyName != null && NewShipment.RecipientDepartmentName == null))
             {
                 ModelState.AddModelError("RecipientCompanyName", "You must either leave company name and department name empty or fill in both of them.");
                 InputError = true;
@@ -252,13 +252,78 @@ namespace SinExWebApp20328381.Controllers
             var ShipmentObject = ShipmentViewModelToShipment(NewShipment);
             db.Shipments.Add(ShipmentObject);
             db.SaveChanges();
-            ViewBag.Message = "Successfully Updated.";
-            return View(NewShipment);
+            return RedirectToAction("Index");
+        }
+
+        private ShipmentInputViewModel ShipmentToShipmentViewModel(Shipment input)
+        {
+            var Shipment = new ShipmentInputViewModel();
+            Shipment.ReferenceNumber = input.ReferenceNumber;
+            Shipment.RecipientName = input.RecipientName;
+            Shipment.RecipientCompanyName = input.RecipientCompanyName;
+            Shipment.RecipientDepartmentName = input.RecipientDepartmentName;
+            Shipment.RecipientPhoneNumber = input.RecipientPhoneNumber;
+            Shipment.RecipientEmailAddress = input.RecipientEmailAddress;
+            if (long.Parse(input.ShipmentShippingAccountId) == GetCurrentShippingAccount().ShippingAccountId)
+            {
+                Shipment.ShipmentPayer = "sender";
+            }
+            else
+            {
+                Shipment.ShipmentPayer = "recipient";
+                Shipment.RecipientAccountId = input.ShipmentShippingAccountId;
+            }
+            if (long.Parse(input.TaxAndDutyShippingAccountId) == GetCurrentShippingAccount().ShippingAccountId)
+            {
+                Shipment.DaTPayer = "sender";
+            }
+            else
+            {
+                Shipment.DaTPayer = "recipient";
+                Shipment.RecipientAccountId = input.TaxAndDutyShippingAccountId;
+            }
+            Shipment.DeliverEmail = input.EmailWhenDeliver == false ? "0" : "1";
+            Shipment.PickupEmail = input.EmailWhenPickup == false ? "0" : "1";
+            Shipment.NumberOfPackages = input.NumberOfPackages;
+            Shipment.Packages = new List<PackageInputViewModel>();
+            foreach (var Package in input.Packages)
+            {
+                Shipment.Packages.Add(PackageToPackageViewModel(Package));
+            }
+            for (int i = Shipment.Packages.Count; i<10; i++)
+            {
+                Shipment.Packages.Add(new PackageInputViewModel());
+            }
+            Shipment.ServiceType = input.ServiceType;
+            Shipment.Origin = input.Origin;
+            Shipment.Destination = input.Destination;
+            Shipment.RecipientBuildingAddress = input.RecipientBuildingAddress;
+            Shipment.RecipientCityAddress = input.RecipientCityAddress;
+            Shipment.RecipientStreetAddress = input.RecipientStreetAddress;
+            Shipment.RecipientPostalCode = input.RecipientPostalCode;
+            return Shipment;
         }
 
         private Shipment ShipmentViewModelToShipment(ShipmentInputViewModel input)
         {
             var Shipment = new Shipment();
+            ShipmentViewModelToShipment(input, ref Shipment);
+            //undefined: PickupType, ShippedDate, DeliveredDate
+            return Shipment;
+        }
+
+        private void ShipmentViewModelToShipment(ShipmentInputViewModel input, ref Shipment Shipment)
+        {
+            ShipmentViewModelToShipmentWithoutPackage(input, ref Shipment);
+            Shipment.Packages = new List<Package>();
+            for (int i = 0; i < input.NumberOfPackages; i++)
+            {
+                Shipment.Packages.Add(PackageViewModelToPackage(input.Packages[i]));
+            }
+        }
+
+        private void ShipmentViewModelToShipmentWithoutPackage(ShipmentInputViewModel input, ref Shipment Shipment)
+        {
             Shipment.ReferenceNumber = input.ReferenceNumber;
             Shipment.RecipientName = input.RecipientName;
             Shipment.RecipientCompanyName = input.RecipientCompanyName;
@@ -267,7 +332,7 @@ namespace SinExWebApp20328381.Controllers
             Shipment.RecipientEmailAddress = input.RecipientEmailAddress;
             if (input.ShipmentPayer == "sender")
             {
-                Shipment.ShipmentShippingAccountId = GetCurrentShippingAccount().ShippingAccountId.ToString();
+                Shipment.ShipmentShippingAccountId = GetCurrentShippingAccount().ShippingAccountId.ToString().PadLeft(12, '0');
             }
             else
             {
@@ -275,7 +340,7 @@ namespace SinExWebApp20328381.Controllers
             }
             if (input.DaTPayer == "sender")
             {
-                Shipment.TaxAndDutyShippingAccountId = GetCurrentShippingAccount().ShippingAccountId.ToString();
+                Shipment.TaxAndDutyShippingAccountId = GetCurrentShippingAccount().ShippingAccountId.ToString().PadLeft(12, '0');
             }
             else
             {
@@ -284,11 +349,6 @@ namespace SinExWebApp20328381.Controllers
             Shipment.EmailWhenDeliver = input.DeliverEmail == "0" ? false : true;
             Shipment.EmailWhenPickup = input.PickupEmail == "0" ? false : true;
             Shipment.NumberOfPackages = input.NumberOfPackages;
-            Shipment.Packages = new List<Package>();
-            for (int i = 0; i < input.NumberOfPackages; i++)
-            {
-                Shipment.Packages.Add(PackageViewModelToPackage(input.Packages[i]));
-            }
             Shipment.Status = "Saved";
             Shipment.ShippingAccountId = GetCurrentShippingAccount().ShippingAccountId;
             Shipment.ServiceType = input.ServiceType;
@@ -297,8 +357,7 @@ namespace SinExWebApp20328381.Controllers
             Shipment.RecipientBuildingAddress = input.RecipientBuildingAddress;
             Shipment.RecipientCityAddress = input.RecipientCityAddress;
             Shipment.RecipientStreetAddress = input.RecipientStreetAddress;
-            //undefined: PickupType, ShippedDate, DeliveredDate
-            return Shipment;
+            Shipment.RecipientPostalCode = input.RecipientPostalCode;
         }
         public JsonResult GetAddress(AddressJson Address)
         {
@@ -315,8 +374,8 @@ namespace SinExWebApp20328381.Controllers
         private Package PackageViewModelToPackage (PackageInputViewModel input)
         {
             Package Package = new Package();
-            Package.Weight = (decimal)input.Weight;
-            Package.Value = (decimal)input.Value;
+            Package.Weight = decimal.Round((decimal)input.Weight, 1);
+            Package.Value = decimal.Round((decimal)input.Value, 1);
             Package.ValueCurrency = input.ValueCurrency;
             Package.Description = input.Description;
             Package.PackageTypeID = db.PackageTypes.SingleOrDefault(s => s.Type == input.PackageType).PackageTypeID;
@@ -328,14 +387,16 @@ namespace SinExWebApp20328381.Controllers
             {
                 Package.PackageTypeSizeID = 0;
             }
+            if (input.PackageId != null)
+                Package.PackageId = (int)input.PackageId;
             return Package;
         }
 
         private PackageInputViewModel PackageToPackageViewModel(Package input)
         {
             PackageInputViewModel PackageInputViewModel = new PackageInputViewModel();
-            PackageInputViewModel.Weight = input.Weight;
-            PackageInputViewModel.Value = input.Value;
+            PackageInputViewModel.Weight = decimal.Round(input.Weight, 1);
+            PackageInputViewModel.Value = decimal.Round(input.Value, 1);
             PackageInputViewModel.ValueCurrency = input.ValueCurrency;
             PackageInputViewModel.Description = input.Description;
             PackageType PackageTypeRes = db.PackageTypes.SingleOrDefault(s => s.PackageTypeID == input.PackageTypeID);
@@ -348,6 +409,7 @@ namespace SinExWebApp20328381.Controllers
             {
                 PackageInputViewModel.Size = null;
             }
+            PackageInputViewModel.PackageId = input.PackageId;
             return PackageInputViewModel;
         }
         // POST: Shipments/Create
@@ -368,27 +430,139 @@ namespace SinExWebApp20328381.Controllers
             return View(shipment);
         }
         */
-        
+
         // GET: Shipments/Edit/5
-        public ActionResult Edit(int? id)
+        public ActionResult Edit(long? id)
         {
+            ViewBag.WaybillId = id;
             if (id == null)
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            Shipment shipment = db.Shipments.Find(id);
-            if (shipment == null)
+            var CurrentShippingAccountId = GetCurrentShippingAccount().ShippingAccountId;
+            Shipment shipment = db.Shipments.Include("Packages").SingleOrDefault(s => (s.WaybillId == id && s.ShippingAccountId == CurrentShippingAccountId));
+            if (shipment == null || shipment.Status != "Saved")
             {
                 return HttpNotFound();
             }
-            return View(shipment);
+            var NewShipment = ShipmentToShipmentViewModel(shipment);
+            bool InputError = false;
+            var OutputGenerater = new ServicePackageFeesController();
+            NewShipment.SystemOutputSource = (FeeCheckGenerateViewModel)PopulateDrownLists(new FeeCheckGenerateViewModel());
+            NewShipment.CurrentShippingAccount = GetCurrentShippingAccount();
+
+            if (NewShipment.ShipmentPayer == "recipient" || NewShipment.DaTPayer == "recipient")
+            {
+                if (NewShipment.RecipientAccountId == null)
+                {
+                    InputError = true;
+                }
+            }
+            if ((NewShipment.RecipientCompanyName == null && NewShipment.RecipientDepartmentName != null) || (NewShipment.RecipientCompanyName != null && NewShipment.RecipientDepartmentName == null))
+            {
+                ModelState.AddModelError("RecipientCompanyName", "You must either leave company name and department name empty or fill in both of them.");
+                InputError = true;
+            }
+
+            if (!ModelState.IsValid || InputError == true)
+            {
+                return View(NewShipment);
+            }
+            NewShipment.SystemOutputSource.Fees = OutputGenerater.ProcessFeeCheck(NewShipment.ServiceType, NewShipment.Packages);
+            return View(NewShipment);
         }
+
+        /*
+    // GET: Shipments/Edit/5
+    public ActionResult Edit(int? id)
+    {
+
+        if (id == null)
+        {
+            return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+        }
+        Shipment shipment = db.Shipments.Find(id);
+        if (shipment == null)
+        {
+            return HttpNotFound();
+        }
+        return View(shipment);
+    }
+    */
 
         // POST: Shipments/Edit/5
         // 为了防止“过多发布”攻击，请启用要绑定到的特定属性，有关 
         // 详细信息，请参阅 http://go.microsoft.com/fwlink/?LinkId=317598。
         [HttpPost]
         [ValidateAntiForgeryToken]
+        public ActionResult Edit(ShipmentInputViewModel NewShipment, long WaybillId)
+        {
+            bool InputError = false;
+            var OutputGenerater = new ServicePackageFeesController();
+            NewShipment.SystemOutputSource = (FeeCheckGenerateViewModel)PopulateDrownLists(new FeeCheckGenerateViewModel());
+            NewShipment.CurrentShippingAccount = GetCurrentShippingAccount();
+            ViewBag.WaybillId = WaybillId;
+            if (NewShipment.ShipmentPayer == "recipient" || NewShipment.DaTPayer == "recipient")
+            {
+                if (NewShipment.RecipientAccountId == null)
+                {
+                    InputError = true;
+                }
+            }
+            if ((NewShipment.RecipientCompanyName == null && NewShipment.RecipientDepartmentName != null) || (NewShipment.RecipientCompanyName != null && NewShipment.RecipientDepartmentName == null))
+            {
+                ModelState.AddModelError("RecipientCompanyName", "You must either leave company name and department name empty or fill in both of them.");
+                InputError = true;
+            }
+
+            if (!ModelState.IsValid || InputError == true)
+            {
+                return View(NewShipment);
+            }
+
+            NewShipment.SystemOutputSource.Fees = OutputGenerater.ProcessFeeCheck(NewShipment.ServiceType, NewShipment.Packages);
+            var DBShipment = db.Shipments.Include("Packages").SingleOrDefault(s => s.WaybillId == WaybillId);
+            //ShipmentViewModelToShipmentWithoutPackage(NewShipment, ref DBShipment);
+            //db.Entry(DBShipment).State = EntityState.Modified;
+            var shipment = ShipmentViewModelToShipment(NewShipment);
+            shipment.WaybillId = WaybillId;
+            db.Entry(DBShipment).CurrentValues.SetValues(shipment);
+            foreach (var existingPackage in DBShipment.Packages.ToList())
+            {
+                if (!shipment.Packages.Any(s => s.PackageId == existingPackage.PackageId))
+                    db.Packages.Remove(existingPackage);
+            }
+            foreach (var packageModel in shipment.Packages)
+            {
+                var existingPackage = DBShipment.Packages.SingleOrDefault(s => s.PackageId == packageModel.PackageId);
+                packageModel.WaybillId = DBShipment.WaybillId;
+                if (existingPackage != null)
+                {
+                    db.Entry(existingPackage).CurrentValues.SetValues(packageModel);
+                }
+                else
+                {
+                    var newPackage = new Package();
+                    newPackage = packageModel;
+                    DBShipment.Packages.Add(newPackage);
+                }
+            }
+            db.SaveChanges();
+            ViewBag.Message = "Successfully Updated.";
+            DBShipment = db.Shipments.Include("Packages").SingleOrDefault(s => s.WaybillId == WaybillId);
+            //following code is going to update the packages (we need package id)
+            NewShipment.Packages = new List<PackageInputViewModel>();
+            foreach (var Package in DBShipment.Packages)
+            {
+                NewShipment.Packages.Add(PackageToPackageViewModel(Package));
+            }
+            for (int i = NewShipment.Packages.Count; i < 10; i++)
+            {
+                NewShipment.Packages.Add(new PackageInputViewModel());
+            }
+            return View(NewShipment);
+        }
+        /*
         public ActionResult Edit([Bind(Include = "WaybillId,ReferenceNumber,ServiceType,ShippedDate,DeliveredDate,RecipientName,NumberOfPackages,Origin,Destination,Status,ShippingAccountId")] Shipment shipment)
         {
             if (ModelState.IsValid)
@@ -399,6 +573,7 @@ namespace SinExWebApp20328381.Controllers
             }
             return View(shipment);
         }
+        */
 
         // GET: Shipments/Delete/5
         public ActionResult Delete(int? id)

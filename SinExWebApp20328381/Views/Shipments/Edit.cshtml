@@ -1,107 +1,352 @@
-﻿@model SinExWebApp20328381.Models.Shipment
+﻿@model SinExWebApp20328381.ViewModels.ShipmentInputViewModel
 
 @{
-    ViewBag.Title = "Edit";
+    ViewBag.Title = "Edit Shipment";
 }
 
-<h2>Edit</h2>
+@section CustomScripts{
+    <script>
+        var Packages = @Model.NumberOfPackages;
+        var CurrentPostingObject;
+        var RecipientAccountStatus = 1; //0 hide 1 show
+
+
+        function displayRecipientAccountId() {
+            if (!RecipientAccountStatus && ($("#ShipmentPayer2").prop("checked") == true || $("#DaTPayer2").prop("checked") == true))
+            {
+                $("#RecipientOptional").show();
+                $("#RecipientAccountId").attr("required", "required");
+                RecipientAccountStatus = 1;
+            }
+        }
+
+        function hideRecipientAccountId() {
+            if (RecipientAccountStatus && $("#ShipmentPayer1").prop("checked") == true && $("#DaTPayer1").prop("checked") == true)
+            {
+                $("#RecipientAccountId").val("").removeAttr("required");
+                $("#RecipientOptional").hide();
+                RecipientAccountStatus = 0;
+            }
+        }
+
+        function AddPackage() {
+            if (Packages == 10){
+                return;
+            }
+            $("#dropdown" + Packages).show().attr("required", "required");
+            $("#size" + Packages).show().attr("required", "required");
+            $("#weight" + Packages).show().attr("required", "required");
+            $("#value" + Packages).show().attr("required", "required");
+            $("#currencydropdown" + Packages).show().attr("required", "required");
+            $("#description" + Packages).show().attr("required", "required");
+            Packages++;
+            $("#NumberOfPackages").val(Packages);
+        }
+
+        function DeletePackage()
+        {
+            if (Packages == 1){
+                alert("A shipment must contain at least 1 package.");
+                return;
+            }
+            Packages--;
+            $("#hidden" + Packages).val("");
+            $("#dropdown" + Packages).hide().removeAttr("required").val("Please Select");
+            $("#size" + Packages).hide().removeAttr("required").val("");
+            $("#weight" + Packages).hide().removeAttr("required").val("");
+            $("#value" + Packages).hide().removeAttr("required").val("");
+            $("#currencydropdown" + Packages).hide().removeAttr("required").val("");
+            $("#description" + Packages).hide().removeAttr("required").val("");
+            $("#NumberOfPackages").val(Packages);
+        }
+
+        function UpdateSize(sel) {
+            if ($(sel).val() == "Please Select")
+                return;
+            CurrentPostingObject = sel;
+            var data = $(sel).val();
+            var postdata = new Object();
+            postdata = { PackageName: data };
+            $.ajax({
+                type: 'POST',
+                url: '/ServicePackageFees/GetSizeOfPackage',
+                data: postdata,
+                success: UpdateSizeReturn,
+                async:false
+            });
+        }
+
+        function UpdateSizeReturn(data, status){
+            $(CurrentPostingObject).next().empty();
+            if (data.length != 0)
+                $(CurrentPostingObject).next().attr("required", "required");
+            else {
+                $(CurrentPostingObject).next().removeAttr("required");
+                return;
+            }
+            for (var size in data) {
+                $(CurrentPostingObject).next().append($('<option></option').text(data[size]));
+            }
+        }
+
+        function AutoFillAddress()
+        {
+            var data = $("#AddressNickName").val();
+            var postdata = new Object();
+            postdata = { AddressNickName: data };
+            $.post("/Shipments/GetAddress", postdata, function(data, status){
+                if (data == null) return;
+                $("#RecipientBuildingAddress").val(data["Building"]);
+                $("#RecipientStreetAddress").val(data["Street"]);
+                $("#RecipientCityAddress").val(data["City"]);
+                $("#RecipientPostalCode").val(data["PostalCode"]);
+            });
+        }
+
+        $(document).ready(function () {
+            //recipient account id field
+            @if (Model.ShipmentPayer == "sender" && Model.DaTPayer == "sender")
+            {
+                @:hideRecipientAccountId();
+                         }
+            //radio field
+            $("input:radio[name=ShipmentPayer]").filter("[value=@(Model.ShipmentPayer)]").prop("checked","true");
+            $("input:radio[name=DaTPayer]").filter("[value=@(Model.DaTPayer)]").prop("checked","true");
+            $("input:radio[name=PickupEmail]").filter("[value=@(Model.PickupEmail)]").prop("checked","true");
+            $("input:radio[name=DeliverEmail]").filter("[value=@(Model.DeliverEmail)]").prop("checked","true");
+            //packages field
+            $("#NumberOfPackages").val(Packages);
+            for (var i = 0; i < Packages; i++)
+            {
+                $("#dropdown" + i).attr("required", "required");
+                $("#size" + i).attr("required", "required");
+                $("#weight" + i).attr("required", "required");
+                $("#value" + i).attr("required", "required");
+                $("#description" + i).attr("required", "required");
+                UpdateSize("#dropdown" + i);
+            }
+            @for (int i = 0; i < Model.NumberOfPackages; i++)
+            {
+                if (Model.Packages != null) {
+                    if (Model.Packages[i].PackageType != null)
+                    {
+                        @: $("#dropdown@(i)").val("@(Model.Packages[i].PackageType)");
+                    }
+                    @: UpdateSize("#dropdown@(i)");
+                    if (Model.Packages[i].Size != null)
+                    {
+                        @: $("#size@(i)").val("@(Model.Packages[i].Size)");
+                                }
+                    if (Model.Packages[i].ValueCurrency != null)
+                    {
+                        @: $("#currencydropdown@(i)").val("@(Model.Packages[i].ValueCurrency)");
+                                }
+                }
+            }
+            for (var i = Packages; i < 10; i++) {
+                $("#dropdown" + i).hide();
+                $("#size" + i).hide();
+                $("#weight" + i).hide();
+                $("#value" + i).hide();
+                $("#currencydropdown" + i).hide();
+                $("#description" + i).hide();
+            }
+        });
+    </script>
+}
+
+@if (ViewBag.Message != null)
+{
+    <p class="text-danger">@ViewBag.Message</p>
+}
+
+<h2>Edit Shipment</h2>
 
 
 @using (Html.BeginForm())
 {
     @Html.AntiForgeryToken()
-    
-    <div class="form-horizontal">
-        <h4>Shipment</h4>
-        <hr />
-        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
-        @Html.HiddenFor(model => model.WaybillId)
-
-        <div class="form-group">
-            @Html.LabelFor(model => model.ReferenceNumber, htmlAttributes: new { @class = "control-label col-md-2" })
-            <div class="col-md-10">
-                @Html.EditorFor(model => model.ReferenceNumber, new { htmlAttributes = new { @class = "form-control" } })
-                @Html.ValidationMessageFor(model => model.ReferenceNumber, "", new { @class = "text-danger" })
+    <input type="hidden" name="WaybillId" value="@ViewBag.WaybillId" />
+    <div class="form-group">
+        <h3>Recipient Information</h3>
+        <div class="row">
+            <div class="col-md-3">
+                @Html.LabelFor(a => a.RecipientName, "Name:")
+                @Html.TextBoxFor(a => a.RecipientName, new { @Required = "required" })
+                @Html.ValidationMessageFor(a => a.RecipientName, "", new { @Class = "text-danger" })
+            </div>
+            <div class="col-md-4">
+                @Html.LabelFor(a => a.RecipientCompanyName, "Company name:")
+                @Html.TextBoxFor(a => a.RecipientCompanyName, new { @Id = "RecipientCompanyName" })
+                @Html.ValidationMessageFor(a => a.RecipientCompanyName, "", new { @Class = "text-danger" })
+            </div>
+            <div class="col-md-5">
+                @Html.LabelFor(a => a.RecipientDepartmentName, "Department name:")
+                @Html.TextBoxFor(a => a.RecipientDepartmentName, new { @Id = "RecipientDepartmentName" })
+                @Html.ValidationMessageFor(a => a.RecipientDepartmentName, "", new { @Class = "text-danger" })
             </div>
         </div>
-
-        <div class="form-group">
-            @Html.LabelFor(model => model.ServiceType, htmlAttributes: new { @class = "control-label col-md-2" })
-            <div class="col-md-10">
-                @Html.EditorFor(model => model.ServiceType, new { htmlAttributes = new { @class = "form-control" } })
-                @Html.ValidationMessageFor(model => model.ServiceType, "", new { @class = "text-danger" })
+        <div class="row">
+            <div class="col-md-4">
+                @Html.LabelFor(a => a.RecipientPhoneNumber, "Phone number:")
+                @Html.TextBoxFor(a => a.RecipientPhoneNumber)
+                @Html.ValidationMessageFor(a => a.RecipientPhoneNumber, "", new { @Class = "text-danger" })
+            </div>
+            <div class="col-md-4">
+                @Html.LabelFor(a => a.RecipientEmailAddress, "Email address:")
+                @Html.TextBoxFor(a => a.RecipientEmailAddress)
+                @Html.ValidationMessageFor(a => a.RecipientEmailAddress, "", new { @Class = "text-danger" })
             </div>
         </div>
-
-        <div class="form-group">
-            @Html.LabelFor(model => model.ShippedDate, htmlAttributes: new { @class = "control-label col-md-2" })
-            <div class="col-md-10">
-                @Html.EditorFor(model => model.ShippedDate, new { htmlAttributes = new { @class = "form-control" } })
-                @Html.ValidationMessageFor(model => model.ShippedDate, "", new { @class = "text-danger" })
+        <div class="row">
+            <div class="col-md-12">
+                @Html.Label("AddressNickName", "You may select the existed addresses to fill in the forms:")
+                @Html.DropDownList("AddressNickName", Model.SystemOutputSource.Addresses, "Select Address", new { @Onchange = "AutoFillAddress()" })
             </div>
         </div>
-
-        <div class="form-group">
-            @Html.LabelFor(model => model.DeliveredDate, htmlAttributes: new { @class = "control-label col-md-2" })
-            <div class="col-md-10">
-                @Html.EditorFor(model => model.DeliveredDate, new { htmlAttributes = new { @class = "form-control" } })
-                @Html.ValidationMessageFor(model => model.DeliveredDate, "", new { @class = "text-danger" })
+        <div class="row">
+            <div class="col-md-4">
+                @Html.LabelFor(a => a.RecipientBuildingAddress, "Building address:")
+                @Html.TextBoxFor(a => a.RecipientBuildingAddress)
+                @Html.ValidationMessageFor(a => a.RecipientBuildingAddress, "", new { @Class = "text-danger" })
+            </div>
+            <div class="col-md-4">
+                @Html.LabelFor(a => a.RecipientStreetAddress, "Street address:")
+                @Html.TextBoxFor(a => a.RecipientStreetAddress)
+                @Html.ValidationMessageFor(a => a.RecipientStreetAddress, "", new { @Class = "text-danger" })
+            </div>
+            <div class="col-md-4">
+                @Html.LabelFor(a => a.RecipientCityAddress, "Recipient's city:")
+                @Html.TextBoxFor(a => a.RecipientCityAddress)
+                @Html.ValidationMessageFor(a => a.RecipientCityAddress, "", new { @Class = "text-danger" })
             </div>
         </div>
-
-        <div class="form-group">
-            @Html.LabelFor(model => model.RecipientName, htmlAttributes: new { @class = "control-label col-md-2" })
-            <div class="col-md-10">
-                @Html.EditorFor(model => model.RecipientName, new { htmlAttributes = new { @class = "form-control" } })
-                @Html.ValidationMessageFor(model => model.RecipientName, "", new { @class = "text-danger" })
+        <div class="row">
+            <div class="col-md-4">
+                @Html.LabelFor(a => a.RecipientPostalCode, "Postal code:")
+                @Html.TextBoxFor(a => a.RecipientPostalCode)
+                @Html.ValidationMessageFor(a => a.RecipientPostalCode, "", new { @Class = "text-danger" })
             </div>
         </div>
-
-        <div class="form-group">
-            @Html.LabelFor(model => model.NumberOfPackages, htmlAttributes: new { @class = "control-label col-md-2" })
-            <div class="col-md-10">
-                @Html.EditorFor(model => model.NumberOfPackages, new { htmlAttributes = new { @class = "form-control" } })
-                @Html.ValidationMessageFor(model => model.NumberOfPackages, "", new { @class = "text-danger" })
+    </div>
+    <div class="form-group">
+        <h3>Shipment Information</h3>
+        <div class="row">
+            <div class="col-md-4">
+                @Html.LabelFor(a => a.ReferenceNumber, "Reference Number:(Optional)")
+                @Html.TextBoxFor(a => a.ReferenceNumber)
+                @Html.ValidationMessageFor(a => a.ReferenceNumber, "", new { @Class = "text-danger" })
+            </div>
+            <div class="col-md-4">
+                @Html.LabelFor(a => a.ServiceType, "ServiceType: ")
+                @Html.DropDownListFor(a => a.ServiceType, Model.SystemOutputSource.ServiceTypes, "Please Select", htmlAttributes: new { @Value = ViewBag.CurrentServiceType as string, @Class = "dropdown", @required = "required" })
+                @Html.ValidationMessageFor(a => a.ServiceType, "", new { @Class = "text-danger" })
             </div>
         </div>
-
-        <div class="form-group">
-            @Html.LabelFor(model => model.Origin, htmlAttributes: new { @class = "control-label col-md-2" })
-            <div class="col-md-10">
-                @Html.EditorFor(model => model.Origin, new { htmlAttributes = new { @class = "form-control" } })
-                @Html.ValidationMessageFor(model => model.Origin, "", new { @class = "text-danger" })
+        <div class="row">
+            <div class="col-md-4">
+                @Html.LabelFor(a => a.Origin, "Origin: ")
+                @Html.DropDownListFor(a => a.Origin, Model.SystemOutputSource.Destinations, "Please Select", htmlAttributes: new { @Class = "dropdown", @required = "required" })
+                @Html.ValidationMessageFor(a => a.Origin, "", new { @Class = "text-danger" })
+            </div>
+            <div class="col-md-4">
+                @Html.LabelFor(a => a.Destination, "Destination: ")
+                @Html.DropDownListFor(a => a.Destination, Model.SystemOutputSource.Destinations, "Please Select", htmlAttributes: new { @Class = "dropdown", @required = "required" })
+                @Html.ValidationMessageFor(a => a.Destination, "", new { @Class = "text-danger" })
             </div>
         </div>
-
-        <div class="form-group">
-            @Html.LabelFor(model => model.Destination, htmlAttributes: new { @class = "control-label col-md-2" })
-            <div class="col-md-10">
-                @Html.EditorFor(model => model.Destination, new { htmlAttributes = new { @class = "form-control" } })
-                @Html.ValidationMessageFor(model => model.Destination, "", new { @class = "text-danger" })
+    </div>
+    <div class="form-group">
+        <h3>Package Information</h3>
+        <div class="row">
+            <div class="col-md-3">
+                <b>Shipment Payer:</b>
+            </div>
+            <div class="col-md-3">
+                <b>Duties and Taxes Payer:</b>
+            </div>
+            <div class="col-md-3">
+                <b>Pick-up Email Notification:</b>
+            </div>
+            <div class="col-md-3">
+                <b>Deliver Email Notification:</b>
             </div>
         </div>
-
-        <div class="form-group">
-            @Html.LabelFor(model => model.Status, htmlAttributes: new { @class = "control-label col-md-2" })
-            <div class="col-md-10">
-                @Html.EditorFor(model => model.Status, new { htmlAttributes = new { @class = "form-control" } })
-                @Html.ValidationMessageFor(model => model.Status, "", new { @class = "text-danger" })
+        <div class="row">
+            <div class="col-md-3">
+                <input type="radio" name="ShipmentPayer" id="ShipmentPayer1" value="sender" onclick="hideRecipientAccountId();" checked /> Sender
+            </div>
+            <div class="col-md-3">
+                <input type="radio" name="DaTPayer" id="DaTPayer1" value="sender" onclick="hideRecipientAccountId();" checked /> Sender
+            </div>
+            <div class="col-md-3">
+                <input type="radio" name="PickupEmail" value="0" checked /> Disable
+            </div>
+            <div class="col-md-3">
+                <input type="radio" name="DeliverEmail" value="0" checked /> Disable
             </div>
         </div>
-
-        <div class="form-group">
-            @Html.LabelFor(model => model.ShippingAccountId, htmlAttributes: new { @class = "control-label col-md-2" })
-            <div class="col-md-10">
-                @Html.EditorFor(model => model.ShippingAccountId, new { htmlAttributes = new { @class = "form-control" } })
-                @Html.ValidationMessageFor(model => model.ShippingAccountId, "", new { @class = "text-danger" })
+        <div class="row">
+            <div class="col-md-3">
+                <input type="radio" name="ShipmentPayer" id="ShipmentPayer2" onclick="displayRecipientAccountId();" value="recipient" /> Recipient
+            </div>
+            <div class="col-md-3">
+                <input type="radio" name="DaTPayer" id="DaTPayer2" onclick="displayRecipientAccountId();" value="recipient" /> Recipient
+            </div>
+            <div class="col-md-3">
+                <input type="radio" name="PickupEmail" value="1" /> Enable
+            </div>
+            <div class="col-md-3">
+                <input type="radio" name="DeliverEmail" value="1" /> Enable
             </div>
         </div>
-
-        <div class="form-group">
-            <div class="col-md-offset-2 col-md-10">
-                <input type="submit" value="Save" class="btn btn-default" />
-            </div>
+    </div>
+    <div class="row" id="RecipientOptional">
+        @Html.LabelFor(a => a.RecipientAccountId, "Recipient's account ID:")
+        @Html.TextBoxFor(a => a.RecipientAccountId, new { @Id = "RecipientAccountId", @Required = "required" })
+        @Html.ValidationMessageFor(a => a.RecipientAccountId, "", new { @Class = "text-danger" })
+    </div>
+    <div class="form-group">
+        <div class="col-md-2">
+            <b>PackageType</b>
         </div>
+        <div class="col-md-2">
+            <b>Size</b>
+        </div>
+        <div class="col-md-2">
+            <b>Weight(kg)</b>
+        </div>
+        <div class="col-md-2">
+            <b>Value</b>
+        </div>
+        <div class="col-md-4">
+            <b>Description</b>
+        </div>
+        @for (int i = 0; i < 10; i++)
+        {
+            @:<div class="row">
+                <input type="hidden" name="Packages[@(i)].PackageId" id="hidden@(i)" value="@(Model.Packages[i].PackageId)" />
+                @Html.DropDownListFor(a => a.Packages[i].PackageType, Model.SystemOutputSource.PackageTypes, "Please Select", htmlAttributes: new { @Class = "dropdown col-md-2", @id = "dropdown" + i, @onchange = "UpdateSize(this);" })
+                <select id="size@(i)" name="Packages[@(i)].Size" class="dropdown col-md-2"><option>Please Select</option></select>
+                @Html.TextBoxFor(a => a.Packages[i].Weight, new { @Class = "col-md-2", @Id = "weight" + i })
+                @Html.TextBoxFor(a => a.Packages[i].Value, new { @Class = "col-md-1", @Id = "value" + i })
+                @Html.DropDownListFor(a => a.Packages[i].ValueCurrency, new SelectList(Model.SystemOutputSource.Exchange.Select(x => x.CurrencyCode)).ToList(), new { @Class = "dropdown col-md-1", @Id = "currencydropdown" + i })
+                @Html.TextBoxFor(a => a.Packages[i].Description, new { @Class = "col-md-4", @Id = "description" + i })
+                @:
+            @:</div>
+            @:<div class="row">
+                @Html.ValidationMessageFor(a => a.Packages[i].Weight, "", new { @Class = "col-md-offset-4 col-md-2 text-danger" })
+                @Html.ValidationMessageFor(a => a.Packages[i].Value, "", new { @Class = "col-md-2 text-danger" })
+                @Html.ValidationMessageFor(a => a.Packages[i].Description, "", new { @Class = "col-md-4 text-danger" })
+                @:
+            @:</div>
+        }
+    </div>
+    @Html.HiddenFor(a => a.NumberOfPackages, new { @Id = "NumberOfPackages" })
+    <div class="row">
+        <input type="button" class="btn" value="Add Package" onclick="AddPackage()" />
+        <input type="button" class="btn" value="Delete Last Package" onclick="DeletePackage()" />
+        <input type="submit" class="btn" value="Save" />
     </div>
 }
 
