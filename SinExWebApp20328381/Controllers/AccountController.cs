@@ -1,4 +1,5 @@
 ﻿using System;
+using System.ComponentModel.DataAnnotations;
 using System.Globalization;
 using System.Linq;
 using System.Security.Claims;
@@ -10,6 +11,7 @@ using Microsoft.AspNet.Identity.Owin;
 using Microsoft.Owin.Security;
 using SinExWebApp20328381.Models;
 using SinExWebApp20328381.ViewModels;
+using System.Diagnostics;
 
 namespace SinExWebApp20328381.Controllers
 {
@@ -170,6 +172,30 @@ namespace SinExWebApp20328381.Controllers
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> Register(RegisterCustomerViewModel model)
         {
+            //check credit card expiry
+            if (model.PersonalInformation != null)
+            {
+                int y = int.Parse(model.PersonalInformation.CreditCardExpiryYear);
+                int m = model.PersonalInformation.CreditCardExpiryMonth;
+                if (y < DateTime.Now.Year)
+                {
+                    ModelState.AddModelError("", "The card is expired.");
+                    
+                }
+                    
+                if (y == DateTime.Now.Year && m < DateTime.Now.Month)
+                    ModelState.AddModelError("", "The card is expired.");
+                ViewBag.AccountType = "Personal";
+            }
+            else
+            {
+                int y = int.Parse(model.BusinessInformation.CreditCardExpiryYear);
+                int m = model.BusinessInformation.CreditCardExpiryMonth;
+                if (y < DateTime.Now.Year)
+                    ModelState.AddModelError("", "The card is expired.");
+                if (y == DateTime.Now.Year && m < DateTime.Now.Month)
+                    ModelState.AddModelError("", "The card is expired.");
+            }
             if (ModelState.IsValid)
             {
                 if (model.PersonalInformation != null)
@@ -184,10 +210,14 @@ namespace SinExWebApp20328381.Controllers
                 var result = await UserManager.CreateAsync(user, model.LoginInformation.Password);
                 if (result.Succeeded)
                 {
+
                     // Assign user to Customer role.
                     var roleResult = await UserManager.AddToRolesAsync(user.Id, "Customer");
                     if (roleResult.Succeeded)
                     {
+                        
+                        
+
                         // Create a shipping account for the customer.
                         if (model.PersonalInformation != null)
                         {
@@ -220,6 +250,7 @@ namespace SinExWebApp20328381.Controllers
 
             // If we got this far, something failed, redisplay form
             return View(model);
+            //return RedirectToAction("Index", "Home");
         }
 
         //

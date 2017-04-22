@@ -63,17 +63,19 @@ namespace SinExWebApp20328381.Models
         [Required]
         [Range(1, 12)]
         [Display(Name = "Expiry Month", Order = 14)]
+        //[CardExipire]
         public virtual int CreditCardExpiryMonth { get; set; }
         [Required]
-        [Range(1000,3000)]
+        [Range(2017,2050)]
         [RegularExpression(@"^[0-9]{4}$", ErrorMessage = "The field Expiry Year must be a number.")]
         [Display(Name = "Expiry Year", Order = 15)]
+        //[CardExipire]
         public virtual string CreditCardExpiryYear { get; set; }
         [StringLength(10, MinimumLength = 6)]
         public virtual string UserName { get; set; }
         public virtual ICollection<Shipment> Shipments { get; set; }
         public virtual ICollection<Address> Addresses { get; set; }
 
-
+        //public abstract IEnumerable<ValidationResult> Validate(ValidationContext validationContext);
     }
 }
