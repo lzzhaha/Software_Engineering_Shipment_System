@@ -20,6 +20,7 @@ namespace SinExWebApp20328381.Models
         public virtual DateTime ShippedDate { get; set; }// the same as pickup date
         public virtual DateTime DeliveredDate { get; set; }
         public virtual string DeliveredPlace { get; set; }
+        public virtual string DeliveredPerson { get; set; }
         public virtual string RecipientName { get; set; }
         public virtual int NumberOfPackages { get; set; }
         public ICollection<Package> Packages { get; set; }

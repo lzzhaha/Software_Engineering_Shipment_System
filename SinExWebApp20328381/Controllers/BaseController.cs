@@ -38,7 +38,7 @@ namespace SinExWebApp20328381.Controllers
         protected string joinAddress(Address address)
         {
 
-            return address.Building + "," + address.City + "," + address.ProvinceCode;
+            return address.Building + "," + address.City + "," + address.ServiceCity;
         }
         
         protected DropdownListsViewModel PopulateDrownLists(DropdownListsViewModel DropdownListsViewModel)
