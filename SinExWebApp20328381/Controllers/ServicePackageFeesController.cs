@@ -220,41 +220,11 @@ namespace SinExWebApp20328381.Controllers
         public ActionResult FeeCheck(string ServiceType, ICollection<PackageInputViewModel> Packages)
         {
             var FeeCheckInput = new FeeCheckGenerateViewModel();
-            FeeCheckInput = FetchDataFromDatabase(FeeCheckInput);
+            FeeCheckInput = (FeeCheckGenerateViewModel)PopulateDrownLists(FeeCheckInput);
             FeeCheckInput.Fees = ProcessFeeCheck(ServiceType, Packages);
             return View(FeeCheckInput);
         }
 
-        public FeeCheckGenerateViewModel FetchDataFromDatabase(FeeCheckGenerateViewModel FeeCheckInput)
-        {
-            FeeCheckInput.Destinations = PopulateDestinationsDropdownList().ToList();
-            FeeCheckInput.ServiceTypes = PopulateServiceTypesDropdownList().ToList();
-            FeeCheckInput.PackageTypes = PopulatePackageTypesDropdownList().ToList();
-            FeeCheckInput.Exchange = db.Currencies.Select(s => s);
-            return FeeCheckInput;
-        }
-        private SelectList PopulatePackageTypesDropdownList()
-        {
-            var PackageTypeQuery = db.PackageTypes.Select(s => s.Type).Distinct().OrderBy(s => s);
-            return new SelectList(PackageTypeQuery);
-        }
-
-        private SelectList PopulateServiceTypesDropdownList()
-        {
-            var ServiceTypeQuery = db.ServiceTypes.Select(s => s.Type).Distinct().OrderBy(s => s);
-            return new SelectList(ServiceTypeQuery);
-        }
-
-        private SelectList PopulateDestinationsDropdownList()
-        {
-            var DestinationQuery = db.Destinations.Select(s => s.City).Distinct().OrderBy(s => s);
-            return new SelectList(DestinationQuery);
-        }
-        private SelectList PopulateCurrenciesDropdownList()
-        {
-            var CurrencyQuery = db.Currencies.Select(s => s.CurrencyCode).Distinct().OrderBy(s => s);
-            return new SelectList(CurrencyQuery);
-        }
         [HttpPost]
         public JsonResult GetSizeOfPackage(FeeCheckPackageJson jsonPackageName)
         {

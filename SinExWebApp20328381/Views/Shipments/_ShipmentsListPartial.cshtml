@@ -44,10 +44,24 @@
                 @Html.DisplayFor(modelItem => item.ServiceType)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.ShippedDate)
+                @if (DateTime.Compare(item.ShippedDate, new DateTime(1900, 1, 1, 0, 0, 0)) == 0)
+                {
+                    <b>Not Yet Picked Up</b>
+                }
+                else
+                {
+                    @Html.DisplayFor(modelItem => item.ShippedDate)
+                }
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.DeliveredDate)
+                @if (DateTime.Compare(item.DeliveredDate, new DateTime(1900, 1, 1, 0, 0, 0)) == 0)
+                {
+                    <b>Not Yet Delivered</b>
+                }
+                else
+                {
+                    @Html.DisplayFor(modelItem => item.DeliveredDate)
+                }
             </td>
             <td>
                 @Html.DisplayFor(modelItem => item.RecipientName)

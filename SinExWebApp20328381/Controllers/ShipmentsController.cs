@@ -78,16 +78,25 @@ namespace SinExWebApp20328381.Controllers
                 page = 1;
             }
             ViewBag.CurrentShippingAccountId = ShippingAccountId;
-
             ShippedStartDate = ShippedStartDate == null ? CurrentShippedStartDate : ShippedStartDate;
             ShippedEndDate = ShippedEndDate == null ? CurrentShippedEndDate : ShippedEndDate;
-            ViewBag.CurrentShippedStartDate = Convert.ToDateTime(ShippedStartDate);
-            ViewBag.CurrentShippedEndDate = Convert.ToDateTime(ShippedEndDate);
-            if (ViewBag.CurrentShippedStartDate.Date == DateTime.Now.Date && ViewBag.CurrentShippedEndDate.Date == DateTime.Now.Date)
+            if (ShippedStartDate == null)
             {
-                ShippedEndDate = ShippedStartDate = null;
+                ViewBag.CurrentShippedStartDate = null;
             }
-            if (ViewBag.CurrentShippedStartDate.Date > ViewBag.CurrentShippedEndDate.Date)
+            else
+            {
+                ViewBag.CurrentShippedStartDate = Convert.ToDateTime(ShippedStartDate);
+            }
+            if (ShippedEndDate == null)
+            {
+                ViewBag.CurrentShippedEndDate = null;
+            }
+            else
+            {
+                ViewBag.CurrentShippedEndDate = Convert.ToDateTime(ShippedEndDate);
+            }
+            if ((Convert.ToDateTime(ShippedStartDate) > Convert.ToDateTime(ShippedEndDate)) || (ShippedStartDate == null && ShippedEndDate != null) || (ShippedStartDate != null && ShippedEndDate == null))
             {
                 ViewBag.ErrorMessage = "Date range is invalid.";
                 shipmentSearch.Shipments = (new ShipmentsListViewModel[0]).ToPagedList(pageNumber, pageSize);
@@ -201,24 +210,24 @@ namespace SinExWebApp20328381.Controllers
         // GET: Shipments/Create
         public ActionResult Create()
         {
-            var result = new CreateShipmentInputViewModel();
+            var result = new ShipmentInputViewModel();
             result.NumberOfPackages = 1;
             result.ShipmentPayer = "sender";
             result.DaTPayer = "sender";
             result.PickupEmail = "0";
             result.DeliverEmail = "0";
             var OutputGenerater = new ServicePackageFeesController();
-            result.SystemOutputSource = OutputGenerater.FetchDataFromDatabase(new FeeCheckGenerateViewModel());
+            result.SystemOutputSource = (FeeCheckGenerateViewModel)PopulateDrownLists(new FeeCheckGenerateViewModel());
             result.CurrentShippingAccount = GetCurrentShippingAccount();
             return View(result);
         }
 
         [HttpPost]
-        public ActionResult Create(CreateShipmentInputViewModel NewShipment)
+        public ActionResult Create(ShipmentInputViewModel NewShipment)
         {
             bool InputError = false;
             var OutputGenerater = new ServicePackageFeesController();
-            NewShipment.SystemOutputSource = OutputGenerater.FetchDataFromDatabase(new FeeCheckGenerateViewModel());
+            NewShipment.SystemOutputSource = (FeeCheckGenerateViewModel)PopulateDrownLists(new FeeCheckGenerateViewModel());
             NewShipment.CurrentShippingAccount = GetCurrentShippingAccount();
 
             if (NewShipment.ShipmentPayer == "recipient" || NewShipment.DaTPayer == "recipient")
@@ -243,10 +252,11 @@ namespace SinExWebApp20328381.Controllers
             var ShipmentObject = ShipmentViewModelToShipment(NewShipment);
             db.Shipments.Add(ShipmentObject);
             db.SaveChanges();
-            return RedirectToAction("Index");
+            ViewBag.Message = "Successfully Updated.";
+            return View(NewShipment);
         }
 
-        private Shipment ShipmentViewModelToShipment(CreateShipmentInputViewModel input)
+        private Shipment ShipmentViewModelToShipment(ShipmentInputViewModel input)
         {
             var Shipment = new Shipment();
             Shipment.ReferenceNumber = input.ReferenceNumber;
@@ -271,8 +281,6 @@ namespace SinExWebApp20328381.Controllers
             {
                 Shipment.TaxAndDutyShippingAccountId = input.RecipientAccountId;
             }
-            Shipment.Origin = input.CurrentShippingAccount.MailingAddressCity;
-            Shipment.Destination = input.Address;
             Shipment.EmailWhenDeliver = input.DeliverEmail == "0" ? false : true;
             Shipment.EmailWhenPickup = input.PickupEmail == "0" ? false : true;
             Shipment.NumberOfPackages = input.NumberOfPackages;
@@ -284,10 +292,26 @@ namespace SinExWebApp20328381.Controllers
             Shipment.Status = "Saved";
             Shipment.ShippingAccountId = GetCurrentShippingAccount().ShippingAccountId;
             Shipment.ServiceType = input.ServiceType;
+            Shipment.Origin = input.Origin;
+            Shipment.Destination = input.Destination;
+            Shipment.RecipientBuildingAddress = input.RecipientBuildingAddress;
+            Shipment.RecipientCityAddress = input.RecipientCityAddress;
+            Shipment.RecipientStreetAddress = input.RecipientStreetAddress;
             //undefined: PickupType, ShippedDate, DeliveredDate
             return Shipment;
         }
-
+        public JsonResult GetAddress(AddressJson Address)
+        {
+            var ShippingAccountId = GetCurrentShippingAccount().ShippingAccountId;
+            var AddRes = db.Addresses.SingleOrDefault(s => (s.ShippingAccountId == ShippingAccountId && s.NickName == Address.AddressNickName));
+            if (AddRes == null) return Json(null);
+            Dictionary<string, string> res = new Dictionary<string, string>();
+            res["Building"] = AddRes.Building;
+            res["Street"] = AddRes.Street;
+            res["City"] = AddRes.City;
+            res["PostalCode"] = AddRes.PostalCode;
+            return Json(res);
+        }
         private Package PackageViewModelToPackage (PackageInputViewModel input)
         {
             Package Package = new Package();
