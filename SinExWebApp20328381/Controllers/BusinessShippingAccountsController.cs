@@ -7,6 +7,7 @@ using System.Net;
 using System.Web;
 using System.Web.Mvc;
 using SinExWebApp20328381.Models;
+using System.Net.Mail;
 
 namespace SinExWebApp20328381.Controllers
 {
@@ -369,5 +370,6 @@ namespace SinExWebApp20328381.Controllers
             db.SaveChanges();
             return RedirectToAction("ManageRecipientAddress", "BusinessShippingAccounts");
         }
+       
     }
 }

@@ -4,8 +4,11 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
+using System.Net;
+using System.Net.Mail;
 using System.Web.Mvc;
 using System.Web.UI;
+using System.Net;
 
 namespace SinExWebApp20328381.Controllers
 {
@@ -80,6 +83,25 @@ namespace SinExWebApp20328381.Controllers
             var AddressQuery = db.Addresses.Where(s => s.ShippingAccountId == CurrentShippingAccountId).Select(s => s.NickName).Distinct().OrderBy(s => s);
             return new SelectList(AddressQuery);
         }
+        protected  bool sendEmail(MailMessage message)
+        {
+            using (var smtp = new SmtpClient())
+            {
+                var credential = new NetworkCredential
+                {
+                    UserName = "comp3111_team105@cse.ust.hk",  // replace with valid value
+                    Password = "team105#"  // replace with valid value
+                };
+                smtp.Credentials = credential;
+                smtp.Host = "smtp.cse.ust.hk";
+                smtp.Port = 587;
+                smtp.EnableSsl = true;
+                smtp.Send(message);
+                return true;
+
+            }
+        }
+
     }
 
 }
