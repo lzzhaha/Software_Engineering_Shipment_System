@@ -70,6 +70,21 @@
                 $(CurrentPostingObject).next().append($('<option></option').text(data[size]));
             }
         }
+
+        function AutoFillAddress()
+        {
+            var data = $("#AddressNickName").val();
+            var postdata = new Object();
+            postdata = { AddressNickName: data };
+            $.post("/Shipments/GetAddress", postdata, function(data, status){
+                if (data == null) return;
+                $("#RecipientBuildingAddress").val(data["Building"]);
+                $("#RecipientStreetAddress").val(data["Street"]);
+                $("#RecipientCityAddress").val(data["City"]);
+                $("#RecipientPostalCode").val(data["PostalCode"]);
+            });
+        }
+
         $(document).ready(function () {
             //recipient account id field
             @if (Model.ShipmentPayer == "sender" && Model.DaTPayer == "sender")
@@ -117,13 +132,17 @@
     </script>
 }
 
+@if (ViewBag.Message != null)
+{
+    <p class="text-danger">@ViewBag.Message</p>
+}
 <h2>Create Waybill</h2>
 <!-- display current account information here-->
 @using (Html.BeginForm("Create", "Shipments", FormMethod.Post))
 {
     //@Html.ValidationSummary(false, "", new {@Class = "text-danger" })
     <div class="form-group">
-        <h3>Recipient</h3>
+        <h3>Recipient Information</h3>
         <div class="row">
             <div class="col-md-3">
                 @Html.LabelFor(a => a.RecipientName, "Name:")
@@ -152,11 +171,36 @@
                     @Html.TextBoxFor(a => a.RecipientEmailAddress)
                     @Html.ValidationMessageFor(a => a.RecipientEmailAddress, "", new { @Class = "text-danger" })
                 </div>
-                <div class="col-md-4">
-                    @Html.LabelFor(a => a.Address, "Address:")
-                    @Html.TextBoxFor(a => a.Address)
-                    @Html.ValidationMessageFor(a => a.Address, "", new { @Class = "text-danger" })
-                </div>
+        </div>
+        <div class="row">
+            <div class="col-md-12">
+                @Html.Label("AddressNickName", "You may select the existed addresses to fill in the forms:")
+                @Html.DropDownList("AddressNickName", Model.SystemOutputSource.Addresses, "Select Address", new { @Onchange = "AutoFillAddress()" })
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-4">
+                @Html.LabelFor(a =>a.RecipientBuildingAddress, "Building address:")
+                @Html.TextBoxFor(a => a.RecipientBuildingAddress)
+                @Html.ValidationMessageFor(a => a.RecipientBuildingAddress, "", new { @Class = "text-danger" })
+            </div>
+            <div class="col-md-4">
+                @Html.LabelFor(a => a.RecipientStreetAddress, "Street address:")
+                @Html.TextBoxFor(a => a.RecipientStreetAddress)
+                @Html.ValidationMessageFor(a => a.RecipientStreetAddress, "", new { @Class = "text-danger" })
+            </div>
+            <div class="col-md-4">
+                @Html.LabelFor(a => a.RecipientCityAddress, "Recipient's city:")
+                @Html.TextBoxFor(a => a.RecipientCityAddress)
+                @Html.ValidationMessageFor(a => a.RecipientCityAddress, "", new { @Class = "text-danger" })
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-4">
+                @Html.LabelFor(a => a.RecipientPostalCode, "Postal code:")
+                @Html.TextBoxFor(a => a.RecipientPostalCode)
+                @Html.ValidationMessageFor(a => a.RecipientPostalCode, "", new { @Class = "text-danger" })
+            </div>
         </div>
     </div>
     <div class="form-group">
@@ -171,6 +215,18 @@
                 @Html.LabelFor(a => a.ServiceType, "ServiceType: ")
                 @Html.DropDownListFor(a => a.ServiceType, Model.SystemOutputSource.ServiceTypes, "Please Select", htmlAttributes: new { @Value = ViewBag.CurrentServiceType as string, @Class = "dropdown", @required = "required" })
                 @Html.ValidationMessageFor(a => a.ServiceType, "", new { @Class = "text-danger" })
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-4">
+                @Html.LabelFor(a => a.Origin, "Origin: ")
+                @Html.DropDownListFor(a => a.Origin, Model.SystemOutputSource.Destinations, "Please Select", htmlAttributes: new { @Class = "dropdown", @required = "required" })
+                @Html.ValidationMessageFor(a => a.Origin, "", new { @Class = "text-danger" })
+            </div>
+            <div class="col-md-4">
+                @Html.LabelFor(a => a.Destination, "Destination: ")
+                @Html.DropDownListFor(a => a.Destination, Model.SystemOutputSource.Destinations, "Please Select", htmlAttributes: new { @Class = "dropdown", @required = "required" })
+                @Html.ValidationMessageFor(a => a.Destination, "", new { @Class = "text-danger" })
             </div>
         </div>
     </div>
@@ -260,7 +316,7 @@
     @Html.HiddenFor(a=> a.NumberOfPackages, new {@Id = "NumberOfPackages" })
     <div class="row">
         <input type="button" class="btn" value="Add Package" onclick="AddPackage()"/>
-        <input type="submit" class="btn" value="Submit" />
+        <input type="submit" class="btn" value="Save" />
     </div>
 }
 <br />

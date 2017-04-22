@@ -25,7 +25,7 @@ namespace SinExWebApp20328381.Models
         public ICollection<Package> Packages { get; set; }
         public virtual string Origin { get; set; }
         public virtual string Destination { get; set; }
-        public virtual string Status { get; set; } // 4 status: Saved, PickedUp, Delivered, Cancelled
+        public virtual string Status { get; set; } // 5 status: Saved, Confirmed, PickedUp, Delivered, Cancelled
         public virtual long? ShippingAccountId { get; set; }
         public virtual decimal Tax { get; set; }
         public virtual decimal Duty { get; set; }
@@ -39,9 +39,9 @@ namespace SinExWebApp20328381.Models
         [EmailAddress(ErrorMessage = "Please enter a valid Email address.")]
         public virtual string RecipientEmailAddress { get; set; }
         public virtual string RecipientBuildingAddress { get; set; }
-        public virtual string RecipientStressAddress { get; set; }
+        public virtual string RecipientStreetAddress { get; set; }
+        public virtual string RecipientCityAddress { get; set; }
         public virtual string RecipientPostalCode { get; set; }
-        //city and province?
         public virtual string PickupAddress { get; set; }
         public virtual string AuthorizationCode { get; set; } // payment information
         public virtual ICollection<ShipmentStatusHistory> ShipmentStatusHistory { get; set; }

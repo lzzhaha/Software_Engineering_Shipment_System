@@ -241,6 +241,8 @@
     <Compile Include="Models\SinExDatabaseContext.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Startup.cs" />
+    <Compile Include="ViewModels\AddressJson.cs" />
+    <Compile Include="ViewModels\DropdownListsViewModel.cs" />
     <Compile Include="ViewModels\ShipmentInputViewModel.cs" />
     <Compile Include="ViewModels\PackageInputViewModel.cs" />
     <Compile Include="ViewModels\FeeCheckGenerateViewModel.cs" />

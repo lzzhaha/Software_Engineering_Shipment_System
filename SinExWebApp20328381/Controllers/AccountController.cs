@@ -14,7 +14,7 @@ using SinExWebApp20328381.ViewModels;
 namespace SinExWebApp20328381.Controllers
 {
     [Authorize]
-    public class AccountController : Controller
+    public class AccountController : BaseController
     {
         private SinExDatabaseContext db = new SinExDatabaseContext();
         private ApplicationSignInManager _signInManager;
@@ -66,7 +66,7 @@ namespace SinExWebApp20328381.Controllers
                 return Json(false, JsonRequestBehavior.AllowGet);
             }
             var res = db.ShippingAccounts.Where(s => s.ShippingAccountId == realId).ToList();
-            if (res.Count == 1)
+            if (res.Count == 1 && realId != GetCurrentShippingAccount().ShippingAccountId)
             {
                 return Json(true, JsonRequestBehavior.AllowGet);
             }

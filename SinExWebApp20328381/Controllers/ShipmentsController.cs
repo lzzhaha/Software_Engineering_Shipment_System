@@ -217,7 +217,7 @@ namespace SinExWebApp20328381.Controllers
             result.PickupEmail = "0";
             result.DeliverEmail = "0";
             var OutputGenerater = new ServicePackageFeesController();
-            result.SystemOutputSource = OutputGenerater.FetchDataFromDatabase(new FeeCheckGenerateViewModel());
+            result.SystemOutputSource = (FeeCheckGenerateViewModel)PopulateDrownLists(new FeeCheckGenerateViewModel());
             result.CurrentShippingAccount = GetCurrentShippingAccount();
             return View(result);
         }
@@ -227,7 +227,7 @@ namespace SinExWebApp20328381.Controllers
         {
             bool InputError = false;
             var OutputGenerater = new ServicePackageFeesController();
-            NewShipment.SystemOutputSource = OutputGenerater.FetchDataFromDatabase(new FeeCheckGenerateViewModel());
+            NewShipment.SystemOutputSource = (FeeCheckGenerateViewModel)PopulateDrownLists(new FeeCheckGenerateViewModel());
             NewShipment.CurrentShippingAccount = GetCurrentShippingAccount();
 
             if (NewShipment.ShipmentPayer == "recipient" || NewShipment.DaTPayer == "recipient")
@@ -252,7 +252,8 @@ namespace SinExWebApp20328381.Controllers
             var ShipmentObject = ShipmentViewModelToShipment(NewShipment);
             db.Shipments.Add(ShipmentObject);
             db.SaveChanges();
-            return RedirectToAction("Index");
+            ViewBag.Message = "Successfully Updated.";
+            return View(NewShipment);
         }
 
         private Shipment ShipmentViewModelToShipment(ShipmentInputViewModel input)
@@ -280,8 +281,6 @@ namespace SinExWebApp20328381.Controllers
             {
                 Shipment.TaxAndDutyShippingAccountId = input.RecipientAccountId;
             }
-            Shipment.Origin = input.CurrentShippingAccount.MailingAddressCity;
-            Shipment.Destination = input.Address;
             Shipment.EmailWhenDeliver = input.DeliverEmail == "0" ? false : true;
             Shipment.EmailWhenPickup = input.PickupEmail == "0" ? false : true;
             Shipment.NumberOfPackages = input.NumberOfPackages;
@@ -293,10 +292,26 @@ namespace SinExWebApp20328381.Controllers
             Shipment.Status = "Saved";
             Shipment.ShippingAccountId = GetCurrentShippingAccount().ShippingAccountId;
             Shipment.ServiceType = input.ServiceType;
+            Shipment.Origin = input.Origin;
+            Shipment.Destination = input.Destination;
+            Shipment.RecipientBuildingAddress = input.RecipientBuildingAddress;
+            Shipment.RecipientCityAddress = input.RecipientCityAddress;
+            Shipment.RecipientStreetAddress = input.RecipientStreetAddress;
             //undefined: PickupType, ShippedDate, DeliveredDate
             return Shipment;
         }
-
+        public JsonResult GetAddress(AddressJson Address)
+        {
+            var ShippingAccountId = GetCurrentShippingAccount().ShippingAccountId;
+            var AddRes = db.Addresses.SingleOrDefault(s => (s.ShippingAccountId == ShippingAccountId && s.NickName == Address.AddressNickName));
+            if (AddRes == null) return Json(null);
+            Dictionary<string, string> res = new Dictionary<string, string>();
+            res["Building"] = AddRes.Building;
+            res["Street"] = AddRes.Street;
+            res["City"] = AddRes.City;
+            res["PostalCode"] = AddRes.PostalCode;
+            return Json(res);
+        }
         private Package PackageViewModelToPackage (PackageInputViewModel input)
         {
             Package Package = new Package();
