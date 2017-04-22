@@ -15,7 +15,8 @@ namespace SinExWebApp20328381.Controllers
         private SinExDatabaseContext db = new SinExDatabaseContext();
 
 
-        public ActionResult Search() {
+        public ActionResult Search(string errorMessage) {
+            ViewBag.Error = errorMessage;
             return View();
         }
         // GET: ShipmentStatusHistories
@@ -25,12 +26,16 @@ namespace SinExWebApp20328381.Controllers
          */
         public ActionResult Index(long? WaybillId)
         {
-
+            if (WaybillId ==null ) {
+                return RedirectToAction("Search",new { errorMessage = "You should enter a waybill number"});
+            }
             //Retrieve Shipment 
             var shipment = db.Shipments.Include("Packages").Include("Packages.PackageType").Where(s => s.WaybillId == WaybillId).FirstOrDefault();
             //Pass the property of the shipment to ViewData
 
-           
+            if (shipment==null) {
+                return RedirectToAction("Search", new { errorMessage = "No such a waybill" });
+            }
             
             ViewData["WaybillNumber"] = shipment.WaybillId;
 
