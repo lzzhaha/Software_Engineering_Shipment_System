@@ -49,7 +49,8 @@ namespace SinExWebApp20328381.Controllers
             DropdownListsViewModel.Destinations = PopulateDestinationsDropdownList().ToList();
             DropdownListsViewModel.ServiceTypes = PopulateServiceTypesDropdownList().ToList();
             DropdownListsViewModel.PackageTypes = PopulatePackageTypesDropdownList().ToList();
-            DropdownListsViewModel.Addresses = PopulateAddressDropdownList().ToList();
+            DropdownListsViewModel.RecipientAddresses = PopulateRecipientAddressDropdownList().ToList();
+            DropdownListsViewModel.PickupLocations = PopulatePickupLocationDropdownList().ToList();
             DropdownListsViewModel.Exchange = db.Currencies.Select(s => s);
             return DropdownListsViewModel;
         }
@@ -77,10 +78,17 @@ namespace SinExWebApp20328381.Controllers
             return new SelectList(CurrencyQuery);
         }
 
-        protected SelectList PopulateAddressDropdownList()
+        protected SelectList PopulateRecipientAddressDropdownList()
         {
             var CurrentShippingAccountId = GetCurrentShippingAccount().ShippingAccountId;
-            var AddressQuery = db.Addresses.Where(s => s.ShippingAccountId == CurrentShippingAccountId).Select(s => s.NickName).Distinct().OrderBy(s => s);
+            var AddressQuery = db.Addresses.Where(s => (s.ShippingAccountId == CurrentShippingAccountId && s.AddressType == "Recipient Address")).Select(s => s.NickName).Distinct().OrderBy(s => s);
+            return new SelectList(AddressQuery);
+        }
+
+        protected SelectList PopulatePickupLocationDropdownList()
+        {
+            var CurrentShippingAccountId = GetCurrentShippingAccount().ShippingAccountId;
+            var AddressQuery = db.Addresses.Where(s => (s.ShippingAccountId == CurrentShippingAccountId && s.AddressType == "Pickup Location")).Select(s => s.NickName).Distinct().OrderBy(s => s);
             return new SelectList(AddressQuery);
         }
         protected  bool sendEmail(MailMessage message)

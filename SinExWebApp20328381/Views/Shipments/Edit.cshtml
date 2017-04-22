@@ -31,6 +31,7 @@
 
         function AddPackage() {
             if (Packages == 10){
+                alert("A shipment can have at most 1 package.");
                 return;
             }
             $("#dropdown" + Packages).show().attr("required", "required");
@@ -51,12 +52,12 @@
             }
             Packages--;
             $("#hidden" + Packages).val("");
-            $("#dropdown" + Packages).hide().removeAttr("required").val("Please Select");
-            $("#size" + Packages).hide().removeAttr("required").val("");
-            $("#weight" + Packages).hide().removeAttr("required").val("");
-            $("#value" + Packages).hide().removeAttr("required").val("");
-            $("#currencydropdown" + Packages).hide().removeAttr("required").val("");
-            $("#description" + Packages).hide().removeAttr("required").val("");
+            $("#dropdown" + Packages).val("").hide().removeAttr("required");
+            $("#size" + Packages).val("").hide().removeAttr("required");
+            $("#weight" + Packages).val("").hide().removeAttr("required");
+            $("#value" + Packages).val("").hide().removeAttr("required");
+            $("#currencydropdown" + Packages).val("CNY").hide().removeAttr("required");
+            $("#description" + Packages).val("").hide().removeAttr("required");
             $("#NumberOfPackages").val(Packages);
         }
 
@@ -93,13 +94,14 @@
         {
             var data = $("#AddressNickName").val();
             var postdata = new Object();
-            postdata = { AddressNickName: data };
+            postdata = { AddressNickName: data, AddressType: "Recipient Address" };
             $.post("/Shipments/GetAddress", postdata, function(data, status){
                 if (data == null) return;
                 $("#RecipientBuildingAddress").val(data["Building"]);
                 $("#RecipientStreetAddress").val(data["Street"]);
                 $("#RecipientCityAddress").val(data["City"]);
                 $("#RecipientPostalCode").val(data["PostalCode"]);
+                $("#Destination").val(data["ServiceCity"]);
             });
         }
 
@@ -201,7 +203,7 @@
         <div class="row">
             <div class="col-md-12">
                 @Html.Label("AddressNickName", "You may select the existed addresses to fill in the forms:")
-                @Html.DropDownList("AddressNickName", Model.SystemOutputSource.Addresses, "Select Address", new { @Onchange = "AutoFillAddress()" })
+                @Html.DropDownList("AddressNickName", Model.SystemOutputSource.RecipientAddresses, "Select Address", new { @Onchange = "AutoFillAddress()" })
             </div>
         </div>
         <div class="row">
@@ -349,7 +351,34 @@
         <input type="submit" class="btn" value="Save" />
     </div>
 }
-
+<br />
+@if (Model.SystemOutputSource.Fees != null && Model.SystemOutputSource.Fees.Count != 0)
+            {
+                var count = Model.SystemOutputSource.Fees.Count;
+                for (var i = 1; i <= count - 1; i++)
+                {
+        <p>
+            Package @i Fee:
+            @foreach (var j in Model.SystemOutputSource.Exchange)
+            {
+                @j.CurrencyCode
+                @: :
+                @((double)Model.SystemOutputSource.Fees[i - 1] * j.ExchangeRate)
+                @:&nbsp;&nbsp;
+        }
+        </p>
+    }
+    <p>
+        Total:
+        @foreach (var j in Model.SystemOutputSource.Exchange)
+        {
+            @j.CurrencyCode
+            @: :
+            @((double)Model.SystemOutputSource.Fees[count - 1] * j.ExchangeRate)
+            @:&nbsp;&nbsp;
+        }
+    </p>
+}
 <div>
     @Html.ActionLink("Back to List", "Index")
 </div>

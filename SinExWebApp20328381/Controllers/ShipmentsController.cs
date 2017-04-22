@@ -362,13 +362,14 @@ namespace SinExWebApp20328381.Controllers
         public JsonResult GetAddress(AddressJson Address)
         {
             var ShippingAccountId = GetCurrentShippingAccount().ShippingAccountId;
-            var AddRes = db.Addresses.SingleOrDefault(s => (s.ShippingAccountId == ShippingAccountId && s.NickName == Address.AddressNickName));
+            var AddRes = db.Addresses.SingleOrDefault(s => (s.ShippingAccountId == ShippingAccountId && s.NickName == Address.AddressNickName && s.AddressType == Address.AddressType));
             if (AddRes == null) return Json(null);
             Dictionary<string, string> res = new Dictionary<string, string>();
             res["Building"] = AddRes.Building;
             res["Street"] = AddRes.Street;
             res["City"] = AddRes.City;
             res["PostalCode"] = AddRes.PostalCode;
+            res["ServiceCity"] = AddRes.ServiceCity;
             return Json(res);
         }
         private Package PackageViewModelToPackage (PackageInputViewModel input)
@@ -532,8 +533,10 @@ namespace SinExWebApp20328381.Controllers
                 if (!shipment.Packages.Any(s => s.PackageId == existingPackage.PackageId))
                     db.Packages.Remove(existingPackage);
             }
+            db.SaveChanges();
             foreach (var packageModel in shipment.Packages)
             {
+                db.Entry(DBShipment).Reload();
                 var existingPackage = DBShipment.Packages.SingleOrDefault(s => s.PackageId == packageModel.PackageId);
                 packageModel.WaybillId = DBShipment.WaybillId;
                 if (existingPackage != null)
@@ -545,12 +548,13 @@ namespace SinExWebApp20328381.Controllers
                     var newPackage = new Package();
                     newPackage = packageModel;
                     DBShipment.Packages.Add(newPackage);
+                    db.SaveChanges();
                 }
             }
             db.SaveChanges();
             ViewBag.Message = "Successfully Updated.";
-            DBShipment = db.Shipments.Include("Packages").SingleOrDefault(s => s.WaybillId == WaybillId);
             //following code is going to update the packages (we need package id)
+            db.Entry(DBShipment).Reload();
             NewShipment.Packages = new List<PackageInputViewModel>();
             foreach (var Package in DBShipment.Packages)
             {

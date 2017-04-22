@@ -8,5 +8,6 @@ namespace SinExWebApp20328381.ViewModels
     public class AddressJson
     {
         public virtual string AddressNickName { get; set; }
+        public virtual string AddressType { get; set; }
     }
 }

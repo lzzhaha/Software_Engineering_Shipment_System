@@ -12,7 +12,8 @@ namespace SinExWebApp20328381.ViewModels
         public virtual List<SelectListItem> Destinations { get; set; }
         public virtual List<SelectListItem> ServiceTypes { get; set; }
         public virtual List<SelectListItem> PackageTypes { get; set; }
-        public virtual List<SelectListItem> Addresses { get; set; }
+        public virtual List<SelectListItem> RecipientAddresses { get; set; }
+        public virtual List<SelectListItem> PickupLocations { get; set; }
         public virtual IEnumerable<Currency> Exchange { get; set; }
     }
 }
