@@ -11,21 +11,25 @@
 <tr>
     <td colspan="5">
         Waybill number: &nbsp;@ViewData["WaybillNumber"] <br>
-        Delivered to: &nbsp;@ViewData["RecipientName"]<br>
+        Delivered to: &nbsp;@ViewData["DeliveredPerson"]<br>
         Delivered at: &nbsp;@ViewData["DeliveredPlace"]<br>
         Status: &nbsp;@ViewData["Status"]
     </td>
     <td colspan="5">
         Service type:&nbsp;@ViewData["ServiceType"]<br>
+        
         Package type:
-        @foreach (var package in ViewData["Packages"] as ICollection<SinExWebApp20328381.Models.Package>) {
+        @foreach (var package in ViewData["Packages"] as List<SinExWebApp20328381.Models.Package>) {
             @:&nbsp; @package.PackageType.Type
         }
         <br>
         Weight:
-        @foreach (var package in ViewData["Packages"] as ICollection<SinExWebApp20328381.Models.Package>) {
-            @:&nbsp; @package.Weight<text>kg</text>
+        @foreach (var package in ViewData["Packages"] as List<SinExWebApp20328381.Models.Package>) {
+            @:&nbsp; @package.Weight.ToString("0.0")<text>kg</text>
         }
+        
+
+
     </td>
 </tr>
     <!--Display shipment status history-->
@@ -36,7 +40,7 @@
     <th colspan="2">Location</th>
     <th colspan="3">Remark</th>
 </tr>
-    @{ DateTime? date = null}
+    @{ DateTime? date = null;}
    
         
         @foreach (var status in Model)
@@ -61,11 +65,11 @@
         }
 </table>
 
-@if (User.IsInRole("Employee")) {
     <div>
-        @Html.ActionLink("Update", "Create", "ShipmentStatusHistories");
+       
+        @Html.ActionLink("Update", "Create",new { WaybillId= ViewData["WaybillNumber"], Status = ViewData["Status"] })
     </div>
-}
+
 
 
 

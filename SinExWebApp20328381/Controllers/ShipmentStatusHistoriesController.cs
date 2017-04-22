@@ -14,6 +14,10 @@ namespace SinExWebApp20328381.Controllers
     {
         private SinExDatabaseContext db = new SinExDatabaseContext();
 
+
+        public ActionResult Search() {
+            return View();
+        }
         // GET: ShipmentStatusHistories
         /*
          Shipment Tracking Functionality
@@ -21,24 +25,29 @@ namespace SinExWebApp20328381.Controllers
          */
         public ActionResult Index(long? WaybillId)
         {
+
             //Retrieve Shipment 
-            IEnumerable<Shipment> shipment = db.Shipments.Where(s => s.WaybillId == WaybillId);
+            var shipment = db.Shipments.Include("Packages").Include("Packages.PackageType").Where(s => s.WaybillId == WaybillId).FirstOrDefault();
             //Pass the property of the shipment to ViewData
 
-             ViewData["WaybillNumber"] = shipment.ElementAt(0).WaybillId;
+           
+            
+            ViewData["WaybillNumber"] = shipment.WaybillId;
 
-            ViewData["RecipientName"] = shipment.ElementAt(0).RecipientName;
+            ViewData["DeliveredPerson"] = shipment.DeliveredPerson==null? "Not Delivered": shipment.DeliveredPerson;
 
-            ViewData["Company"] = shipment.ElementAt(0).RecipientCompanyName;
+            ViewData["Company"] = shipment.RecipientCompanyName;
 
-            ViewData["DeliveredPlace"] = shipment.ElementAt(0).DeliveredPlace;
+            ViewData["DeliveredPlace"] = shipment.DeliveredPlace==null? "Not Delivered": shipment.DeliveredPlace;
 
-            ViewData["Status"] = shipment.ElementAt(0).Status;
+            ViewData["Status"] = shipment.Status;
 
-            ViewData["ServiceType"] = shipment.ElementAt(0).ServiceType;
+            ViewData["ServiceType"] = shipment.ServiceType;
 
-            ViewData["Packages"] = shipment.ElementAt(0).Packages;
+            List<Package> Packages = shipment.Packages.ToList();
+            ViewData["Packages"] = Packages;
 
+            
             //Retrieve shipmentStatusHistory
             var statusQuery = from status in db.ShipmentStatusHistories
                               where status.WaybillId == WaybillId
@@ -65,8 +74,10 @@ namespace SinExWebApp20328381.Controllers
         }
         */
         // GET: ShipmentStatusHistories/Create
-        public ActionResult Create()
+        public ActionResult Create(long? WaybillId, string Status)
         {
+            ViewData["WaybillId"] = WaybillId;
+            ViewData["Status"] = Status;
             return View();
         }
 
@@ -75,13 +86,26 @@ namespace SinExWebApp20328381.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create([Bind(Include = "ShipmentStatusHistoryId,WaybillId,Status,DateAndTime,Description,Location,Remark")] ShipmentStatusHistory shipmentStatusHistory)
+        public ActionResult Create([Bind(Include = "WaybillId,ShipmentStatusHistoryId,Status,DateAndTime,Description,Location,Remark,DeliveredPerson,DeliveredPlace")] ShipmentStatusHistory shipmentStatusHistory)
         {
+           
             if (ModelState.IsValid)
             {
-                db.ShipmentStatusHistories.Add(shipmentStatusHistory);
+                Shipment shipment = db.Shipments.Where(s => s.WaybillId == shipmentStatusHistory.WaybillId).SingleOrDefault();
+                shipment.Status = shipmentStatusHistory.Status;
+                if (shipmentStatusHistory.Status == "Delivered")
+                {
+                    shipment.DeliveredDate = shipmentStatusHistory.DateAndTime;
+                    shipment.DeliveredPlace = shipmentStatusHistory.DeliveredPlace;
+                    shipment.DeliveredPerson = shipmentStatusHistory.DeliveredPerson;
+                
+                }
+                db.Entry(shipment).State = EntityState.Modified;
                 db.SaveChanges();
-                return RedirectToAction("Index");
+                db.ShipmentStatusHistories.Add(shipmentStatusHistory);
+             
+                db.SaveChanges();
+                return RedirectToAction("Index",new { WaybillId = shipmentStatusHistory.WaybillId });
             }
 
             return View(shipmentStatusHistory);
