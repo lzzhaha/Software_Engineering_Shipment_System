@@ -10,7 +10,7 @@ using SinExWebApp20328381.Models;
 
 namespace SinExWebApp20328381.Controllers
 {
-    public class ShipmentStatusHistoriesController : Controller
+    public class ShipmentStatusHistoriesController : BaseController
     {
         private SinExDatabaseContext db = new SinExDatabaseContext();
 
@@ -103,6 +103,8 @@ namespace SinExWebApp20328381.Controllers
                     shipment.DeliveredDate = shipmentStatusHistory.DateAndTime;
                     shipment.DeliveredPlace = shipmentStatusHistory.DeliveredPlace;
                     shipment.DeliveredPerson = shipmentStatusHistory.DeliveredPerson;
+                    //Send Email to sender
+                     
                 
                 }
                 db.Entry(shipment).State = EntityState.Modified;

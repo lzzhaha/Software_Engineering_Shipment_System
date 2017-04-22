@@ -55,7 +55,7 @@
             </div>
             @Html.LabelFor(model => model.PersonalInformation.MailingAddressProvinceCode, htmlAttributes: new { @class = "control-label col-md-2" })
             <div class="col-md-1">
-                @Html.EditorFor(model => model.PersonalInformation.MailingAddressProvinceCode, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.DropDownListFor(model => model.PersonalInformation.MailingAddressProvinceCode, Model.ProvinceList,"Select Province")
                 @Html.ValidationMessageFor(model => model.PersonalInformation.MailingAddressProvinceCode, "", new { @class = "text-danger" })
             </div>
             @Html.LabelFor(model => model.PersonalInformation.MailingAddressPostalCode, htmlAttributes: new { @class = "control-label col-md-2" })

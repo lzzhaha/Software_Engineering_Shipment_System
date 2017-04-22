@@ -60,7 +60,7 @@
             </div>
             @Html.LabelFor(model => model.BusinessInformation.MailingAddressProvinceCode, htmlAttributes: new { @class = "control-label col-md-2" })
             <div class="col-md-1">
-                @Html.EditorFor(model => model.BusinessInformation.MailingAddressProvinceCode, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.DropDownListFor(model => model.PersonalInformation.MailingAddressProvinceCode, Model.ProvinceList, "Select Province")
                 @Html.ValidationMessageFor(model => model.BusinessInformation.MailingAddressProvinceCode, "", new { @class = "text-danger" })
             </div>
             @Html.LabelFor(model => model.BusinessInformation.MailingAddressPostalCode, htmlAttributes: new { @class = "control-label col-md-2" })

@@ -160,7 +160,15 @@ namespace SinExWebApp20328381.Controllers
         public ActionResult Register(string accountType)
         {
             ViewBag.AccountType = accountType;
-            return View(new RegisterCustomerViewModel());
+            RegisterCustomerViewModel rem = new RegisterCustomerViewModel();
+            rem.ProvinceList = PopulateProvinceDropdownList().ToList();
+            return View(rem);
+        }
+        private SelectList PopulateProvinceDropdownList()
+        {
+            // TODO: Construct the LINQ query to retrieve the unique list of shipping account ids.
+            var provinceQuery = db.Destinations.Select(s => s.ProvinceCode).Distinct().OrderBy(c => c);
+            return new SelectList(provinceQuery);
         }
 
         //
