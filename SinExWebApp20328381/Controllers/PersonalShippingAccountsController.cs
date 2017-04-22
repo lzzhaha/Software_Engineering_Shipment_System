@@ -104,32 +104,42 @@ namespace SinExWebApp20328381.Controllers
             ShippingAccount shippingAccount = db.ShippingAccounts.SingleOrDefault(s => s.UserName == System.Web.HttpContext.Current.User.Identity.Name);
             if (shippingAccount is BusinessShippingAccount)
             {
-                return RedirectToAction("Edit", "BusinessShippingAccounts");
+                return RedirectToAction("AddRecipientAddress", "BusinessShippingAccounts");
             }
             else
             {
-                
+
+                var selectIetm = db.Destinations.Select(x => new SelectListItem() { Value = x.City, Text = x.City }).ToList();
+                ViewBag.ServiceCity = selectIetm;
                 ViewBag.shipmentId = shippingAccount.ShippingAccountId;
                 return View();
             }
 
-            
+
         }
-        
+
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult AddRecipientAddress([Bind(Include = "NickName,AddressId,ShippingAccountId,Building,Street,City,ProvinceCode,PostalCode")] Address address)
+        public ActionResult AddRecipientAddress([Bind(Include = "NickName,AddressId,ShippingAccountId,Building,Street,City,ServiceCity,PostalCode")] Address address)
         {
+
             ShippingAccount shippingAccount = db.ShippingAccounts.SingleOrDefault(s => s.UserName == System.Web.HttpContext.Current.User.Identity.Name);
+            if (shippingAccount is BusinessShippingAccount)
+            {
+                return RedirectToAction("AddRecipientAddress", "BusinessShippingAccounts");
+            }
+            var selectIetm = db.Destinations.Select(x => new SelectListItem() { Value = x.City, Text = x.City }).ToList();
+            ViewBag.ServiceCity = selectIetm;
             if (ModelState.IsValid)
             {
                 address.AddressType = "Recipient Address";
-                var temp=db.Addresses.Where(s => (s.NickName == address.NickName) && ( s.AddressType == address.AddressType));
-                if ( temp.Count()==0)
+
+                var temp = shippingAccount.Addresses.Where(s => (s.NickName == address.NickName) && (s.AddressType == address.AddressType));
+                if (temp.Count() == 0)
                 {
                     db.Addresses.Add(address);
                     db.SaveChanges();
-                    
+
                     return RedirectToAction("ManageRecipientAddress", "PersonalShippingAccounts");
                 }
             }
@@ -140,8 +150,12 @@ namespace SinExWebApp20328381.Controllers
 
         public ActionResult ManageRecipientAddress()
         {
-            ShippingAccount shippingAccount = db.ShippingAccounts.SingleOrDefault(s => s.UserName == System.Web.HttpContext.Current.User.Identity.Name);
-            if (shippingAccount.Addresses.Count == 0)
+            ShippingAccount shippingAccount = db.ShippingAccounts.Include("Addresses").SingleOrDefault(s => s.UserName == System.Web.HttpContext.Current.User.Identity.Name);
+            if (shippingAccount is BusinessShippingAccount)
+            {
+                return RedirectToAction("ManageRecipientAddress", "BusinessShippingAccounts");
+            }
+            if (shippingAccount.Addresses.Where(s => s.AddressType == "Recipient Address").Count() == 0)
             {
                 ViewBag.addressCount = "Empty";
             }
@@ -154,30 +168,64 @@ namespace SinExWebApp20328381.Controllers
         [HttpGet]
         public ActionResult EditRecipientAddress(int id)
         {
+
             ViewBag.unique = "Yes";
             ShippingAccount shippingAccount = db.ShippingAccounts.SingleOrDefault(s => s.UserName == System.Web.HttpContext.Current.User.Identity.Name);
+            if (shippingAccount is BusinessShippingAccount)
+            {
+                return RedirectToAction("ManageRecipientAddress", "BusinessShippingAccounts");
+            }
             var address = db.Addresses.SingleOrDefault(s => s.AddressId == id);
             ViewBag.shipmentId = shippingAccount.ShippingAccountId;
+            var selectIetm = db.Destinations.Select(x => new SelectListItem() { Value = x.City, Text = x.City }).ToList();
+            selectIetm.Where(x => x.Value == address.ServiceCity).First().Selected = true;
+            ViewBag.ServiceCity = selectIetm;
             TempData["nickname"] = address.NickName;
             TempData["addressId"] = address.AddressId;
             return View(address);
         }
         [HttpPost]
-        public ActionResult EditRecipientAddress([Bind(Include = "NickName,AddressId,ShippingAccountId,Building,Street,City,ProvinceCode,PostalCode")] Address address)
+        public ActionResult EditRecipientAddress([Bind(Include = "NickName,ShippingAccountId,Building,Street,City,ServiceCity,PostalCode")] Address address)
         {
-            ShippingAccount shippingAccount = db.ShippingAccounts.SingleOrDefault(s => s.UserName == System.Web.HttpContext.Current.User.Identity.Name);
+            ShippingAccount shippingAccount = db.ShippingAccounts.Include("Addresses").SingleOrDefault(s => s.UserName == System.Web.HttpContext.Current.User.Identity.Name);
+            if (shippingAccount is BusinessShippingAccount)
+            {
+                return RedirectToAction("EditRecipientAddress", "BusinessShippingAccounts");
+            }
+            var selectIetm = db.Destinations.Select(x => new SelectListItem() { Value = x.City, Text = x.City }).ToList();
+            selectIetm.Where(x => x.Value == address.ServiceCity).First().Selected = true;
+            ViewBag.ServiceCity = selectIetm;
             if (ModelState.IsValid)
             {
                 address.AddressType = "Recipient Address";
-                var temp = db.Addresses.Where(s => (s.NickName == address.NickName) && (s.AddressType == address.AddressType));
-                if (temp.Count() == 0 || address.NickName == TempData["nickname"].ToString())
+                var temp = shippingAccount.Addresses.SingleOrDefault(s => s.AddressId == (int)TempData["addressId"]);
+                if (temp != null || (temp == null || address.NickName == TempData["nickname"].ToString()))
+                {
+
+                    address.AddressId = temp.AddressId;
+                    temp.NickName = address.NickName;
+                    temp.PostalCode = address.PostalCode;
+                    temp.ServiceCity = address.ServiceCity;
+                    temp.ShippingAccountId = shippingAccount.ShippingAccountId;
+                    temp.Street = address.Street;
+                    temp.City = address.City;
+                    temp.Building = address.Building;
+                    temp.AddressType = address.AddressType;
+                    db.Entry(temp).State = EntityState.Modified;
+                    db.SaveChanges();
+                    return RedirectToAction("ManageRecipientAddress", "PersonalShippingAccounts");
+                }
+
+
+                //var temp = db.Addresses.Where(s => (s.NickName == address.NickName) && (s.AddressType == address.AddressType));
+                /*if (temp.Count() == 0 || address.NickName == TempData["nickname"].ToString())
                 {
                     address.AddressId = (int)TempData["addressId"];
                     db.Entry(address).State = EntityState.Modified;
                     db.SaveChanges();
 
                     return RedirectToAction("ManageRecipientAddress", "PersonalShippingAccounts");
-                }
+                }*/
             }
             ViewBag.shipmentId = shippingAccount.ShippingAccountId;
             ViewBag.unique = "No";
@@ -186,6 +234,7 @@ namespace SinExWebApp20328381.Controllers
         [HttpGet]
         public ActionResult DeleteRecipientAddress(int id)
         {
+
             Address address = (Address)db.Addresses.Find(id);
             return View(address);
         }
@@ -205,10 +254,17 @@ namespace SinExWebApp20328381.Controllers
             ShippingAccount shippingAccount = db.ShippingAccounts.SingleOrDefault(s => s.UserName == System.Web.HttpContext.Current.User.Identity.Name);
             if (shippingAccount is BusinessShippingAccount)
             {
+                return RedirectToAction("AddPickupLocation", "BusinessShippingAccounts");
+            }
+            var selectIetm = db.Destinations.Select(x => new SelectListItem() { Value = x.City, Text = x.City }).ToList();
+            ViewBag.ServiceCity = selectIetm;
+            if (shippingAccount is BusinessShippingAccount)
+            {
                 return RedirectToAction("Edit", "BusinessShippingAccounts");
             }
             else
             {
+
                 ViewBag.shipmentId = shippingAccount.ShippingAccountId;
                 return View();
             }
@@ -218,9 +274,15 @@ namespace SinExWebApp20328381.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult AddPickupLocation([Bind(Include = "NickName,AddressId,ShippingAccountId,Building,Street,City,ProvinceCode,PostalCode")] Address address)
+        public ActionResult AddPickupLocation([Bind(Include = "NickName,AddressId,ShippingAccountId,Building,Street,City,ServiceCity,PostalCode")] Address address)
         {
             ShippingAccount shippingAccount = db.ShippingAccounts.SingleOrDefault(s => s.UserName == System.Web.HttpContext.Current.User.Identity.Name);
+            if (shippingAccount is BusinessShippingAccount)
+            {
+                return RedirectToAction("AddPickupLoaction", "BusinessShippingAccounts");
+            }
+            var selectIetm = db.Destinations.Select(x => new SelectListItem() { Value = x.City, Text = x.City }).ToList();
+            ViewBag.ServiceCity = selectIetm;
             if (ModelState.IsValid)
             {
                 address.AddressType = "Pickup Location";
@@ -240,8 +302,12 @@ namespace SinExWebApp20328381.Controllers
 
         public ActionResult ManagePickupLocation()
         {
-            ShippingAccount shippingAccount = db.ShippingAccounts.SingleOrDefault(s => s.UserName == System.Web.HttpContext.Current.User.Identity.Name);
-            if (shippingAccount.Addresses.Count == 0)
+            ShippingAccount shippingAccount = db.ShippingAccounts.Include("Addresses").SingleOrDefault(s => s.UserName == System.Web.HttpContext.Current.User.Identity.Name);
+            if (shippingAccount is BusinessShippingAccount)
+            {
+                return RedirectToAction("ManagePickupLocation", "BusinessShippingAccounts");
+            }
+            if (shippingAccount.Addresses.Where(s => s.AddressType == "Pickup Location").Count() == 0)
             {
                 ViewBag.addressCount = "Empty";
             }
@@ -256,26 +322,48 @@ namespace SinExWebApp20328381.Controllers
         {
             ViewBag.unique = "Yes";
             ShippingAccount shippingAccount = db.ShippingAccounts.SingleOrDefault(s => s.UserName == System.Web.HttpContext.Current.User.Identity.Name);
-            var address =db.Addresses.SingleOrDefault(s =>s.AddressId==id);
+            if (shippingAccount is BusinessShippingAccount)
+            {
+                return RedirectToAction("EditPickupLocation", "BusinessShippingAccounts");
+            }
+            var address = db.Addresses.SingleOrDefault(s => s.AddressId == id);
             ViewBag.shipmentId = shippingAccount.ShippingAccountId;
+            var selectIetm = db.Destinations.Select(x => new SelectListItem() { Value = x.City, Text = x.City }).ToList();
+            selectIetm.Where(x => x.Value == address.ServiceCity).First().Selected = true;
+            ViewBag.ServiceCity = selectIetm;
             TempData["nickname"] = address.NickName;
             TempData["addressId"] = address.AddressId;
             return View(address);
         }
         [HttpPost]
-        public ActionResult EditPickupLocation([Bind(Include = "NickName,AddressId,ShippingAccountId,Building,Street,City,ProvinceCode,PostalCode")] Address address)
+        public ActionResult EditPickupLocation([Bind(Include = "NickName,AddressId,ShippingAccountId,Building,Street,City,ServiceCity,PostalCode")] Address address)
         {
-            ShippingAccount shippingAccount = db.ShippingAccounts.SingleOrDefault(s => s.UserName == System.Web.HttpContext.Current.User.Identity.Name);
+            ShippingAccount shippingAccount = db.ShippingAccounts.Include("Addresses").SingleOrDefault(s => s.UserName == System.Web.HttpContext.Current.User.Identity.Name);
+            if (shippingAccount is BusinessShippingAccount)
+            {
+                return RedirectToAction("EditPcikupLocation", "BusinessShippingAccounts");
+            }
+            var selectIetm = db.Destinations.Select(x => new SelectListItem() { Value = x.City, Text = x.City }).ToList();
+            selectIetm.Where(x => x.Value == address.ServiceCity).First().Selected = true;
+            ViewBag.ServiceCity = selectIetm;
             if (ModelState.IsValid)
             {
                 address.AddressType = "Pickup Location";
-                var temp = db.Addresses.Where(s => (s.NickName == address.NickName) && (s.AddressType == address.AddressType));
-                if (temp.Count() == 0 || address.NickName== TempData["nickname"].ToString())
+                var temp = shippingAccount.Addresses.SingleOrDefault(s => s.AddressId == (int)TempData["addressId"]);
+                if (temp != null || (temp == null || address.NickName == TempData["nickname"].ToString()))
                 {
-                    address.AddressId = (int)TempData["addressId"];
-                    db.Entry(address).State = EntityState.Modified;
-                    db.SaveChanges();
 
+                    address.AddressId = temp.AddressId;
+                    temp.NickName = address.NickName;
+                    temp.PostalCode = address.PostalCode;
+                    temp.ServiceCity = address.ServiceCity;
+                    temp.ShippingAccountId = shippingAccount.ShippingAccountId;
+                    temp.Street = address.Street;
+                    temp.City = address.City;
+                    temp.Building = address.Building;
+                    temp.AddressType = address.AddressType;
+                    db.Entry(temp).State = EntityState.Modified;
+                    db.SaveChanges();
                     return RedirectToAction("ManagePickupLocation", "PersonalShippingAccounts");
                 }
             }

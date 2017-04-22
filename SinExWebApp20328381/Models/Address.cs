@@ -13,7 +13,7 @@ namespace SinExWebApp20328381.Models
         [Key]
         public virtual int AddressId { get; set; }
         
-        public virtual int ShippingAccountId { get; set; }
+        public virtual long? ShippingAccountId { get; set; }
         [StringLength(50)]
         [Display(Name = "Building", Order = 5)]
         public virtual string Building { get; set; }
@@ -25,11 +25,10 @@ namespace SinExWebApp20328381.Models
         [StringLength(25)]
         [Display(Name = "City", Order = 7)]
         public virtual string City { get; set; }
-        [Required]
-        [StringLength(2, MinimumLength = 2)]
-        [RegularExpression(@"^[a-zA-Z]*$", ErrorMessage = "Please enter valid province code!")]
-        [Display(Name = "Province", Order = 8)]
-        public virtual string ProvinceCode { get; set; }
+
+        [RegularExpression(@"^[a-zA-Z]*$", ErrorMessage = "Please select valid cities")]
+        [Display(Name = "ServiceCity", Order = 8)]
+        public virtual string ServiceCity { get; set; }
         [StringLength(6, MinimumLength = 5)]
         [RegularExpression(@"^[0-9]*$", ErrorMessage = "Please enter valid postal code!")]
         [Display(Name = "Postal Code", Order = 9)]

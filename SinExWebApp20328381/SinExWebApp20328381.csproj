@@ -387,6 +387,14 @@
     <Content Include="Views\PersonalShippingAccounts\EditRecipientAddress.cshtml" />
     <Content Include="Views\PersonalShippingAccounts\DeleteRecipientAddress.cshtml" />
     <Content Include="Views\PersonalShippingAccounts\DeletePickupLocation.cshtml" />
+    <Content Include="Views\BusinessShippingAccounts\AddPickupLocation.cshtml" />
+    <Content Include="Views\BusinessShippingAccounts\AddRecipientAddress.cshtml" />
+    <Content Include="Views\BusinessShippingAccounts\DeletePickupLocation.cshtml" />
+    <Content Include="Views\BusinessShippingAccounts\DeleteRecipientAddress.cshtml" />
+    <Content Include="Views\BusinessShippingAccounts\EditPickupLocation.cshtml" />
+    <Content Include="Views\BusinessShippingAccounts\EditRecipientAddress.cshtml" />
+    <Content Include="Views\BusinessShippingAccounts\ManagePickupLocation.cshtml" />
+    <Content Include="Views\BusinessShippingAccounts\ManageRecipientAddress.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
