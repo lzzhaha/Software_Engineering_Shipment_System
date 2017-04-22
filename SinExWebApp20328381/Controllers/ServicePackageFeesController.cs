@@ -169,7 +169,7 @@ namespace SinExWebApp20328381.Controllers
                 TotalFee = 0;
                 foreach (var i in Packages)
                 {
-                    if (i.PackageType != null)
+                    if (i.PackageType != null && i.Weight != null)
                     {
                         PackageTypeID = db.PackageTypes.SingleOrDefault(s => s.Type == i.PackageType).PackageTypeID;
                         servicePackageFee = db.ServicePackageFees.SingleOrDefault(s => (s.PackageTypeID == PackageTypeID && s.ServiceTypeID == ServiceTypeID));
