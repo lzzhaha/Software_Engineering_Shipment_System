@@ -24,7 +24,7 @@
     }
 }
 <h2>Service Package Fees</h2>
-
+<div class="col-lg-6">
 @using (Html.BeginForm("Index3", "ServicePackageFees", FormMethod.Get))
 {
     @Html.LabelFor(a => a.CurrencyCode, "Currency: ", htmlAttributes: new { @Class = "" })
@@ -32,6 +32,7 @@
     <br />
     <input class="btn btn-default" type="submit" value="Search" />
 }
+</div>
 <p>
 </p>
 <table class="table">

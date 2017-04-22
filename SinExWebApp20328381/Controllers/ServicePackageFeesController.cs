@@ -19,10 +19,30 @@ namespace SinExWebApp20328381.Controllers
         private SinExDatabaseContext db = new SinExDatabaseContext();
 
         // GET: ServicePackageFees
-        public ActionResult Index()
+        public ActionResult Index(string CurrencyCode)
         {
+            //var servicePackageFees = db.ServicePackageFees.Include(s => s.PackageType).Include(s => s.ServiceType);
+            //return View(servicePackageFees.ToList());
+            SelectCurrency sc = new SelectCurrency();
+            sc.Currencies = PopulateCurrenciesDropdownList().ToList();
+            if (CurrencyCode == null)
+            {
+                if (Session["LastCurrency"] == null)
+                    Session["LastCurrency"] = "CNY";
+            }
+            else
+            {
+                Session["LastCurrency"] = CurrencyCode;
+            }
             var servicePackageFees = db.ServicePackageFees.Include(s => s.PackageType).Include(s => s.ServiceType);
-            return View(servicePackageFees.ToList());
+            sc.ServicePackageFees = servicePackageFees.ToList();
+            foreach (var servicePackageFee in sc.ServicePackageFees)
+            {
+                servicePackageFee.Fee = ConvertCurrency((string)Session["LastCurrency"], servicePackageFee.Fee);
+                servicePackageFee.MinimumFee = ConvertCurrency((string)Session["LastCurrency"], servicePackageFee.MinimumFee);
+                servicePackageFee.Penalty = ConvertCurrency((string)Session["LastCurrency"], servicePackageFee.Penalty);
+            }
+            return View(sc);
         }
         public ActionResult Index2()
         {
@@ -49,6 +69,7 @@ namespace SinExWebApp20328381.Controllers
             {
                 servicePackageFee.Fee = ConvertCurrency((string)Session["LastCurrency"], servicePackageFee.Fee);
                 servicePackageFee.MinimumFee = ConvertCurrency((string)Session["LastCurrency"], servicePackageFee.MinimumFee);
+                servicePackageFee.Penalty = ConvertCurrency((string)Session["LastCurrency"], servicePackageFee.Penalty);
             }
             return View(sc);
         }
@@ -106,8 +127,7 @@ namespace SinExWebApp20328381.Controllers
             {
                 return HttpNotFound();
             }
-            ViewBag.PackageTypeID = new SelectList(db.PackageTypes, "PackageTypeID", "Type", servicePackageFee.PackageTypeID);
-            ViewBag.ServiceTypeID = new SelectList(db.ServiceTypes, "ServiceTypeID", "Type", servicePackageFee.ServiceTypeID);
+            
             return View(servicePackageFee);
         }
 
@@ -116,16 +136,16 @@ namespace SinExWebApp20328381.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit([Bind(Include = "ServicePackageFeeID,Fee,MinimumFee,PackageTypeID,ServiceTypeID")] ServicePackageFee servicePackageFee)
+        public ActionResult Edit([Bind(Include = "ServicePackageFeeID,Fee,MinimumFee,PackageTypeID,ServiceTypeID,Penalty")] ServicePackageFee servicePackageFee)
         {
             if (ModelState.IsValid)
             {
+                
                 db.Entry(servicePackageFee).State = EntityState.Modified;
                 db.SaveChanges();
                 return RedirectToAction("Index");
             }
-            ViewBag.PackageTypeID = new SelectList(db.PackageTypes, "PackageTypeID", "Type", servicePackageFee.PackageTypeID);
-            ViewBag.ServiceTypeID = new SelectList(db.ServiceTypes, "ServiceTypeID", "Type", servicePackageFee.ServiceTypeID);
+            
             return View(servicePackageFee);
         }
 

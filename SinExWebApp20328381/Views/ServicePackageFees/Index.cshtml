@@ -1,31 +1,44 @@
-﻿@model IEnumerable<SinExWebApp20328381.Models.ServicePackageFee>
-
+﻿@*@model IEnumerable<SinExWebApp20328381.Models.ServicePackageFee>*@
+@model SinExWebApp20328381.ViewModels.SelectCurrency
 @{
     ViewBag.Title = "Service Package Fees";
 }
 
 <h2>Service Package Fees</h2>
-
+<div>
+    @using (Html.BeginForm("Index", "ServicePackageFees", FormMethod.Get))
+    {
+        @Html.LabelFor(a => a.CurrencyCode, "Change Currency to: ", htmlAttributes: new { @Class = "" })
+        @Html.DropDownListFor(a => a.CurrencyCode, Model.Currencies, "Please Select", htmlAttributes: new { @Class = "dropdown" })
+        <br />
+        <input class="btn btn-default" type="submit" value="Change" />
+    }
+</div>
 <p>
 </p>
 <table class="table">
     <tr>
         <th>
-            @Html.DisplayNameFor(model => model.PackageType.Type)
+            @Html.DisplayNameFor(model => model.ServicePackageFee.PackageType.Type)
         </th>
         <th>
-            @Html.DisplayNameFor(model => model.ServiceType.Type)
+            @Html.DisplayNameFor(model => model.ServicePackageFee.ServiceType.Type)
         </th>
         <th>
-            @Html.DisplayNameFor(model => model.Fee)
+            @Html.DisplayNameFor(model => model.ServicePackageFee.Fee)
         </th>
         <th>
-            @Html.DisplayNameFor(model => model.MinimumFee)
+            @Html.DisplayNameFor(model => model.ServicePackageFee.MinimumFee)
         </th>
-        <th></th>
+        <th>
+            @Html.DisplayNameFor(model => model.ServicePackageFee.Penalty)
+        </th>
+        <th>
+            
+        </th>
     </tr>
 
-@foreach (var item in Model) {
+@foreach (var item in Model.ServicePackageFees) {
     <tr>
         <td>
             @Html.DisplayFor(modelItem => item.PackageType.Type)
@@ -40,7 +53,15 @@
             @Html.DisplayFor(modelItem => item.MinimumFee)
         </td>
         <td>
+            @Html.DisplayFor(modelItem => item.Penalty)
         </td>
+        @if (User.IsInRole("Employee"))
+        {
+            <td>
+                @Html.ActionLink("Edit", "Edit", new { id = item.ServicePackageFeeID }) |
+
+            </td>
+        }
     </tr>
 }
 
