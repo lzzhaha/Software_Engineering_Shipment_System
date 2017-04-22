@@ -7,7 +7,7 @@ using System.Net;
 using System.Web;
 using System.Web.Mvc;
 using SinExWebApp20328381.Models;
-
+using System.Net.Mail;
 namespace SinExWebApp20328381.Controllers
 {
     public class ShipmentStatusHistoriesController : BaseController
@@ -103,10 +103,49 @@ namespace SinExWebApp20328381.Controllers
                     shipment.DeliveredDate = shipmentStatusHistory.DateAndTime;
                     shipment.DeliveredPlace = shipmentStatusHistory.DeliveredPlace;
                     shipment.DeliveredPerson = shipmentStatusHistory.DeliveredPerson;
+
                     //Send Email to sender
-                     
-                
+                   
+                    MailMessage DMail = new MailMessage();
+                    DMail.From = new MailAddress("comp3111_team105@cse.ust.hk");
+                    DMail.To.Add(shipment.ShippingAccount.EmailAddress);
+                    DMail.Subject = "Delivered Notification";
+                    DMail.Body = "Your shipment has been successfully delivered to: " + '\n' + shipment.RecipientName + "\nAt: " +
+
+                       "City: "+ shipment.RecipientCityAddress + ", Street:" + shipment.RecipientStreetAddress + ", Building: " + shipment.RecipientBuildingAddress + "\nDelivery Date:"
+                        + shipment.DeliveredDate.ToString("dd-mm-yyyy");
+                    sendEmail(DMail);
+                  } else if (shipmentStatusHistory.Status=="PickedUp") {
+
+                    //Send Email to recipient
+
+                    bool IsPerson;
+                    if (shipment.ShippingAccount is PersonalShippingAccount) {
+                        IsPerson = true;
+                    } else {
+                        IsPerson = false;
+                    }
+                    string SenderName;
+                    if (IsPerson) {
+                        PersonalShippingAccount sender = new PersonalShippingAccount();
+                        SenderName = sender.FirstName + " " + sender.LastName;
+                    } else {
+                        BusinessShippingAccount sender = new BusinessShippingAccount();
+                        SenderName = "Company Name: " + sender.CompanyName + ", Contact Person: " + sender.ContactPersonName;
+                    }
+
+                    MailMessage DMail = new MailMessage();
+                    DMail.From = new MailAddress("comp3111_team105@cse.ust.hk");
+                    DMail.To.Add(shipment.RecipientEmailAddress);
+                    DMail.Subject = "PickedUp Notification";
+                    DMail.Body = "A shipment (WaybillId:" + shipment.WaybillId+")" +" for you has been successfully picked up from the Sender: " + '\n' + SenderName + "\nAt: " +
+
+                        "City: "+shipment.ShippingAccount.MailingAddressCity + ", Street: " + shipment.ShippingAccount.MailingAddressStreet + ", Building: " + shipment.ShippingAccount.MailingAddressBuilding + "\nDelivery Date:"
+                        + shipment.ShippedDate.ToString("dd-mm-yyyy");
+                    sendEmail(DMail);
+
                 }
+
                 db.Entry(shipment).State = EntityState.Modified;
                 db.SaveChanges();
                 db.ShipmentStatusHistories.Add(shipmentStatusHistory);

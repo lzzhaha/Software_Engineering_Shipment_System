@@ -10,9 +10,11 @@ namespace SinExWebApp20328381.Models
         public virtual int ShipmentStatusHistoryId { get; set; }
         public virtual long WaybillId { get; set; }
         public virtual DateTime DateAndTime { get; set; }
+        [Required]
         public virtual string Description { get; set; }
+        [Required]
         public virtual string Location { get; set; }
-        public virtual string Remark { get; set; }
+        public virtual string Remarks { get; set; }
         [StringLength(70)]
         [RegularExpression(@"^[A-Z]{1}[a-zA-Z]+$",ErrorMessage ="Please enter a valid name of a person")]
         public virtual string DeliveredPerson  { get; set; }
