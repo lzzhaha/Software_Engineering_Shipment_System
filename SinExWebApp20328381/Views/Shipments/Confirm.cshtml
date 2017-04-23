@@ -1,0 +1,108 @@
+﻿@model SinExWebApp20328381.ViewModels.PickupInformationInputViewModel
+
+@{
+    ViewBag.Title = "Confirm";
+}
+@section CustomScripts{
+    <script>
+        $(document).ready(function () {
+            $("input:radio[name=PickupType]").filter("[value=@(Model.PickupType)]").prop("checked", "true");
+            @if (Model.PickupType == "immediate")
+            {
+                @:HideDate();
+            }
+            else
+            {
+                @:ShowDate();
+            }
+        });
+        function AutoFillAddress() {
+            var data = $("#AddressNickName").val();
+            var postdata = new Object();
+            postdata = { AddressNickName: data, AddressType: "Pickup Location" };
+            $.post("/Shipments/GetAddress", postdata, function (data, status) {
+                if (data == null) return;
+                $("#PickupBuildingAddress").val(data["Building"]);
+                $("#PickupStreetAddress").val(data["Street"]);
+                $("#PickupCityAddress").val(data["City"]);
+                $("#ServiceCity").val(data["ServiceCity"]);
+            });
+        }
+
+        function ShowDate()
+        {
+            $("#PickupDateInput").show();
+            $("#ShippedDate").attr("required", "required");
+        }
+
+        function HideDate()
+        {
+            $("#PickupDateInput").hide();
+            $("#ShippedDate").removeAttr("required");
+        }
+    </script>
+}
+<h2>Confirm</h2>
+
+<h5>Pickup Information</h5>
+@using (Html.BeginForm())
+{
+
+    @Html.AntiForgeryToken()
+    <div class="form-group">
+        <div class="row">
+            <div class="col-md-4"><b>Pickup Type:</b> <input type="radio" name="PickupType" id="PickupType" value="immediate" onclick="HideDate();" checked /> Immediate <input type="radio" name="PickupType" id="PickupType" value="prearranged" onclick="ShowDate();" /> Prearranged</div>
+            <div class="col-md-4" id="PickupDateInput">
+                <b>Pickup Date:</b> @Html.TextBoxFor(a => a.ShippedDate, htmlAttributes: new { Type = "datetime" })
+                @Html.ValidationMessageFor(a => a.ShippedDate, "", new { @Class = "text-danger" })
+            </div>
+        </div>
+    </div>
+    <hr />
+    <div id="AddressInput">
+        <div class="form-group">
+            <div class="row">
+                <div class="col-md-12">
+                    @Html.Label("AddressNickName", "You may select the existed addresses to fill in the forms: ")
+                    @Html.DropDownList("AddressNickName", Model.SystemOutputSource.PickupLocations, "Select Address", new { @Onchange = "AutoFillAddress()" })
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-4">
+                    @Html.LabelFor(a => a.PickupBuildingAddress, "Building address:")
+                    @Html.TextBoxFor(a => a.PickupBuildingAddress)
+                    @Html.ValidationMessageFor(a => a.PickupBuildingAddress, "", new { @Class = "text-danger" })
+                </div>
+                <div class="col-md-4">
+                    @Html.LabelFor(a => a.PickupStreetAddress, "Street address:")
+                    @Html.TextBoxFor(a => a.PickupStreetAddress)
+                    @Html.ValidationMessageFor(a => a.PickupStreetAddress, "", new { @Class = "text-danger" })
+                </div>
+                <div class="col-md-4">
+                    @Html.LabelFor(a => a.PickupCityAddress, "Pickup Location City:")
+                    @Html.TextBoxFor(a => a.PickupCityAddress)
+                    @Html.ValidationMessageFor(a => a.PickupCityAddress, "", new { @Class = "text-danger" })
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-3">
+                    @Html.LabelFor(a => a.ServiceCity, "Service City:")
+                    @Html.DropDownListFor(a => a.ServiceCity, Model.SystemOutputSource.Destinations, new { @Class = "Dropdown" })
+                    @Html.ValidationMessageFor(a => a.ServiceCity, "", new { @Class = "text-danger" })
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <input type="submit" value="Confirm" class="btn btn-default" />
+    </div>
+}
+
+<div>
+    @Html.ActionLink("Back to List", "Index")
+</div>
+
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+}

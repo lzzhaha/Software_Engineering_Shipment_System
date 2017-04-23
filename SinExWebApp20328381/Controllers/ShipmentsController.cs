@@ -24,6 +24,68 @@ namespace SinExWebApp20328381.Controllers
             return View(db.Shipments.Where(s => s.ShippingAccountId == CurrentShippingAccount.ShippingAccountId).ToList());
         }
 
+        public ActionResult Confirm(long? id)
+        {
+            if (id == null)
+            {
+                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+            }
+            ShippingAccount CurrentShippingAccount = GetCurrentShippingAccount();
+            Shipment shipment = db.Shipments.Include(s => s.Packages).SingleOrDefault(s => (s.WaybillId == id && s.ShippingAccountId == CurrentShippingAccount.ShippingAccountId));
+            if (shipment == null)
+            {
+                return HttpNotFound();
+            }
+            if (shipment.Status != "Saved")
+            {
+                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+            }
+            PickupInformationInputViewModel Pickup = new PickupInformationInputViewModel();
+            Pickup.SystemOutputSource = new DropdownListsViewModel();
+            Pickup.SystemOutputSource = PopulateDrownLists(Pickup.SystemOutputSource);
+            Pickup.PickupBuildingAddress = CurrentShippingAccount.MailingAddressBuilding;
+            Pickup.PickupCityAddress = CurrentShippingAccount.MailingAddressCity;
+            Pickup.PickupStreetAddress = CurrentShippingAccount.MailingAddressStreet;
+            Pickup.ShippedDate = DateTime.Now;
+            Pickup.PickupType = "immediate";
+            return View(Pickup);
+        }
+
+        [HttpPost, ActionName("Confirm")]
+        [ValidateAntiForgeryToken]
+        public ActionResult Confirm(PickupInformationInputViewModel PickupInformation, long id)
+        {
+            if (PickupInformation.PickupType == "prearranged" && ((PickupInformation.ShippedDate - DateTime.Now).TotalDays < 1 || (PickupInformation.ShippedDate - DateTime.Now).TotalDays > 5))
+            {
+                PickupInformation.SystemOutputSource = new DropdownListsViewModel();
+                PickupInformation.SystemOutputSource = PopulateDrownLists(PickupInformation.SystemOutputSource);
+                ModelState.AddModelError("ShippedDate", "Prearranged date should be up to 5 days in advance.");
+                return View(PickupInformation);
+            }
+            ShippingAccount CurrentShippingAccount = GetCurrentShippingAccount();
+            Shipment shipment = db.Shipments.SingleOrDefault(s => (s.WaybillId == id && s.ShippingAccountId == CurrentShippingAccount.ShippingAccountId));
+            shipment.PickupType = PickupInformation.PickupType;
+            shipment.PickupAddress = PickupInformation.PickupStreetAddress + ", " + PickupInformation.PickupCityAddress + ", " + PickupInformation.ServiceCity;
+            if (PickupInformation.PickupBuildingAddress != null)
+            {
+                shipment.PickupAddress = PickupInformation.PickupBuildingAddress + ", " + shipment.PickupAddress;
+            }
+            //validate
+            if (PickupInformation.PickupType == "immediate")
+            {
+                
+                shipment.ShippedDate = DateTime.Now;
+            }
+            else
+            {
+                shipment.ShippedDate = PickupInformation.ShippedDate;
+            }
+            shipment.Status = "Confirmed";
+            db.Entry(shipment).State = EntityState.Modified;
+            db.SaveChanges();
+            return RedirectToAction("Index");
+        }
+
         // GET: Shipments/Details/5
         public ActionResult Details(long? id)
         {
@@ -313,6 +375,10 @@ namespace SinExWebApp20328381.Controllers
             Shipment.AuthorizationCode = input.AuthorizationCode;
             Shipment.TaxCurrency = input.TaxCurreny;
             Shipment.DutyCurrency = input.DutyCurrency;
+            Shipment.PickupType = input.PickupType;
+            Shipment.PickupAddress = input.PickupAddress;
+            Shipment.ShippedDate = input.ShippedDate;
+            Shipment.DeliveredDate = input.DeliveredDate;
             return Shipment;
         }
 

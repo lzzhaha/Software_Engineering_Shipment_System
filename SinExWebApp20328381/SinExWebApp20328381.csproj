@@ -244,6 +244,7 @@
     <Compile Include="Startup.cs" />
     <Compile Include="ViewModels\AddressJson.cs" />
     <Compile Include="ViewModels\DropdownListsViewModel.cs" />
+    <Compile Include="ViewModels\PickupInformationInputViewModel.cs" />
     <Compile Include="ViewModels\ShipmentInputViewModel.cs" />
     <Compile Include="ViewModels\PackageInputViewModel.cs" />
     <Compile Include="ViewModels\FeeCheckGenerateViewModel.cs" />
@@ -397,6 +398,7 @@
     <Content Include="Views\BusinessShippingAccounts\ManageRecipientAddress.cshtml" />
     <Content Include="Views\Shipments\_ShipmentDetailPartial.cshtml" />
     <Content Include="Views\Shipments\Cancel.cshtml" />
+    <Content Include="Views\Shipments\Confirm.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
