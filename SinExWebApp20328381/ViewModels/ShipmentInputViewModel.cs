@@ -52,5 +52,20 @@ namespace SinExWebApp20328381.ViewModels
         public virtual string Origin { get; set; }
         [Required]
         public virtual string Destination { get; set; }
+        public virtual string PickupType { get; set; }
+        public virtual DateTime ShippedDate { get; set; }// the same as pickup date
+        public virtual DateTime DeliveredDate { get; set; }
+        public virtual long WaybillId { get; set; }
+        public virtual decimal Tax { get; set; }
+        public virtual string TaxCurrency { get; set; }
+        public virtual decimal Duty { get; set; }
+        public virtual string DutyCurrency { get; set; }
+        public virtual string AuthorizationCode { get; set; }
+        public ShipmentInputViewModel()
+        {
+            ShippedDate = new DateTime(1900, 1, 1, 0, 0, 0);
+            DeliveredDate = new DateTime(1900, 1, 1, 0, 0, 0);
+            ReferenceNumber = "";
+        }
     }
 }

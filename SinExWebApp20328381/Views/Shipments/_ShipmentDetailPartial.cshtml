@@ -1,0 +1,127 @@
+﻿@model SinExWebApp20328381.ViewModels.ShipmentInputViewModel
+
+
+<div>
+    <h4>Shipment</h4>
+    <hr />
+    <h5>Sender Information</h5>
+    <div class="row">
+        <div class="col-md-4"><b>Sender User Name:</b> @Html.DisplayFor(model => model.CurrentShippingAccount.UserName)</div>
+        <div class="col-md-4"><b>Service Type:</b> @Html.DisplayFor(model => model.ServiceType)</div>
+    </div>
+    <hr />
+    <h5>Recipient Information</h5>
+    <div class="row">
+        <div class="col-md-3"><b>Name:</b> @Html.DisplayFor(model => model.RecipientName)</div>
+        <div class="col-md-3"><b>City:</b> @Html.DisplayFor(model => model.RecipientCityAddress)</div>
+        <div class="col-md-3"><b>Province:</b> @Html.DisplayFor(model => model.Destination)</div>
+        <div class="col-md-3"><b>Postal Code:</b> @Html.DisplayFor(model => model.RecipientPostalCode) </div>
+    </div>
+    <div class="row">
+        <div class="col-md-4"><b>Building:</b> @Html.DisplayFor(model => model.RecipientBuildingAddress)</div>
+        <div class="col-md-8"><b>Street:</b> @Html.DisplayFor(model => model.RecipientStreetAddress)</div>
+    </div>
+    <div class="row">
+        <div class="col-md-4"><b>Telephone:</b> @Html.DisplayFor(model => model.RecipientPhoneNumber)</div>
+        <div class="col-md-4"><b>Email:</b> @Html.DisplayFor(model => model.RecipientEmailAddress)</div>
+    </div>
+    <hr />
+    <h5>Packages Information</h5>
+    <div class="row">
+        <div class="col-md-2"><b>Type:</b></div>
+        <div class="col-md-2"><b>Description:</b></div>
+        <div class="col-md-2"><b>Value:</b></div>
+        <div class="col-md-2"><b>Customer weight:</b></div>
+        <div class="col-md-2"><b>Actual weight:</b></div>
+        <div class="col-md-2"><b>Cost:</b></div>
+    </div>
+    @for (int i = 0; i < Model.NumberOfPackages; i++)
+    {
+        <div class="row">
+            <div class="col-md-2">@Model.Packages[i].PackageType</div>
+            <div class="col-md-2">@Model.Packages[i].Description</div>
+            <div class="col-md-2">@Model.Packages[i].ValueCurrency @Model.Packages[i].Value</div>
+            <div class="col-md-2">@Model.Packages[i].Weight</div>
+            @if (Model.Packages[i].ActualWeight == -1)
+            {
+                <div class="col-md-2">Not Updated</div>
+            }
+            else
+            {
+                <div class="col-md-2">@Model.Packages[i].ActualWeight</div>
+            }
+            <div class="col-md-2">CNY @Model.SystemOutputSource.Fees[i]</div>
+        </div>
+    }
+    <hr />
+    <h5>Payer Information</h5>
+    <div class="row">
+        <div class="col-md-3"><b>Shipment:</b> @Model.ShipmentPayer</div>
+        <div class="col-md-3"><b>Duties & Taxes:</b> @Model.DaTPayer</div>
+    </div>
+    <hr />
+    <h5>Notification Information</h5>
+    <div class="row">
+        <div class="col-md-3"><b>Notify sender:</b> @(Model.DeliverEmail == "0" ? "no" : "yes")</div>
+        <div class="col-md-3"><b>Notify recipient:</b> @(Model.PickupEmail == "0" ? "no" : "yes")</div>
+    </div>
+    <hr />
+    <h5>Pickup Information</h5>
+    <div class="row">
+        @if (Model.PickupAddress == null)
+        {
+            <div class="col-md-12"><b>Location:</b> Your shipment is not yet picked up.</div>
+        }
+        else
+        {
+            <div class="col-md-12"><b>Location:</b> @Model.PickupAddress</div>
+        }
+    </div>
+    <div class="row">
+        @if (Model.PickupType == null)
+        {
+            <div class="col-md-3"><b>Type:</b> Your shipment is not yet picked up.</div>
+        }
+        else
+        {
+            <div class="col-md-3"><b>Type:</b> @Model.PickupType</div>
+        }
+        @if (DateTime.Compare(Model.ShippedDate, new DateTime(1900, 1, 1, 0, 0, 0)) == 0)
+        {
+            <div class="col-md-9"><b>Date & Time:</b> Your shipment is not yet picked up.</div>
+        }
+        else
+        {
+            <div class="col-md-9"><b>Date & Time:</b> @Model.ShippedDate.ToString()</div>
+        }
+    </div>
+    <hr />
+    <h5>Payment Information</h5>
+    <div class="row">
+        @if (Model.DutyCurrency == null)
+        {
+            <div class="col-md-3"><b>Duties amount:</b> Not Updated</div>
+        }
+        else
+        {
+            <div class="col-md-3"><b>Duties amount:</b> @Model.DutyCurrency @Model.Duty</div>
+        }
+        @if (Model.TaxCurrency == null)
+        {
+            <div class="col-md-3"><b>Taxes amount:</b> Not Updated</div>
+        }
+        else
+        {
+            <div class="col-md-3"><b>Taxes amount:</b> @Model.TaxCurrency @Model.Tax</div>
+        }
+        @if (Model.AuthorizationCode == null)
+        {
+            <div class="col-md-3"><b>Authorization Code:</b> Not Updated</div>
+        }
+        else
+        {
+            <div class="col-md-3"><b>Authorization Code:</b> @Model.AuthorizationCode</div>
+        }
+    </div>
+
+</div>

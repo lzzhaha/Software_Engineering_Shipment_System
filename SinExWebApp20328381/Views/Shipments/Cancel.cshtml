@@ -1,0 +1,20 @@
+﻿@model SinExWebApp20328381.ViewModels.ShipmentInputViewModel
+@{
+    ViewBag.Title = "Cancel";
+}
+
+<h2>Delete</h2>
+
+<h3>Are you sure you want to cancel this?</h3>
+
+@Html.Partial("_ShipmentDetailPartial", Model)
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+
+    <div class="form-actions no-color">
+        <input type="submit" value="Cancel" class="btn btn-default" /> |
+        @Html.ActionLink("Back to List", "Index")
+    </div>
+}

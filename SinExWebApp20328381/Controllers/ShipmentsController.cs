@@ -25,18 +25,24 @@ namespace SinExWebApp20328381.Controllers
         }
 
         // GET: Shipments/Details/5
-        public ActionResult Details(int? id)
+        public ActionResult Details(long? id)
         {
             if (id == null)
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            Shipment shipment = db.Shipments.Find(id);
+            ShippingAccount CurrentShippingAccount = GetCurrentShippingAccount();
+            Shipment shipment = db.Shipments.Include(s => s.Packages).SingleOrDefault(s => (s.WaybillId == id && s.ShippingAccountId == CurrentShippingAccount.ShippingAccountId));
             if (shipment == null)
             {
                 return HttpNotFound();
             }
-            return View(shipment);
+            ShipmentInputViewModel Res = ShipmentToShipmentViewModel(shipment);
+            Res.CurrentShippingAccount = CurrentShippingAccount;
+            Res.Destination = db.Destinations.SingleOrDefault(s => s.City == Res.Destination).ProvinceCode; //Change the service city to province code
+            Res.SystemOutputSource = new FeeCheckGenerateViewModel();
+            Res.SystemOutputSource.Fees = new ServicePackageFeesController().ProcessFeeCheck(Res.ServiceType, Res.Packages);
+            return View(Res);
         }
 
         // GET: Shipments/GenerateHistoryReport
@@ -301,6 +307,12 @@ namespace SinExWebApp20328381.Controllers
             Shipment.RecipientCityAddress = input.RecipientCityAddress;
             Shipment.RecipientStreetAddress = input.RecipientStreetAddress;
             Shipment.RecipientPostalCode = input.RecipientPostalCode;
+            Shipment.WaybillId = input.WaybillId;
+            Shipment.Tax = input.Tax;
+            Shipment.Duty = input.Duty;
+            Shipment.AuthorizationCode = input.AuthorizationCode;
+            Shipment.TaxCurrency = input.TaxCurreny;
+            Shipment.DutyCurrency = input.DutyCurrency;
             return Shipment;
         }
 
@@ -358,6 +370,7 @@ namespace SinExWebApp20328381.Controllers
             Shipment.RecipientCityAddress = input.RecipientCityAddress;
             Shipment.RecipientStreetAddress = input.RecipientStreetAddress;
             Shipment.RecipientPostalCode = input.RecipientPostalCode;
+            Shipment.PickupType = input.PickupType;
         }
         public JsonResult GetAddress(AddressJson Address)
         {
@@ -390,6 +403,10 @@ namespace SinExWebApp20328381.Controllers
             }
             if (input.PackageId != null)
                 Package.PackageId = (int)input.PackageId;
+            if (input.ActualWeight != null)
+                Package.ActualWeight = (decimal)input.ActualWeight;
+            else
+                Package.ActualWeight = -1;
             return Package;
         }
 
@@ -411,6 +428,7 @@ namespace SinExWebApp20328381.Controllers
                 PackageInputViewModel.Size = null;
             }
             PackageInputViewModel.PackageId = input.PackageId;
+            PackageInputViewModel.ActualWeight = input.ActualWeight;
             return PackageInputViewModel;
         }
         // POST: Shipments/Create
@@ -580,27 +598,74 @@ namespace SinExWebApp20328381.Controllers
         */
 
         // GET: Shipments/Delete/5
-        public ActionResult Delete(int? id)
+        public ActionResult Delete(long? id)
         {
             if (id == null)
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            Shipment shipment = db.Shipments.Find(id);
+            ShippingAccount CurrentShippingAccount = GetCurrentShippingAccount();
+            Shipment shipment = db.Shipments.Include(s => s.Packages).SingleOrDefault(s => (s.WaybillId == id && s.ShippingAccountId == CurrentShippingAccount.ShippingAccountId));
             if (shipment == null)
             {
                 return HttpNotFound();
             }
-            return View(shipment);
+            if (shipment.Status != "Saved")
+            {
+                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+            }
+            ShipmentInputViewModel Res = ShipmentToShipmentViewModel(shipment);
+            Res.CurrentShippingAccount = CurrentShippingAccount;
+            Res.Destination = db.Destinations.SingleOrDefault(s => s.City == Res.Destination).ProvinceCode; //Change the service city to province code
+            Res.SystemOutputSource = new FeeCheckGenerateViewModel();
+            Res.SystemOutputSource.Fees = new ServicePackageFeesController().ProcessFeeCheck(Res.ServiceType, Res.Packages);
+            return View(Res);
         }
 
         // POST: Shipments/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
-        public ActionResult DeleteConfirmed(int id)
+        public ActionResult DeleteConfirmed(long id)
         {
-            Shipment shipment = db.Shipments.Find(id);
+            ShippingAccount CurrentShippingAccount = GetCurrentShippingAccount();
+            Shipment shipment = db.Shipments.Include(s => s.Packages).SingleOrDefault(s => (s.WaybillId == id && s.ShippingAccountId == CurrentShippingAccount.ShippingAccountId));
             db.Shipments.Remove(shipment);
+            db.SaveChanges();
+            return RedirectToAction("Index");
+        }
+
+        public ActionResult Cancel(long? id)
+        {
+            if (id == null)
+            {
+                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+            }
+            ShippingAccount CurrentShippingAccount = GetCurrentShippingAccount();
+            Shipment shipment = db.Shipments.Include(s => s.Packages).SingleOrDefault(s => (s.WaybillId == id && s.ShippingAccountId == CurrentShippingAccount.ShippingAccountId));
+            if (shipment == null)
+            {
+                return HttpNotFound();
+            }
+            if (shipment.Status != "Confirmed")
+            {
+                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+            }
+            ShipmentInputViewModel Res = ShipmentToShipmentViewModel(shipment);
+            Res.CurrentShippingAccount = CurrentShippingAccount;
+            Res.Destination = db.Destinations.SingleOrDefault(s => s.City == Res.Destination).ProvinceCode; //Change the service city to province code
+            Res.SystemOutputSource = new FeeCheckGenerateViewModel();
+            Res.SystemOutputSource.Fees = new ServicePackageFeesController().ProcessFeeCheck(Res.ServiceType, Res.Packages);
+            return View(Res);
+        }
+        
+        [HttpPost, ActionName("Cancel")]
+        [ValidateAntiForgeryToken]
+        public ActionResult CancelConfirmed(long id)
+        {
+            ShippingAccount CurrentShippingAccount = GetCurrentShippingAccount();
+            Shipment shipment = db.Shipments.SingleOrDefault(s => (s.WaybillId == id && s.ShippingAccountId == CurrentShippingAccount.ShippingAccountId));
+            shipment.Status = "Cancelled";
+            db.Entry(shipment).State = EntityState.Modified;
             db.SaveChanges();
             return RedirectToAction("Index");
         }

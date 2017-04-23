@@ -29,7 +29,9 @@ namespace SinExWebApp20328381.Models
         public virtual string Status { get; set; } // 5 status: Saved, Confirmed, PickedUp, Delivered, Cancelled
         public virtual long? ShippingAccountId { get; set; }
         public virtual decimal Tax { get; set; }
+        public virtual string TaxCurreny { get; set; }
         public virtual decimal Duty { get; set; }
+        public virtual string DutyCurrency { get; set; }
         public virtual string TaxAndDutyShippingAccountId { get; set; }
         public virtual string ShipmentShippingAccountId { get; set; }
         public virtual bool EmailWhenPickup { get; set; }
@@ -44,6 +46,7 @@ namespace SinExWebApp20328381.Models
         public virtual string RecipientCityAddress { get; set; }
         public virtual string RecipientPostalCode { get; set; }
         public virtual string PickupAddress { get; set; }
+        [RegularExpression(@"^\d{4}$", ErrorMessage = "Invalid Code.")]
         public virtual string AuthorizationCode { get; set; } // payment information
         public virtual ICollection<ShipmentStatusHistory> ShipmentStatusHistory { get; set; }
         public virtual ShippingAccount ShippingAccount { get; set; }
@@ -53,6 +56,8 @@ namespace SinExWebApp20328381.Models
             ShippedDate = new DateTime(1900, 1, 1, 0, 0, 0);
             DeliveredDate = new DateTime(1900, 1, 1, 0, 0, 0);
             ReferenceNumber = "";
+            Tax = -1;
+            Duty = -1;
         }
     }
 }

@@ -395,6 +395,8 @@
     <Content Include="Views\BusinessShippingAccounts\EditRecipientAddress.cshtml" />
     <Content Include="Views\BusinessShippingAccounts\ManagePickupLocation.cshtml" />
     <Content Include="Views\BusinessShippingAccounts\ManageRecipientAddress.cshtml" />
+    <Content Include="Views\Shipments\_ShipmentDetailPartial.cshtml" />
+    <Content Include="Views\Shipments\Cancel.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
