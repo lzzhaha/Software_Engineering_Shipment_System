@@ -55,7 +55,7 @@ namespace SinExWebApp20328381.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult Confirm(PickupInformationInputViewModel PickupInformation, long id)
         {
-            if (PickupInformation.PickupType == "prearranged" && ((PickupInformation.ShippedDate - DateTime.Now).TotalDays < 1 || (PickupInformation.ShippedDate - DateTime.Now).TotalDays > 5))
+            if (PickupInformation.PickupType == "prearranged" && ((PickupInformation.ShippedDate - DateTime.Now).TotalDays < 0 || (PickupInformation.ShippedDate - DateTime.Now).TotalDays > 5))
             {
                 PickupInformation.SystemOutputSource = new DropdownListsViewModel();
                 PickupInformation.SystemOutputSource = PopulateDrownLists(PickupInformation.SystemOutputSource);
