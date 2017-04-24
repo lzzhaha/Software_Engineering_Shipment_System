@@ -31,7 +31,9 @@
             <th>
                 @Html.ActionLink("Destination", "GenerateHistoryReport", new { sortOrder = ViewBag.DestinationParm, CurrentShippingAccountId = ViewBag.CurrentShippingAccountId, CurrentShippedStartDate = ViewBag.CurrentShippedStartDate, CurrentShippedEndDate = ViewBag.CurrentShippedEndDate })
             </th>
-            <th></th>
+            <th>
+                @Html.DisplayNameFor(model => model.ShippingAccountId)
+            </th>
         </tr>
 
     @foreach (var item in Model)
@@ -79,9 +81,9 @@
                 @Html.DisplayFor(modelItem => item.ShippingAccountId)
             </td>
             <td>
-                @Html.ActionLink("Edit", "Edit", new { id = item.WaybillId }) |
-                @Html.ActionLink("Details", "Details", new { id = item.WaybillId }) |
-                @Html.ActionLink("Delete", "Delete", new { id = item.WaybillId })
+                @*Html.ActionLink("Edit", "Edit", new { id = item.WaybillId }) |*@
+                @Html.ActionLink("Details", "Details", new { id = item.WaybillId }) 
+                @*Html.ActionLink("Delete", "Delete", new { id = item.WaybillId })*@
             </td>
         </tr>
     }
