@@ -50,6 +50,7 @@ namespace SinExWebApp20328381.Models
         public virtual string AuthorizationCode { get; set; } // payment information
         public virtual ICollection<ShipmentStatusHistory> ShipmentStatusHistory { get; set; }
         public virtual ShippingAccount ShippingAccount { get; set; }
+        public virtual Invoice invoice { get; set; }
 
         public Shipment()
         {
