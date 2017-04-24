@@ -1,0 +1,58 @@
+﻿@model SinExWebApp20328381.Models.Invoice
+
+@{
+    ViewBag.Title = "Details";
+}
+
+<h2>Details</h2>
+
+<div>
+    <h4>Invoice</h4>
+    <hr />
+    <dl class="dl-horizontal">
+        <dt>
+            @Html.DisplayNameFor(model => model.shipment.ReferenceNumber)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.shipment.ReferenceNumber)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.WaybillId)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.WaybillId)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.TotalCostCurrency)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.TotalCostCurrency)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.TotalCost)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.TotalCost)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.ShippingAccountId)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.ShippingAccountId)
+        </dd>
+
+    </dl>
+</div>
+<p>
+    @Html.ActionLink("Edit", "Edit", new { id = Model.InvoiceId }) |
+    @Html.ActionLink("Back to List", "Index")
+</p>

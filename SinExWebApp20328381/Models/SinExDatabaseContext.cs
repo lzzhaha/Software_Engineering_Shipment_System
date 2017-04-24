@@ -39,5 +39,7 @@ namespace SinExWebApp20328381.Models
         public System.Data.Entity.DbSet<SinExWebApp20328381.Models.Address> Addresses { get; set; }
 
         public System.Data.Entity.DbSet<SinExWebApp20328381.Models.Package> Packages { get; set; }
+
+        public System.Data.Entity.DbSet<SinExWebApp20328381.Models.Invoice> Invoices { get; set; }
     }
 }

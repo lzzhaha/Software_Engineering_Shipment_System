@@ -19,6 +19,7 @@ namespace SinExWebApp20328381.Models
         public virtual decimal Value { get; set; }
         public virtual string ValueCurrency { get; set; }
         public virtual string Description { get; set; }
+        public virtual decimal Cost { get; set; }
 
         public PackageType PackageType { get; set; }
         public Package()
