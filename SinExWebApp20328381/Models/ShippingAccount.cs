@@ -43,7 +43,7 @@ namespace SinExWebApp20328381.Models
         [Display(Name = "Email", Order = 4)]
         public virtual string EmailAddress { get; set; }
         [Required]
-        [RegularExpression(@"^American Express$|^Diners Club$|^Discover$|^MasterCard$|^UnionPay$|^Visa$", ErrorMessage = "Please enter valid card type.")]
+        [RegularExpression(@"^American Express$|^Diners Club$|^Discover$|^MasterCard$|^UnionPay$|^Visa$", ErrorMessage = "Please enter valid card type, Which can only be American Express,Diners Clubm,Discover,MasterCard,UnionPay or Visa")]
         [Display(Name = "Type", Order = 10)]
         public virtual string CreditCardType { get; set; }
         [Required]

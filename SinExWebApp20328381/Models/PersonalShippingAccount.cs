@@ -11,10 +11,12 @@ namespace SinExWebApp20328381.Models
         [Required]
         [StringLength(35)]
         [Display(Name = "First Name", Order = 1)]
+        [RegularExpression("^[A-Za-z]+$",ErrorMessage ="Please enter a valid Name!")]
         public virtual string FirstName { get; set; }
         [Required]
         [StringLength(35)]
         [Display(Name = "Last Name", Order = 2)]
+        [RegularExpression("^[A-Za-z]+$", ErrorMessage = "Please enter a valid Name!")]
         public virtual string LastName { get; set; }
         /*
         public override IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
