@@ -37,7 +37,7 @@ namespace SinExWebApp20328381.Controllers
                 return RedirectToAction("Search", new { errorMessage = "No such a waybill" });
             }
             
-            ViewData["WaybillNumber"] = shipment.WaybillId;
+            ViewData["WaybillNumber"] = shipment.WaybillId.ToString().PadLeft(12, '0'); ;
 
             ViewData["DeliveredPerson"] = shipment.DeliveredPerson==null? "Not Delivered": shipment.DeliveredPerson;
 

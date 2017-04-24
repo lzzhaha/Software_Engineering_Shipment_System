@@ -56,15 +56,13 @@
 
 
 
-
-
-
+       
 
 
         <div class="form-group">
             @Html.LabelFor(model => model.DateAndTime, htmlAttributes: new { @class = "control-label col-md-2" })
             <div class="col-md-10">
-                @Html.EditorFor(model => model.DateAndTime, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.EditorFor(model => model.DateAndTime, new {htmlAttributes = new { @class = "form-control" }})
                 @Html.ValidationMessageFor(model => model.DateAndTime, "", new { @class = "text-danger" })
             </div>
         </div>
@@ -86,10 +84,10 @@
         </div>
 
         <div class="form-group">
-            @Html.LabelFor(model => model.Remark, htmlAttributes: new { @class = "control-label col-md-2" })
+            @Html.LabelFor(model => model.Remarks, htmlAttributes: new { @class = "control-label col-md-2" })
             <div class="col-md-10">
-                @Html.EditorFor(model => model.Remark, new { htmlAttributes = new { @class = "form-control" } })
-                @Html.ValidationMessageFor(model => model.Remark, "", new { @class = "text-danger" })
+                @Html.EditorFor(model => model.Remarks, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.Remarks, "", new { @class = "text-danger" })
             </div>
         </div>
 
