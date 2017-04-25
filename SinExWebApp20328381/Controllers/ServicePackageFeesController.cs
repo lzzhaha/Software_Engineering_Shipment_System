@@ -193,7 +193,7 @@ namespace SinExWebApp20328381.Controllers
                     {
                         PackageTypeID = db.PackageTypes.SingleOrDefault(s => s.Type == i.PackageType).PackageTypeID;
                         servicePackageFee = db.ServicePackageFees.SingleOrDefault(s => (s.PackageTypeID == PackageTypeID && s.ServiceTypeID == ServiceTypeID));
-                        decimalweight = decimal.Round((decimal)i.Weight, 1);
+                        decimalweight = (i.ActualWeight != null && i.ActualWeight > 0)? decimal.Round((decimal)i.ActualWeight, 1) : decimal.Round((decimal)i.Weight, 1);
                         fee = (decimalweight * servicePackageFee.Fee < servicePackageFee.MinimumFee ? servicePackageFee.MinimumFee : decimalweight * servicePackageFee.Fee);
                         Regex reg = new Regex(@"([0-9]*).*");
                         if (i.Size != null)
