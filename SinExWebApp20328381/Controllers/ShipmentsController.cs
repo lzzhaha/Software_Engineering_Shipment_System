@@ -372,7 +372,7 @@ namespace SinExWebApp20328381.Controllers
             Shipment.WaybillId = input.WaybillId;
             Shipment.Tax = input.Tax;
             Shipment.Duty = input.Duty;
-            Shipment.AuthorizationCode = input.AuthorizationCode;
+            Shipment.AuthorizationCode = input.TaxAuthorizationCode;
             Shipment.TaxCurrency = input.TaxCurreny;
             Shipment.DutyCurrency = input.DutyCurrency;
             Shipment.PickupType = input.PickupType;

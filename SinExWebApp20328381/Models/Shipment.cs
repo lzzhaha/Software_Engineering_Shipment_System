@@ -47,7 +47,8 @@ namespace SinExWebApp20328381.Models
         public virtual string RecipientPostalCode { get; set; }
         public virtual string PickupAddress { get; set; }
         [RegularExpression(@"^\d{4}$", ErrorMessage = "Invalid Code.")]
-        public virtual string AuthorizationCode { get; set; } // payment information
+        public virtual string TaxAuthorizationCode { get; set; } // payment information
+        public virtual string ShipmentAuthorizationCode { get; set; } // payment information
         public virtual ICollection<ShipmentStatusHistory> ShipmentStatusHistory { get; set; }
         public virtual ShippingAccount ShippingAccount { get; set; }
         public virtual Invoice invoice { get; set; }

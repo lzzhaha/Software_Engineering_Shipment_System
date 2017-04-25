@@ -109,7 +109,14 @@ namespace SinExWebApp20328381.Controllers
 
             }
         }
-
+        protected Tuple<bool, int> creditCard_request(string CardNum, string SecurityNum, decimal ChargeAmount)
+        {
+            int min = 1000;
+            int max = 9999;
+            Random rdm = new Random();
+            int authCode = rdm.Next(min, max);
+            return Tuple.Create(true, authCode);
+        }
     }
 
 }

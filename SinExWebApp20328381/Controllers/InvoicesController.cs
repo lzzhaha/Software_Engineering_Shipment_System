@@ -8,10 +8,11 @@ using System.Web;
 using System.Web.Mvc;
 using SinExWebApp20328381.Models;
 using System.Text.RegularExpressions;
+using System.Net.Mail;
 
 namespace SinExWebApp20328381.Controllers
 {
-    public class InvoicesController : Controller
+    public class InvoicesController : BaseController
     {
         private SinExDatabaseContext db = new SinExDatabaseContext();
 
@@ -142,7 +143,18 @@ namespace SinExWebApp20328381.Controllers
         {
             long waybillID = Convert.ToInt64(WaybillId);
             Shipment shipment=db.Shipments.Include("Packages").SingleOrDefault(s => s.WaybillId == waybillID);
+
             Invoice invoice = new Invoice();
+            if (shipment.Status == "Saved" || shipment.Status == " Confirmed")
+            {
+                ViewBag.NoPickup = "yes";
+                return View(invoice);
+            }
+            ViewBag.NoPickup = "No";
+            foreach (var package in shipment.Packages)
+            {
+                package.PackageType = db.PackageTypes.SingleOrDefault(s => s.PackageTypeID == package.PackageTypeID);
+            }
             invoice.shipment = shipment;
             invoice.WaybillId = waybillID;
             ViewData["waybillID"] = WaybillId;
@@ -154,6 +166,7 @@ namespace SinExWebApp20328381.Controllers
         {
             long waybillID = Convert.ToInt64(invoice.WaybillId);
             Shipment shipment = db.Shipments.Include("Packages").SingleOrDefault(s => s.WaybillId == waybillID);
+           
             invoice.ShippingAccountId = shipment.ShippingAccountId;
             int i = 0;
             foreach(var package in shipment.Packages)
@@ -204,16 +217,116 @@ namespace SinExWebApp20328381.Controllers
                             }
                         }
                         TotalFee += fee;
-                        
+                        package.PackageType = db.PackageTypes.SingleOrDefault(s => s.PackageTypeID == package.PackageTypeID);
                     }
                     invoice.TotalCost = TotalFee;
                 }
                
             }
+
             invoice.shipment = shipment;
-            db.Invoices.Add(invoice);
+            if (invoice.shipment.TaxAndDutyShippingAccountId != invoice.shipment.ShipmentShippingAccountId)
+            {
+                ShippingAccount shippingaccount = db.ShippingAccounts.SingleOrDefault(s => s.ShippingAccountId == invoice.shipment.ShippingAccountId);
+                string province = db.Destinations.FirstOrDefault(s => s.City == invoice.shipment.Destination).ProvinceCode;
+                long taxid = Convert.ToInt64(invoice.shipment.TaxAndDutyShippingAccountId);
+                ShippingAccount Taxaccount = db.ShippingAccounts.SingleOrDefault(s => s.ShippingAccountId == taxid);
+                var taxCode = creditCard_request(Taxaccount.CreditCardNumber, Taxaccount.CreditCardSecurityNumber, invoice.shipment.Tax).Item2;
+                invoice.shipment.TaxAuthorizationCode = taxCode.ToString();
+                invoice.shipment.ShipmentAuthorizationCode= creditCard_request(shippingaccount.CreditCardNumber, shippingaccount.CreditCardSecurityNumber, invoice.TotalCost).Item2.ToString();
+                SendVoice("taxInvoice", invoice, shippingaccount, province, "lchenbk@connect.ust.hk");
+                SendVoice("shipmentInvoice", invoice, shippingaccount, province, "lchenbk@connect.ust.hk");
+            }
+            else
+            {
+                ShippingAccount shippingaccount = db.ShippingAccounts.SingleOrDefault(s => s.ShippingAccountId == invoice.shipment.ShippingAccountId);
+                string province = db.Destinations.FirstOrDefault(s => s.City == invoice.shipment.Destination).ProvinceCode;
+                long taxid = Convert.ToInt64(invoice.shipment.TaxAndDutyShippingAccountId);
+                ShippingAccount Taxaccount = db.ShippingAccounts.SingleOrDefault(s => s.ShippingAccountId ==taxid );
+                var taxCode = creditCard_request(Taxaccount.CreditCardNumber, Taxaccount.CreditCardSecurityNumber, invoice.shipment.Tax).Item2;
+                invoice.shipment.TaxAuthorizationCode = taxCode.ToString();
+                invoice.shipment.ShipmentAuthorizationCode = creditCard_request(shippingaccount.CreditCardNumber, shippingaccount.CreditCardSecurityNumber, invoice.TotalCost).Item2.ToString();
+                SendVoice("CombinedInvoice", invoice, shippingaccount, province, "lchenbk@connect.ust.hk");
+            }
+           
+            invoice.shipment.invoice = invoice;
+            db.Entry(invoice).State = EntityState.Modified;
             db.SaveChanges();
             return View(invoice);
+        }
+        public bool SendVoice(string invoiceType,Invoice invoice,ShippingAccount shippingaccount,string province,string emailAddress)
+        {
+            var shipmentShippingAccountId = shippingaccount.ShippingAccountId;
+            var shippedDate = invoice.shipment.ShippedDate;
+            var WaybillId = invoice.shipment.WaybillId;
+            var serviceType = invoice.shipment.ServiceType;
+            var referenceNumber = invoice.shipment.ReferenceNumber;
+            string senderName ="" ;
+            if (shippingaccount is PersonalShippingAccount)
+            {
+                PersonalShippingAccount Paccount = (PersonalShippingAccount)(shippingaccount);
+                senderName = Paccount.FirstName + " " + Paccount.LastName;
+            }
+            else
+            {
+                BusinessShippingAccount Baccount = (BusinessShippingAccount)(shippingaccount);
+                senderName = Baccount.CompanyName;
+            }
+            senderName = shippingaccount.UserName;
+            
+            var senderAddress = shippingaccount.MailingAddressBuilding + " , " + shippingaccount.MailingAddressStreet + shippingaccount.MailingAddressCity + " , " + shippingaccount.MailingAddressProvinceCode;
+            var recipientName = invoice.shipment.RecipientName;
+            var recipientAddress = invoice.shipment.RecipientBuildingAddress+" , "+invoice.shipment.RecipientStreetAddress + " , " + invoice.shipment.RecipientCityAddress+" , "+province;
+            var creditCardType = shippingaccount.CreditCardType;
+            var creditCardNumber = shippingaccount.CreditCardSecurityNumber;
+            string packagesContent = "<table class=\"table\"><tr><th>Package Type</th><th>Customer Weight</th><th>Actual Weight</th><th></th></tr>";
+            foreach(var package in invoice.shipment.Packages)
+            {
+                packagesContent = packagesContent + "<tr><td>"+ package.PackageType.Type+ "  </td><td> ";
+
+                packagesContent = packagesContent + package.ActualWeight;
+                var cost = ConvertCurrency(invoice.TotalCostCurrency, package.Cost);
+                packagesContent = packagesContent + "</td><td>" + cost + "</td></tr>";
+                      
+             }
+            packagesContent = packagesContent + " </table>";
+            MailMessage message = new MailMessage();
+                message.IsBodyHtml = true;
+            message.From = new MailAddress("comp3111_team105@cse.ust.hk");
+            message.To.Add(emailAddress);
+            message.Body = "<!doctype html><html><head><meta charset = 'UTF-8'></head><div>Shipping Account ID: " + shipmentShippingAccountId + " </div> &nbsp; &nbsp;<div> WayBill ID:  " + WaybillId+ "</div><br/><div>Ship Date: ";
+            message.Body = message.Body + shippedDate + " </div> &nbsp; &nbsp; &nbsp; &nbsp;<div>Service Type: " + serviceType + "</div><br/>";
+            if (invoice.shipment.ReferenceNumber != null) {
+                message.Body = message.Body + "< div> Sender Reference Number:  " + referenceNumber + "</div>";
+
+            }
+               message.Body = message.Body + " <div> Sender Name: "+ senderName +"</div><br/><div> Sender Address: "+senderAddress+" </div><br/><div> Recipient Name: "+ recipientName +"</div><br/><div> Recipient Address: "+recipientAddress +"</div><br/><div> Credit Card Type: "+ creditCardType+"</div> &nbsp; &nbsp;<div> Credit Card Number: "+creditCardNumber+"</div><br/>";
+            message.Body = message.Body + packagesContent;
+            switch (invoiceType)
+            {
+                case "taxInvoice": {
+                        message.Subject = "Tax and Duty Invoice";
+                        message.Body = message.Body + "<div>Duties Amounts: " + Math.Round(ConvertCurrency(invoice.shipment.DutyCurrency, invoice.shipment.Duty),2).ToString() + "</div> &nbsp;<div>Tax Amounts" + Math.Round(ConvertCurrency(invoice.shipment.TaxCurreny, invoice.shipment.Tax),2).ToString() + "</div> &nbsp;<div> Authorization Code: " + invoice.shipment.TaxAuthorizationCode + "</div><br/>";
+
+
+                        break; }
+                case "shipmentInvoice": {
+                        message.Subject = "Shipment Invoice";
+                        message.Body = message.Body + "<div>Total Cost: " + Math.Round(ConvertCurrency(invoice.TotalCostCurrency, invoice.TotalCost),2).ToString() + "</div> &nbsp; <div> Authorization Code: " + invoice.shipment.ShipmentAuthorizationCode + "</div><br/>";
+                        break;
+                    }
+                case "CombinedInvoice": {
+                        message.Subject = "Tax, Duty and Shipment  Invoice";
+                        message.Body = message.Body + "<div>Duties Amounts: " + Math.Round(ConvertCurrency(invoice.shipment.DutyCurrency, invoice.shipment.Duty),2).ToString() + "</div>&nbsp;<div> Tax Amount: " + Math.Round(ConvertCurrency(invoice.shipment.TaxCurreny, invoice.shipment.Tax), 2).ToString() + "</div> &nbsp; <div> Authorization Code: " + invoice.shipment.ShipmentAuthorizationCode + "</div><br/>";
+                        message.Body = message.Body + "<div>Total Cost: " + Math.Round(ConvertCurrency(invoice.TotalCostCurrency, invoice.TotalCost),2).ToString() + "</div><br/>";
+                        break; }
+            }
+            message.Body = message.Body + "<body></body></html>";
+            if (sendEmail(message))
+            {
+                return true;
+            }
+            return false;
         }
     }
 }

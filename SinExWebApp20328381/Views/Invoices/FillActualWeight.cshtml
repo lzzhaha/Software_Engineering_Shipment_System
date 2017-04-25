@@ -5,11 +5,15 @@
 }
 
 <h2>FillActualWeight</h2>
-
-@using (Html.BeginForm("FillActualWeight", "Invoices", FormMethod.Post))
+@if(ViewBag.NoPickup == "yes")
+{
+    @:The packages of this shipment is still not picked up so you can not input their actual weights!
+}
+else {
+using (Html.BeginForm("FillActualWeight", "Invoices", FormMethod.Post))
 {
     @Html.AntiForgeryToken()
-    
+
     <div class="form-horizontal">
         <h4>Invoice</h4>
         <hr />
@@ -31,13 +35,13 @@
             @Html.LabelFor(model => model.shipment.Tax, htmlAttributes: new { @class = "control-label col-md-2" })
             <div class="col-md-10">
                 @Html.EditorFor(model => model.shipment.Tax, new { htmlAttributes = new { @class = "form-control" } })
-                @Html.ValidationMessageFor(model => model.shipment.Tax, "", new { @class = "text-danger",id="shipment.Tax"})
+                @Html.ValidationMessageFor(model => model.shipment.Tax, "", new { @class = "text-danger", id = "shipment.Tax" })
             </div>
         </div>
         <table class="table">
             <tr>
                 <th>
-                    Packages Type
+                    Package Type
                 </th>
                 <th>
                     Customer Weight
@@ -54,13 +58,13 @@
 
                     <tr>
                         <td>
-                            @Html.DisplayFor(modelItem => package.PackageType)
+                            @Html.DisplayFor(modelItem => package.PackageType.Type)
                         </td>
                         <td>
                             @Html.DisplayFor(modelItem => package.Weight)
                         </td>
                         <td>
-                            @Html.EditorFor(model => package.ActualWeight, new { htmlAttributes = new { @class = "form-control", id = "shipment.Packages[" + @i + "].ActualWeight",Name = "shipment.Packages[" + @i + "].ActualWeight" } })
+                            @Html.EditorFor(model => package.ActualWeight, new { htmlAttributes = new { @class = "form-control", id = "shipment.Packages[" + @i + "].ActualWeight", Name = "shipment.Packages[" + @i + "].ActualWeight" } })
                             
                         </td>
                   
@@ -76,6 +80,7 @@
             </div>
         </div>
     </div>
+       }
 }
 
 <div>
