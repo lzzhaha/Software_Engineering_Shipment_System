@@ -74,7 +74,7 @@ namespace SinExWebApp20328381.Controllers
             }
             return Json(false, JsonRequestBehavior.AllowGet);
         }
-        //
+        
         // GET: /Account/Login
         [AllowAnonymous]
         public ActionResult Login(string returnUrl)

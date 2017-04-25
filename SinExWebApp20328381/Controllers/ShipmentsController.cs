@@ -188,6 +188,7 @@ namespace SinExWebApp20328381.Controllers
             // Add the condition to select a spefic shipping account if shipping account id is not null.
             if (ShippingAccountId != null || ShippedStartDate != null || ShippedEndDate != null)
             {
+
                 // TODO: Construct the LINQ query to retrive only the shipments for the specified shipping account id.
                 if (ShippingAccountId != null)
                     shipmentQuery = shipmentQuery.Where(c => c.ShippingAccountId == ShippingAccountId);
@@ -195,6 +196,10 @@ namespace SinExWebApp20328381.Controllers
                     shipmentQuery = shipmentQuery.Where(c => c.ShippedDate >= ShippedStartDate);
                 if (ShippedEndDate != null)
                     shipmentQuery = shipmentQuery.Where(c => c.ShippedDate <= ShippedEndDate);
+                //only picked up shipment will be displayed
+                DateTime dt=new DateTime(1900, 1, 1, 0, 0, 0);
+                shipmentQuery = shipmentQuery.Where(c => c.ShippedDate != dt);
+
                 ViewBag.ServiceTypeParm = sortOrder == "ServiceType" ? "ServiceType_dest" : "ServiceType";
                 ViewBag.ShippedDateParm = sortOrder == "ShippedDate" ? "ShippedDate_dest" : "ShippedDate";
                 ViewBag.DeliveredDateParm = sortOrder == "DeliveredDate" ? "DeliveredDate_dest" : "DeliveredDate";

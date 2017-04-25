@@ -72,6 +72,7 @@
                 @Html.EditorFor(model => model.MailingAddressProvinceCode, new { htmlAttributes = new { @class = "form-control" } })
                 @Html.ValidationMessageFor(model => model.MailingAddressProvinceCode, "", new { @class = "text-danger" })
             </div>
+
             @Html.LabelFor(model => model.MailingAddressPostalCode, htmlAttributes: new { @class = "control-label col-md-2" })
             <div class="col-md-2">
                 @Html.EditorFor(model => model.MailingAddressPostalCode, new { htmlAttributes = new { @class = "form-control" } })
@@ -132,7 +133,7 @@
 }
 
 <div>
-    @Html.ActionLink("Back to List", "Index")
+    @*Html.ActionLink("Back to List", "Index")*@
 </div>
 
 @section Scripts {
