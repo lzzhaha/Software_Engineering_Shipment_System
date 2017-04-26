@@ -202,26 +202,32 @@ namespace SinExWebApp20328381.Controllers
             invoice.shipment = shipment;
             if (invoice.shipment.TaxAndDutyShippingAccountId != invoice.shipment.ShipmentShippingAccountId)
             {
-                ShippingAccount shippingaccount = db.ShippingAccounts.SingleOrDefault(s => s.ShippingAccountId == invoice.shipment.ShippingAccountId);
+                long shipment_fee_id = Convert.ToInt64(invoice.shipment.ShipmentShippingAccountId);
+                ShippingAccount shipment_fee_account = db.ShippingAccounts.SingleOrDefault(s => s.ShippingAccountId == shipment_fee_id);
                 string province = db.Destinations.FirstOrDefault(s => s.City == invoice.shipment.Destination).ProvinceCode;
                 long taxid = Convert.ToInt64(invoice.shipment.TaxAndDutyShippingAccountId);
-                ShippingAccount Taxaccount = db.ShippingAccounts.SingleOrDefault(s => s.ShippingAccountId == taxid);
-                var taxCode = creditCard_request(Taxaccount.CreditCardNumber, Taxaccount.CreditCardSecurityNumber, invoice.shipment.Tax).Item2;
+                ShippingAccount tax_account = db.ShippingAccounts.SingleOrDefault(s => s.ShippingAccountId == taxid);
+                var taxCode = creditCard_request(tax_account.CreditCardNumber, tax_account.CreditCardSecurityNumber, invoice.shipment.Tax).Item2;
                 invoice.shipment.TaxAuthorizationCode = taxCode.ToString();
-                invoice.shipment.ShipmentAuthorizationCode = creditCard_request(shippingaccount.CreditCardNumber, shippingaccount.CreditCardSecurityNumber, invoice.TotalCost).Item2.ToString();
-                SendVoice("taxInvoice", invoice, shippingaccount, province, "lchenbk@connect.ust.hk");
-                SendVoice("shipmentInvoice", invoice, shippingaccount, province, "lchenbk@connect.ust.hk");
+                invoice.shipment.ShipmentAuthorizationCode = creditCard_request(shipment_fee_account.CreditCardNumber, shipment_fee_account.CreditCardSecurityNumber, invoice.TotalCost).Item2.ToString();
+                SendVoice("taxInvoice", invoice, shipment_fee_account, province, tax_account.EmailAddress);
+                SendVoice("shipmentInvoice", invoice, shipment_fee_account, province, shipment_fee_account.EmailAddress);
             }
             else
             {
-                ShippingAccount shippingaccount = db.ShippingAccounts.SingleOrDefault(s => s.ShippingAccountId == invoice.shipment.ShippingAccountId);
+                long shipment_fee_id = Convert.ToInt64(invoice.shipment.ShipmentShippingAccountId);
+                ShippingAccount shipment_fee_account = db.ShippingAccounts.SingleOrDefault(s => s.ShippingAccountId == shipment_fee_id);
                 string province = db.Destinations.FirstOrDefault(s => s.City == invoice.shipment.Destination).ProvinceCode;
+
+                /*Unecessary?
                 long taxid = Convert.ToInt64(invoice.shipment.TaxAndDutyShippingAccountId);
-                ShippingAccount Taxaccount = db.ShippingAccounts.SingleOrDefault(s => s.ShippingAccountId == taxid);
-                var taxCode = creditCard_request(Taxaccount.CreditCardNumber, Taxaccount.CreditCardSecurityNumber, invoice.shipment.Tax).Item2;
+                ShippingAccount tax_account = db.ShippingAccounts.SingleOrDefault(s => s.ShippingAccountId == taxid);
+                */
+
+                var taxCode = creditCard_request(shipment_fee_account.CreditCardNumber, shipment_fee_account.CreditCardSecurityNumber, invoice.shipment.Tax).Item2;
                 invoice.shipment.TaxAuthorizationCode = taxCode.ToString();
-                invoice.shipment.ShipmentAuthorizationCode = creditCard_request(shippingaccount.CreditCardNumber, shippingaccount.CreditCardSecurityNumber, invoice.TotalCost).Item2.ToString();
-                SendVoice("CombinedInvoice", invoice, shippingaccount, province, "lchenbk@connect.ust.hk");
+                invoice.shipment.ShipmentAuthorizationCode = creditCard_request(shipment_fee_account.CreditCardNumber, shippingaccount.CreditCardSecurityNumber, invoice.TotalCost).Item2.ToString();
+                SendVoice("CombinedInvoice", invoice, shippingaccount, province, );
             }
 
             invoice.shipment.invoice = invoice;
