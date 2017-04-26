@@ -226,8 +226,8 @@ namespace SinExWebApp20328381.Controllers
 
                 var taxCode = creditCard_request(shipment_fee_account.CreditCardNumber, shipment_fee_account.CreditCardSecurityNumber, invoice.shipment.Tax).Item2;
                 invoice.shipment.TaxAuthorizationCode = taxCode.ToString();
-                invoice.shipment.ShipmentAuthorizationCode = creditCard_request(shipment_fee_account.CreditCardNumber, shippingaccount.CreditCardSecurityNumber, invoice.TotalCost).Item2.ToString();
-                SendVoice("CombinedInvoice", invoice, shippingaccount, province, );
+                invoice.shipment.ShipmentAuthorizationCode = creditCard_request(shipment_fee_account.CreditCardNumber, shipment_fee_account.CreditCardSecurityNumber, invoice.TotalCost).Item2.ToString();
+                SendVoice("CombinedInvoice", invoice, shipment_fee_account, province, shipment_fee_account.EmailAddress);
             }
 
             invoice.shipment.invoice = invoice;
