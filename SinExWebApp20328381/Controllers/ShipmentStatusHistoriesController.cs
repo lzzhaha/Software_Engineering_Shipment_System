@@ -142,10 +142,20 @@ namespace SinExWebApp20328381.Controllers
                     DMail.From = new MailAddress("comp3111_team105@cse.ust.hk");
                     DMail.To.Add(shipment.RecipientEmailAddress);
                     DMail.Subject = "PickedUp Notification";
-                    DMail.Body = "A shipment (WaybillId:" + shipment.WaybillId+")" +" for you has been successfully picked up from the Sender: " + '\n' + SenderName + "\nAt: " +
 
-                        "City: "+shipment.ShippingAccount.MailingAddressCity + ", Street: " + shipment.ShippingAccount.MailingAddressStreet + ", Building: " + shipment.ShippingAccount.MailingAddressBuilding + "\nDelivery Date:"
-                        + shipment.ShippedDate.ToString("dd-mm-yyyy");
+
+
+
+                    DMail.Body = "<!doctype html><html><head><meta charset = 'UTF-8'></head>";
+                    DMail.Body += "<div>Your shipment has been successfully delivered to:&nbsp " + shipment.RecipientName + "</div> <br /> " +
+                        "<div>A shipment (WaybillId:&nbsp"+ shipment.WaybillId+ ") for you has been successfully picked up from: </div><br />" +
+                        "<div>Sender:&nbsp"+ SenderName+"</div><br />"+
+                       "<div>City:&nbsp" + shipment.ShippingAccount.MailingAddressCity + ",</div> <br />" +
+                       "<div>Street:&nbsp" + shipment.ShippingAccount.MailingAddressStreet + "</div><br />" +
+                       " <div>Building:&nbsp" + shipment.ShippingAccount.MailingAddressBuilding + "</div><br />" +
+                       "<div>Delivery Date:&nbsp" + shipment.ShippedDate.ToString("dd-mm-yyyy") + "</div>";
+                    DMail.Body += "< body ></ body ></ html >";
+
                     sendEmail(DMail);
 
                 }
