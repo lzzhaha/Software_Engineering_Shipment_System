@@ -109,6 +109,27 @@ namespace SinExWebApp20328381.Controllers
 
             }
         }
+        protected PackageInputViewModel PackageToPackageViewModel(Package input)
+        {
+            PackageInputViewModel PackageInputViewModel = new PackageInputViewModel();
+            PackageInputViewModel.Weight = decimal.Round(input.Weight, 1);
+            PackageInputViewModel.Value = decimal.Round(input.Value, 1);
+            PackageInputViewModel.ValueCurrency = input.ValueCurrency;
+            PackageInputViewModel.Description = input.Description;
+            PackageType PackageTypeRes = db.PackageTypes.SingleOrDefault(s => s.PackageTypeID == input.PackageTypeID);
+            PackageInputViewModel.PackageType = PackageTypeRes.Type;
+            if (PackageTypeRes.PackageTypeSizes.Count != 0)
+            {
+                PackageInputViewModel.Size = PackageTypeRes.PackageTypeSizes.SingleOrDefault(s => s.PackageTypeSizeID == input.PackageTypeSizeID).size;
+            }
+            else
+            {
+                PackageInputViewModel.Size = null;
+            }
+            PackageInputViewModel.PackageId = input.PackageId;
+            PackageInputViewModel.ActualWeight = input.ActualWeight;
+            return PackageInputViewModel;
+        }
 
         // Mimicing Credit card authorization system
         protected Tuple<bool,int> creditCard_request(string CardNum, string SecurityNum, decimal ChargeAmount) {

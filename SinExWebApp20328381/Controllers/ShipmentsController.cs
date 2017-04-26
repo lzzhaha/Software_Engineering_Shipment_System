@@ -481,27 +481,7 @@ namespace SinExWebApp20328381.Controllers
             return Package;
         }
 
-        private PackageInputViewModel PackageToPackageViewModel(Package input)
-        {
-            PackageInputViewModel PackageInputViewModel = new PackageInputViewModel();
-            PackageInputViewModel.Weight = decimal.Round(input.Weight, 1);
-            PackageInputViewModel.Value = decimal.Round(input.Value, 1);
-            PackageInputViewModel.ValueCurrency = input.ValueCurrency;
-            PackageInputViewModel.Description = input.Description;
-            PackageType PackageTypeRes = db.PackageTypes.SingleOrDefault(s => s.PackageTypeID == input.PackageTypeID);
-            PackageInputViewModel.PackageType = PackageTypeRes.Type;
-            if (PackageTypeRes.PackageTypeSizes.Count != 0)
-            {
-                PackageInputViewModel.Size = PackageTypeRes.PackageTypeSizes.SingleOrDefault(s => s.PackageTypeSizeID == input.PackageTypeSizeID).size;
-            }
-            else
-            {
-                PackageInputViewModel.Size = null;
-            }
-            PackageInputViewModel.PackageId = input.PackageId;
-            PackageInputViewModel.ActualWeight = input.ActualWeight;
-            return PackageInputViewModel;
-        }
+       
         // POST: Shipments/Create
         // 为了防止“过多发布”攻击，请启用要绑定到的特定属性，有关 
         // 详细信息，请参阅 http://go.microsoft.com/fwlink/?LinkId=317598。

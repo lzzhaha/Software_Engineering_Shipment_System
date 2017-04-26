@@ -9,6 +9,7 @@ using System.Web.Mvc;
 using SinExWebApp20328381.Models;
 using System.Text.RegularExpressions;
 using System.Net.Mail;
+using SinExWebApp20328381.ViewModels;
 
 namespace SinExWebApp20328381.Controllers
 {
@@ -160,70 +161,44 @@ namespace SinExWebApp20328381.Controllers
             ViewData["waybillID"] = WaybillId;
             return View(invoice);
         }
-    
+
         [HttpPost]
-         public ActionResult FillActualWeight(Invoice invoice)
+        public ActionResult FillActualWeight(Invoice invoice)
         {
             long waybillID = Convert.ToInt64(invoice.WaybillId);
             Shipment shipment = db.Shipments.Include("Packages").SingleOrDefault(s => s.WaybillId == waybillID);
-           
+
             invoice.ShippingAccountId = shipment.ShippingAccountId;
             int i = 0;
-            foreach(var package in shipment.Packages)
+            foreach (var package in shipment.Packages)
             {
                 package.ActualWeight = invoice.shipment.Packages.ToList()[i].ActualWeight;
                 i = i + 1;
             }
             shipment.Tax = invoice.shipment.Tax;
             shipment.Duty = invoice.shipment.Duty;
-            long shipmentShippingAccountId= Convert.ToInt64(shipment.ShipmentShippingAccountId);
+            long shipmentShippingAccountId = Convert.ToInt64(shipment.ShipmentShippingAccountId);
             var provinceCode = db.ShippingAccounts.SingleOrDefault(s => s.ShippingAccountId == shipmentShippingAccountId).MailingAddressProvinceCode;
             invoice.TotalCostCurrency = db.Destinations.SingleOrDefault(s => s.ProvinceCode == provinceCode).CurrencyCode;
-            long taxShippingAccountID = Convert.ToInt64(shipment.TaxAndDutyShippingAccountId );
+            long taxShippingAccountID = Convert.ToInt64(shipment.TaxAndDutyShippingAccountId);
             var provinceCode2 = db.ShippingAccounts.SingleOrDefault(s => s.ShippingAccountId == taxShippingAccountID).MailingAddressProvinceCode;
             shipment.TaxCurreny = db.Destinations.SingleOrDefault(s => s.ProvinceCode == provinceCode2).CurrencyCode;
             shipment.DutyCurrency = shipment.TaxCurreny;
-            //calculate the total fee
-            if (shipment.Packages.Count()!=0)
+            List<PackageInputViewModel> Packages = new List<PackageInputViewModel>();
+            foreach (var item in shipment.Packages)
             {
-                var ServiceTypeID = db.ServiceTypes.SingleOrDefault(s => s.Type == shipment.ServiceType).ServiceTypeID;
-                int PackageTypeID;
-                ServicePackageFee servicePackageFee;
-                string packageTypelimit;
-                Decimal fee, TotalFee, decimalweight;
-                TotalFee = 0;
-                foreach (var package in shipment.Packages)
-                {
-                    if (package.PackageTypeID !=0 && package.ActualWeight != null)
-                    {
-                        PackageTypeID = package.PackageTypeID;
-                        servicePackageFee = db.ServicePackageFees.SingleOrDefault(s => (s.PackageTypeID == PackageTypeID && s.ServiceTypeID == ServiceTypeID));
-                        decimalweight = decimal.Round((decimal)package.Weight, 1);
-                        fee = (decimalweight * servicePackageFee.Fee < servicePackageFee.MinimumFee ? servicePackageFee.MinimumFee : decimalweight * servicePackageFee.Fee);
-                        package.Cost = fee;
-                        Regex reg = new Regex(@"([0-9]*).*");
-
-                        if (package.PackageTypeSizeID != null)
-                        {
-                            packageTypelimit = db.PackageTypeSizes.SingleOrDefault(s => s.PackageTypeSizeID == package.PackageTypeSizeID).limit;
-                            var result = reg.Match(packageTypelimit).Groups;
-                            if (result[1].Value == "")
-                            {
-                                fee = servicePackageFee.Fee;
-                            }
-                            else if (package.Weight > decimal.Parse(result[1].Value))
-                            {
-                                fee += 500;
-                            }
-                        }
-                        TotalFee += fee;
-                        package.PackageType = db.PackageTypes.SingleOrDefault(s => s.PackageTypeID == package.PackageTypeID);
-                    }
-                    invoice.TotalCost = TotalFee;
-                }
-               
+                var temp = PackageToPackageViewModel(item);
+                Packages.Add(temp);
             }
-
+            var fees = new ServicePackageFeesController().ProcessFeeCheck(shipment.ServiceType, Packages);
+            int feeCount = 0;
+            foreach (var item in shipment.Packages)
+            {
+                item.Cost = fees[feeCount];
+                item.PackageType = db.PackageTypes.SingleOrDefault(s => s.PackageTypeID == item.PackageTypeID);
+                feeCount = feeCount + 1;
+            }
+            invoice.TotalCost = fees.Last();
             invoice.shipment = shipment;
             if (invoice.shipment.TaxAndDutyShippingAccountId != invoice.shipment.ShipmentShippingAccountId)
             {
@@ -233,7 +208,7 @@ namespace SinExWebApp20328381.Controllers
                 ShippingAccount Taxaccount = db.ShippingAccounts.SingleOrDefault(s => s.ShippingAccountId == taxid);
                 var taxCode = creditCard_request(Taxaccount.CreditCardNumber, Taxaccount.CreditCardSecurityNumber, invoice.shipment.Tax).Item2;
                 invoice.shipment.TaxAuthorizationCode = taxCode.ToString();
-                invoice.shipment.ShipmentAuthorizationCode= creditCard_request(shippingaccount.CreditCardNumber, shippingaccount.CreditCardSecurityNumber, invoice.TotalCost).Item2.ToString();
+                invoice.shipment.ShipmentAuthorizationCode = creditCard_request(shippingaccount.CreditCardNumber, shippingaccount.CreditCardSecurityNumber, invoice.TotalCost).Item2.ToString();
                 SendVoice("taxInvoice", invoice, shippingaccount, province, "lchenbk@connect.ust.hk");
                 SendVoice("shipmentInvoice", invoice, shippingaccount, province, "lchenbk@connect.ust.hk");
             }
@@ -242,15 +217,21 @@ namespace SinExWebApp20328381.Controllers
                 ShippingAccount shippingaccount = db.ShippingAccounts.SingleOrDefault(s => s.ShippingAccountId == invoice.shipment.ShippingAccountId);
                 string province = db.Destinations.FirstOrDefault(s => s.City == invoice.shipment.Destination).ProvinceCode;
                 long taxid = Convert.ToInt64(invoice.shipment.TaxAndDutyShippingAccountId);
-                ShippingAccount Taxaccount = db.ShippingAccounts.SingleOrDefault(s => s.ShippingAccountId ==taxid );
+                ShippingAccount Taxaccount = db.ShippingAccounts.SingleOrDefault(s => s.ShippingAccountId == taxid);
                 var taxCode = creditCard_request(Taxaccount.CreditCardNumber, Taxaccount.CreditCardSecurityNumber, invoice.shipment.Tax).Item2;
                 invoice.shipment.TaxAuthorizationCode = taxCode.ToString();
                 invoice.shipment.ShipmentAuthorizationCode = creditCard_request(shippingaccount.CreditCardNumber, shippingaccount.CreditCardSecurityNumber, invoice.TotalCost).Item2.ToString();
                 SendVoice("CombinedInvoice", invoice, shippingaccount, province, "lchenbk@connect.ust.hk");
             }
-           
+
             invoice.shipment.invoice = invoice;
+            if (invoice.InvoiceId == 0)
+            {
+                db.Invoices.Add(invoice);
+            }
+            else { 
             db.Entry(invoice).State = EntityState.Modified;
+            }
             db.SaveChanges();
             return View(invoice);
         }
