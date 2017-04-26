@@ -110,10 +110,14 @@ namespace SinExWebApp20328381.Controllers
                     DMail.From = new MailAddress("comp3111_team105@cse.ust.hk");
                     DMail.To.Add(shipment.ShippingAccount.EmailAddress);
                     DMail.Subject = "Delivered Notification";
-                    DMail.Body = "Your shipment has been successfully delivered to: " + '\n' + shipment.RecipientName + "\nAt: " +
-
-                       "City: "+ shipment.RecipientCityAddress + ", Street:" + shipment.RecipientStreetAddress + ", Building: " + shipment.RecipientBuildingAddress + "\nDelivery Date:"
-                        + shipment.DeliveredDate.ToString("dd-mm-yyyy");
+                    DMail.Body = "<!doctype html><html><head><meta charset = 'UTF-8'></head>";
+                    DMail.Body += "<div>Your shipment has been successfully delivered to:&nbsp " + shipment.RecipientName + "</div> <br /> " +
+                        "<div>Delivered Location:</div><br />"+
+                       "<div>City:&nbsp"+ shipment.RecipientCityAddress + ",</div> <br />" +
+                       "<div>Street:&nbsp" + shipment.RecipientStreetAddress + "</div><br />"+
+                       " <div>Building:&nbsp" + shipment.RecipientBuildingAddress + "</div><br />"+
+                       "<div>Delivery Date:&nbsp"+ shipment.DeliveredDate.ToString("dd-mm-yyyy")+"</div>";
+                    DMail.Body += "< body ></ body ></ html >";
                     sendEmail(DMail);
                   } else if (shipmentStatusHistory.Status=="PickedUp") {
 

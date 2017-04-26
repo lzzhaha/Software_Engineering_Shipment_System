@@ -13,6 +13,7 @@ namespace SinExWebApp20328381.Models
     public class Shipment
     {
         [Key]
+        [RegularExpression(@"^\d{16}$", ErrorMessage ="Please enter a 16-digit waybill number!")]
         public virtual long WaybillId { get; set; }
         public virtual string ReferenceNumber { get; set; }
         public virtual string ServiceType { get; set; }
