@@ -1,0 +1,35 @@
+﻿@model SinExWebApp20328381.ViewModels.InvoiceSearchViewModel
+    
+
+@if (ViewBag.ErrorMessage != null)
+{
+    <p style="color:red">@ViewBag.ErrorMessage</p>
+}
+@using (Html.BeginForm("GenerateInvoiceReport", "Invoices", FormMethod.Get))
+{
+    <div class="form-group">
+        @if (User.IsInRole("Employee"))
+        {
+            @Html.LabelFor(a => a.ShippingAccountId, "Shipment Account: ", htmlAttributes: new { @Class = "" })
+            @Html.DropDownListFor(a => a.ShippingAccountId, Model.ShippingAccounts, "Please Select", htmlAttributes: new { @Value = ViewBag.CurrentShippingAccountId as string, @Class = "dropdown", @Required = "required" })
+            <br />
+        }
+        @Html.LabelFor(a => a.ShippedStartDate, "Start of Shipped Time:")
+        @if (ViewBag.CurrentShippedStartDate == Convert.ToDateTime(null) || ViewBag.CurrentShippedStartDate == null)
+        {
+            ViewBag.CurrentShippedStartDate = DateTime.Now;
+        }
+        @Html.TextBoxFor(a => a.ShippedStartDate, htmlAttributes: new { @Value = ViewBag.CurrentShippedStartDate.ToString("yyyy-MM-dd"), Type = "date" })
+        <br />
+        @Html.LabelFor(a => a.ShippedEndDate, "End of Shipped Time:")
+        @if (ViewBag.CurrentShippedEndDate == Convert.ToDateTime(null) || ViewBag.CurrentShippedEndDate == null)
+        {
+            ViewBag.CurrentShippedEndDate = DateTime.Now;
+        }
+        @Html.TextBoxFor(a => a.ShippedEndDate, htmlAttributes: new { @Value = ViewBag.CurrentShippedEndDate.ToString("yyyy-MM-dd"), Type = "date" })
+        <br />
+
+        <br />
+        <input class="btn btn-default" type="submit" value="Search" />
+    </div>
+}

@@ -246,6 +246,7 @@
     <Compile Include="Startup.cs" />
     <Compile Include="ViewModels\AddressJson.cs" />
     <Compile Include="ViewModels\DropdownListsViewModel.cs" />
+    <Compile Include="ViewModels\InvoiceReportViewModel.cs" />
     <Compile Include="ViewModels\PickupInformationInputViewModel.cs" />
     <Compile Include="ViewModels\ShipmentInputViewModel.cs" />
     <Compile Include="ViewModels\PackageInputViewModel.cs" />
@@ -408,6 +409,10 @@
     <Content Include="Views\Invoices\Index.cshtml" />
     <Content Include="Views\Invoices\SearchWayBill.cshtml" />
     <Content Include="Views\Invoices\FillActualWeight.cshtml" />
+    <Content Include="Views\Invoices\GenerateInvoiceReport.cshtml" />
+    <Content Include="Views\Invoices\_InvoiceSearchPartial.cshtml" />
+    <Content Include="Views\Invoices\_InvoiceListPartial.cshtml" />
+    <Content Include="Views\Invoices\_InvoicePagingPartial.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

@@ -10,6 +10,7 @@ using SinExWebApp20328381.Models;
 using System.Text.RegularExpressions;
 using System.Net.Mail;
 using SinExWebApp20328381.ViewModels;
+using X.PagedList;
 
 namespace SinExWebApp20328381.Controllers
 {
@@ -24,6 +25,183 @@ namespace SinExWebApp20328381.Controllers
             return View(invoices.ToList());
         }
 
+        public ActionResult GenerateInvoiceReport(long? ShippingAccountId, string sortOrder, int? CurrentShippingAccountId, int? page, DateTime? ShippedStartDate, DateTime? ShippedEndDate, DateTime? CurrentShippedStartDate, DateTime? CurrentShippedEndDate,decimal? CurrentTotalInvoiceAmount)
+        {
+            // Instantiate an instance of the ShipmentsReportViewModel and the ShipmentsSearchViewModel.
+            var invoiceSearch = new InvoiceReportViewModel();
+            invoiceSearch.Invoice = new InvoiceSearchViewModel();
+
+            //Check the role
+            if (System.Web.HttpContext.Current.User.IsInRole("Customer"))
+            {
+                string userName = System.Web.HttpContext.Current.User.Identity.Name;
+                if (userName == null)
+                {
+                    return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+                }
+                ShippingAccount shippingAccount = db.ShippingAccounts.SingleOrDefault(s => s.UserName == userName);
+                if (shippingAccount == null)
+                {
+                    return HttpNotFound("There is no shipment with user name " + userName + ".");
+                }
+                ShippingAccountId = shippingAccount.ShippingAccountId;
+            }
+
+            // Populate the ShippingAccountId dropdown list.
+            invoiceSearch.Invoice.ShippingAccounts = PopulateShippingAccountsDropdownList().ToList();
+
+            ViewBag.CurrentSort = sortOrder;
+            int pageSize = 5;
+            int pageNumber = (page ?? 1);
+
+            if (ShippingAccountId == null)
+            {
+                ShippingAccountId = CurrentShippingAccountId;
+            }
+            else
+            {
+                page = 1;
+            }
+            ViewBag.CurrentShippingAccountId = ShippingAccountId;
+            ShippedStartDate = ShippedStartDate == null ? CurrentShippedStartDate : ShippedStartDate;
+            ShippedEndDate = ShippedEndDate == null ? CurrentShippedEndDate : ShippedEndDate;
+            if (ShippedStartDate == null)
+            {
+                ViewBag.CurrentShippedStartDate = null;
+            }
+            else
+            {
+                ViewBag.CurrentShippedStartDate = Convert.ToDateTime(ShippedStartDate);
+            }
+            if (ShippedEndDate == null)
+            {
+                ViewBag.CurrentShippedEndDate = null;
+            }
+            else
+            {
+                ViewBag.CurrentShippedEndDate = Convert.ToDateTime(ShippedEndDate);
+            }
+            if ((Convert.ToDateTime(ShippedStartDate) > Convert.ToDateTime(ShippedEndDate)) || (ShippedStartDate == null && ShippedEndDate != null) || (ShippedStartDate != null && ShippedEndDate == null))
+            {
+                ViewBag.ErrorMessage = "Date range is invalid.";
+                invoiceSearch.Invoices = (new InvoiceListViewModel[0]).ToPagedList(pageNumber, pageSize);
+                return View(invoiceSearch);
+            }
+            // Initialize the query to retrieve shipments using the ShipmentsListViewModel.
+            var invoiceQuery = from s in db.Invoices
+                                select new InvoiceListViewModel()
+                                {
+                                    WaybillId = s.WaybillId,
+                                    ServiceType = s.shipment.ServiceType,
+                                    ShippedDate = s.shipment.ShippedDate,
+                                    DeliveredDate = s.shipment.DeliveredDate,
+                                    RecipientName = s.shipment.RecipientName,
+                                    TotalInvoiceAmount = s.TotalCost,
+                                    Origin = s.shipment.Origin,
+                                    Destination = s.shipment.Destination,
+                                    ShippingAccountId = (long)s.ShippingAccountId
+                                };
+            //shipmentQuery.Where()
+            // Add the condition to select a spefic shipping account if shipping account id is not null.
+            if (ShippingAccountId != null || ShippedStartDate != null || ShippedEndDate != null)
+            {
+
+                // TODO: Construct the LINQ query to retrive only the shipments for the specified shipping account id.
+                if (ShippingAccountId != null)
+                    invoiceQuery = invoiceQuery.Where(c => c.ShippingAccountId == ShippingAccountId);
+                if (ShippedStartDate != null)
+                    invoiceQuery = invoiceQuery.Where(c => c.ShippedDate >= ShippedStartDate);
+                if (ShippedEndDate != null)
+                    invoiceQuery = invoiceQuery.Where(c => c.ShippedDate <= ShippedEndDate);
+                //only picked up shipment will be displayed
+                DateTime dt = new DateTime(1900, 1, 1, 0, 0, 0);
+                invoiceQuery = invoiceQuery.Where(c => c.ShippedDate != dt);
+
+                ViewBag.ServiceTypeParm = sortOrder == "ServiceType" ? "ServiceType_dest" : "ServiceType";
+                ViewBag.ShippedDateParm = sortOrder == "ShippedDate" ? "ShippedDate_dest" : "ShippedDate";
+                ViewBag.DeliveredDateParm = sortOrder == "DeliveredDate" ? "DeliveredDate_dest" : "DeliveredDate";
+                ViewBag.RecipentNameParm = sortOrder == "RecipentName" ? "RecipentName_dest" : "RecipentName";
+                ViewBag.OriginParm = sortOrder == "Origin" ? "Origin_dest" : "Origin";
+                ViewBag.DestinationParm = sortOrder == "Destination" ? "Destination_dest" : "Destination";
+                ViewBag.CostParm = sortOrder == "Cost" ? "Cost_dest" : "Cost";
+                switch (sortOrder)
+                {
+                    case "Cost":
+                        invoiceQuery = invoiceQuery.OrderBy(s => s.TotalInvoiceAmount);
+                        break;
+                    case "ServiceType":
+                        invoiceQuery = invoiceQuery.OrderBy(s => s.ServiceType);
+                        break;
+
+                    case "ShippedDate":
+                        invoiceQuery = invoiceQuery.OrderBy(s => s.ShippedDate);
+                        break;
+
+                    case "DeliveredDate":
+                        invoiceQuery = invoiceQuery.OrderBy(s => s.DeliveredDate);
+                        break;
+
+                    case "RecipentName":
+                        invoiceQuery = invoiceQuery.OrderBy(s => s.RecipientName);
+                        break;
+
+                    case "Origin":
+                        invoiceQuery = invoiceQuery.OrderBy(s => s.Origin);
+                        break;
+
+                    case "Destination":
+                        invoiceQuery = invoiceQuery.OrderBy(s => s.Destination);
+                        break;
+                    case "Cost_dest":
+                        invoiceQuery = invoiceQuery.OrderByDescending(s => s.TotalInvoiceAmount);
+                        break;
+                    case "ServiceType_dest":
+                        invoiceQuery = invoiceQuery.OrderByDescending(s => s.ServiceType);
+                        break;
+
+                    case "ShippedDate_dest":
+                        invoiceQuery = invoiceQuery.OrderByDescending(s => s.ShippedDate);
+                        break;
+
+                    case "DeliveredDate_dest":
+                        invoiceQuery = invoiceQuery.OrderByDescending(s => s.DeliveredDate);
+                        break;
+
+                    case "RecipentName_dest":
+                        invoiceQuery = invoiceQuery.OrderByDescending(s => s.RecipientName);
+                        break;
+
+                    case "Origin_dest":
+                        invoiceQuery = invoiceQuery.OrderByDescending(s => s.Origin);
+                        break;
+
+                    case "Destination_dest":
+                        invoiceQuery = invoiceQuery.OrderByDescending(s => s.Destination);
+                        break;
+
+                    default:
+                        invoiceQuery = invoiceQuery.OrderBy(s => s.WaybillId);
+                        break;
+
+
+                }
+                invoiceSearch.Invoices = invoiceQuery.ToPagedList(pageNumber, pageSize);
+            }
+            else
+            {
+                // Return an empty result if no shipping account id has been selected.
+                invoiceSearch.Invoices = (new InvoiceListViewModel[0]).ToPagedList(pageNumber, pageSize);
+            }
+
+            return View(invoiceSearch);
+        }
+
+        private SelectList PopulateShippingAccountsDropdownList()
+        {
+            // TODO: Construct the LINQ query to retrieve the unique list of shipping account ids.
+            var shippingAccountQuery = db.Shipments.Select(s => s.ShippingAccountId).Distinct().OrderBy(c => c);
+            return new SelectList(shippingAccountQuery);
+        }
         // GET: Invoices/Details/5
         public ActionResult Details(long? id)
         {
@@ -144,14 +322,30 @@ namespace SinExWebApp20328381.Controllers
         {
             long waybillID = Convert.ToInt64(WaybillId);
             Shipment shipment=db.Shipments.Include("Packages").SingleOrDefault(s => s.WaybillId == waybillID);
-
+            
             Invoice invoice = new Invoice();
             if (shipment.Status == "Saved" || shipment.Status == " Confirmed")
             {
-                ViewBag.NoPickup = "yes";
+                ViewBag.NoPickup = "Yes";
                 return View(invoice);
             }
-            ViewBag.NoPickup = "No";
+            else
+            {
+                ViewBag.NoPickup = "No";
+            }
+            //check if the waybillId already invoiced
+            Invoice invoicecheck = db.Invoices.SingleOrDefault(s => s.WaybillId == waybillID);
+            if (invoicecheck != null)
+            {
+                ViewBag.IsInvoiced = "Yes";
+                return View(invoice);
+            }
+            else
+            {
+                ViewBag.IsInvoiced = "No";
+            }
+           
+            
             foreach (var package in shipment.Packages)
             {
                 package.PackageType = db.PackageTypes.SingleOrDefault(s => s.PackageTypeID == package.PackageTypeID);
@@ -231,15 +425,10 @@ namespace SinExWebApp20328381.Controllers
             }
 
             invoice.shipment.invoice = invoice;
-            if (invoice.InvoiceId == 0)
-            {
-                db.Invoices.Add(invoice);
-            }
-            else { 
-            db.Entry(invoice).State = EntityState.Modified;
-            }
+            invoice.InvoiceId = invoice.shipment.WaybillId;
+            db.Invoices.Add(invoice);
             db.SaveChanges();
-            return View(invoice);
+             return RedirectToAction("SearchWayBill");
         }
         public bool SendVoice(string invoiceType,Invoice invoice,ShippingAccount shippingaccount,string province,string emailAddress)
         {

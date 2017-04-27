@@ -40,7 +40,10 @@
                             {
                             <li>@Html.ActionLink("Create Shipment", "Create", "Shipments")</li>
                             }
-                            
+                            @if (User.IsInRole("Employee"))
+                            {
+                                <li>@Html.ActionLink("Create Invoice", "SearchWayBill", "Invoices")</li>
+                            }
                         </ul>
                     </li>
                     @if (User.IsInRole("Employee") || User.IsInRole("Customer")) { 
@@ -48,6 +51,7 @@
                             <a href="#" class="dropdown-toggle" data-toggle="dropdown">Reports<b class="caret"></b></a>
                             <ul class="dropdown-menu">
                                 <li>@Html.ActionLink("Shipping Histroy", "GenerateHistoryReport", "Shipments")</li>
+                                <li>@Html.ActionLink("Invoice Histroy", "GenerateInvoiceReport", "Invoices")</li>
                             </ul>
                         </li>
                     }
