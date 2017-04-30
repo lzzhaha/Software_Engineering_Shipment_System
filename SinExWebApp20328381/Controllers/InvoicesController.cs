@@ -404,8 +404,8 @@ namespace SinExWebApp20328381.Controllers
                 var taxCode = creditCard_request(tax_account.CreditCardNumber, tax_account.CreditCardSecurityNumber, invoice.shipment.Tax).Item2;
                 invoice.shipment.TaxAuthorizationCode = taxCode.ToString();
                 invoice.shipment.ShipmentAuthorizationCode = creditCard_request(shipment_fee_account.CreditCardNumber, shipment_fee_account.CreditCardSecurityNumber, invoice.TotalCost).Item2.ToString();
-                SendVoice("taxInvoice", invoice, shipment_fee_account, province, tax_account.EmailAddress);
-                SendVoice("shipmentInvoice", invoice, shipment_fee_account, province, shipment_fee_account.EmailAddress);
+                SendInvoice(SetEmail("taxInvoice", invoice, shipment_fee_account, province, tax_account.EmailAddress));
+                SendInvoice(SetEmail("shipmentInvoice", invoice, shipment_fee_account, province, shipment_fee_account.EmailAddress));
             }
             else
             {
@@ -421,7 +421,7 @@ namespace SinExWebApp20328381.Controllers
                 var taxCode = creditCard_request(shipment_fee_account.CreditCardNumber, shipment_fee_account.CreditCardSecurityNumber, invoice.shipment.Tax).Item2;
                 invoice.shipment.TaxAuthorizationCode = taxCode.ToString();
                 invoice.shipment.ShipmentAuthorizationCode = creditCard_request(shipment_fee_account.CreditCardNumber, shipment_fee_account.CreditCardSecurityNumber, invoice.TotalCost).Item2.ToString();
-                SendVoice("CombinedInvoice", invoice, shipment_fee_account, province, shipment_fee_account.EmailAddress);
+                SendInvoice(SetEmail("CombinedInvoice", invoice, shipment_fee_account, province, shipment_fee_account.EmailAddress));
             }
 
             invoice.shipment.invoice = invoice;
@@ -430,7 +430,7 @@ namespace SinExWebApp20328381.Controllers
             db.SaveChanges();
              return RedirectToAction("SearchWayBill");
         }
-        public bool SendVoice(string invoiceType,Invoice invoice,ShippingAccount shippingaccount,string province,string emailAddress)
+        public MailMessage SetEmail(string invoiceType,Invoice invoice,ShippingAccount shippingaccount,string province,string emailAddress)
         {
             var shipmentShippingAccountId = shippingaccount.ShippingAccountId;
             var shippedDate = invoice.shipment.ShippedDate;
@@ -462,7 +462,7 @@ namespace SinExWebApp20328381.Controllers
 
                 packagesContent = packagesContent + package.ActualWeight;
                 var cost = ConvertCurrency(invoice.TotalCostCurrency, package.Cost);
-                packagesContent = packagesContent + "</td><td>" + cost + "</td></tr>";
+                packagesContent = packagesContent + "</td><td>" + cost + invoice.TotalCostCurrency+"</td></tr>";
                       
              }
             packagesContent = packagesContent + " </table>";
@@ -482,22 +482,27 @@ namespace SinExWebApp20328381.Controllers
             {
                 case "taxInvoice": {
                         message.Subject = "Tax and Duty Invoice";
-                        message.Body = message.Body + "<div>Duties Amounts: " + Math.Round(ConvertCurrency(invoice.shipment.DutyCurrency, invoice.shipment.Duty),2).ToString() + "</div> &nbsp;<div>Tax Amounts" + Math.Round(ConvertCurrency(invoice.shipment.TaxCurreny, invoice.shipment.Tax),2).ToString() + "</div> &nbsp;<div> Authorization Code: " + invoice.shipment.TaxAuthorizationCode + "</div><br/>";
+                        message.Body = message.Body + "<div>Duties Amounts: " + Math.Round(ConvertCurrency(invoice.shipment.DutyCurrency, invoice.shipment.Duty),2).ToString() + invoice.shipment.DutyCurrency+"</div> &nbsp;<div>Tax Amounts" + Math.Round(ConvertCurrency(invoice.shipment.TaxCurreny, invoice.shipment.Tax),2).ToString() + invoice.shipment.TaxCurreny + "</div> &nbsp;<div> Authorization Code: " + invoice.shipment.TaxAuthorizationCode + "</div><br/>";
 
 
                         break; }
                 case "shipmentInvoice": {
                         message.Subject = "Shipment Invoice";
-                        message.Body = message.Body + "<div>Total Cost: " + Math.Round(ConvertCurrency(invoice.TotalCostCurrency, invoice.TotalCost),2).ToString() + "</div> &nbsp; <div> Authorization Code: " + invoice.shipment.ShipmentAuthorizationCode + "</div><br/>";
+                        message.Body = message.Body + "<div>Total Cost: " + Math.Round(ConvertCurrency(invoice.TotalCostCurrency, invoice.TotalCost),2).ToString() + invoice.TotalCostCurrency+"</div> &nbsp; <div> Authorization Code: " + invoice.shipment.ShipmentAuthorizationCode + "</div><br/>";
                         break;
                     }
                 case "CombinedInvoice": {
                         message.Subject = "Tax, Duty and Shipment  Invoice";
-                        message.Body = message.Body + "<div>Duties Amounts: " + Math.Round(ConvertCurrency(invoice.shipment.DutyCurrency, invoice.shipment.Duty),2).ToString() + "</div>&nbsp;<div> Tax Amount: " + Math.Round(ConvertCurrency(invoice.shipment.TaxCurreny, invoice.shipment.Tax), 2).ToString() + "</div> &nbsp; <div> Authorization Code: " + invoice.shipment.ShipmentAuthorizationCode + "</div><br/>";
+                        message.Body = message.Body + "<div>Duties Amounts: " + Math.Round(ConvertCurrency(invoice.shipment.DutyCurrency, invoice.shipment.Duty), 2).ToString() + invoice.shipment.DutyCurrency + "</div> &nbsp;<div>Tax Amounts" + Math.Round(ConvertCurrency(invoice.shipment.TaxCurreny, invoice.shipment.Tax), 2).ToString() + invoice.shipment.TaxCurreny + "</div> &nbsp;<div> Authorization Code: " + invoice.shipment.TaxAuthorizationCode + "</div><br/>";
                         message.Body = message.Body + "<div>Total Cost: " + Math.Round(ConvertCurrency(invoice.TotalCostCurrency, invoice.TotalCost),2).ToString() + "</div><br/>";
                         break; }
             }
             message.Body = message.Body + "<body></body></html>";
+            return message;
+            
+        }
+        public bool SendInvoice(MailMessage message)
+        {
             if (sendEmail(message))
             {
                 return true;

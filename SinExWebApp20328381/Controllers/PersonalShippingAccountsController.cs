@@ -10,7 +10,7 @@ using SinExWebApp20328381.Models;
 
 namespace SinExWebApp20328381.Controllers
 {
-    public class PersonalShippingAccountsController : Controller
+    public class PersonalShippingAccountsController : BaseController
     {
         private SinExDatabaseContext db = new SinExDatabaseContext();
 
@@ -203,14 +203,15 @@ namespace SinExWebApp20328381.Controllers
                 {
 
                     address.AddressId = temp.AddressId;
-                    temp.NickName = address.NickName;
+                    temp.ShippingAccountId = shippingAccount.ShippingAccountId;
+                    /*temp.NickName = address.NickName;
                     temp.PostalCode = address.PostalCode;
                     temp.ServiceCity = address.ServiceCity;
-                    temp.ShippingAccountId = shippingAccount.ShippingAccountId;
                     temp.Street = address.Street;
                     temp.City = address.City;
                     temp.Building = address.Building;
-                    temp.AddressType = address.AddressType;
+                    temp.AddressType = address.AddressType;*/
+                    AddressObjectMap(ref temp, address);
                     db.Entry(temp).State = EntityState.Modified;
                     db.SaveChanges();
                     return RedirectToAction("ManageRecipientAddress", "PersonalShippingAccounts");
@@ -354,14 +355,15 @@ namespace SinExWebApp20328381.Controllers
                 {
 
                     address.AddressId = temp.AddressId;
-                    temp.NickName = address.NickName;
+                    temp.ShippingAccountId = shippingAccount.ShippingAccountId;
+                    /*temp.NickName = address.NickName;
                     temp.PostalCode = address.PostalCode;
                     temp.ServiceCity = address.ServiceCity;
-                    temp.ShippingAccountId = shippingAccount.ShippingAccountId;
                     temp.Street = address.Street;
                     temp.City = address.City;
                     temp.Building = address.Building;
-                    temp.AddressType = address.AddressType;
+                    temp.AddressType = address.AddressType;*/
+                    AddressObjectMap(ref temp, address);
                     db.Entry(temp).State = EntityState.Modified;
                     db.SaveChanges();
                     return RedirectToAction("ManagePickupLocation", "PersonalShippingAccounts");

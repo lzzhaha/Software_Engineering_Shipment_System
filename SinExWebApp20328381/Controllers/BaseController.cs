@@ -38,7 +38,7 @@ namespace SinExWebApp20328381.Controllers
             return db.ShippingAccounts.AsNoTracking().SingleOrDefault(s => s.UserName == UserName);
 		}
 		
-        protected string joinAddress(Address address)
+        public string joinAddress(Address address)
         {
 
             return address.Building + "," + address.City + "," + address.ServiceCity;
@@ -138,6 +138,16 @@ namespace SinExWebApp20328381.Controllers
             Random rdm = new Random();
             int authCode = rdm.Next(min,max);
             return Tuple.Create(true,authCode);
+        }
+        public void AddressObjectMap(ref Address output, Address input)
+        {
+            output.NickName = input.NickName;
+            output.PostalCode = input.PostalCode;
+            output.ServiceCity = input.ServiceCity;
+            output.Street = input.Street;
+            output.City = input.City;
+            output.Building = input.Building;
+            output.AddressType = input.AddressType;
         }
     }
 
