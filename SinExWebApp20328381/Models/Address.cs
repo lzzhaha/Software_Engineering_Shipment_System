@@ -26,7 +26,7 @@ namespace SinExWebApp20328381.Models
         [Display(Name = "City", Order = 7)]
         public virtual string City { get; set; }
 
-        [RegularExpression(@"^[a-zA-Z]*$", ErrorMessage = "Please select valid cities")]
+        [RegularExpression(@"^[a-zA-Z\s]*$", ErrorMessage = "Please select valid cities")]
         [Display(Name = "ServiceCity", Order = 8)]
         public virtual string ServiceCity { get; set; }
         [StringLength(6, MinimumLength = 5)]
