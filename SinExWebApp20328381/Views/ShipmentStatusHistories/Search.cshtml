@@ -1,4 +1,4 @@
-﻿@model SinExWebApp20328381.Models.ShipmentStatusHistory
+﻿@model SinExWebApp20328381.ViewModels.SearchViewModel
 
 @{
     ViewBag.Title = "Search";
@@ -7,12 +7,14 @@
 <h2>Shipment Tracking</h2>
 
 <p>Enter the 16-digit shipment waybill number to track the shipment</p>
-@ViewBag.Error
-@using (Html.BeginForm("Index", "ShipmentStatusHistories", FormMethod.Get))
+<text class="text-danger">@ViewData["Error"]</text>
+@using (Html.BeginForm("Search", "ShipmentStatusHistories", FormMethod.Post))
 {
+    @Html.ValidationSummary(true, "", new { @class = "text-danger" })
     <div class="form-group">
         @Html.LabelFor(a => a.WaybillId, "Waybill number")
-        @Html.TextBoxFor(a => a.WaybillId, "Enter Waybill number")
+        @Html.TextBoxFor(a => a.WaybillId, new { htmlAttributes = new { @class = "form-control" } })
+        @Html.ValidationMessageFor(a => a.WaybillId, "", new { @class = "text-danger" })
         <br />
         <input class="btn-primary" , type="submit" value="Search" />
     </div>
