@@ -14,11 +14,23 @@ namespace SinExWebApp20328381.Models
         [DisplayFormat(DataFormatString ="{0:dd/mm/yy}",ApplyFormatInEditMode =true)]
         public virtual DateTime Date { get; set; }
 
-        [Required]
+
         [DataType(DataType.Time)]
-        [DisplayFormat(DataFormatString ="{0:HH:mm}", ApplyFormatInEditMode = true)]
-        [RegularExpression(@"^(?:[01]\d|2[0-3]):[0-5]\d$", ErrorMessage ="Enter the time in HH:mm 24-hour format! ")]
-        public virtual DateTime Time { get; set; }
+        [DisplayFormat(DataFormatString ="{0:hh:mm}", ApplyFormatInEditMode = true)]
+        public virtual DateTime? Time { get ; set; }
+
+        [Required]
+        [RegularExpression(@"^(?:[01]\d|2[0-3]):[0-5]\d$", ErrorMessage = "Enter the time in HH:mm 24-hour format! ")]
+        public virtual string TimeValue {
+            get {
+                 return Time.HasValue ? Time.Value.ToString("HH:mm") : string.Empty;
+            }
+
+            set
+            {
+                Time = DateTime.Parse(value);
+            }
+        }
 
         [Required]
         public virtual string Description { get; set; }

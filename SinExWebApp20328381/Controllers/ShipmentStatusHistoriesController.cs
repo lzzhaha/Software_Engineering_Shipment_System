@@ -107,7 +107,7 @@ namespace SinExWebApp20328381.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create([Bind(Include = "WaybillId,ShipmentStatusHistoryId,Status,Date,Time,Description,Location,Remarks,DeliveredPerson,DeliveredPlace")] ShipmentStatusHistory shipmentStatusHistory)
+        public ActionResult Create([Bind(Include = "WaybillId,ShipmentStatusHistoryId,Status,Date,TimeValue,Description,Location,Remarks,DeliveredPerson,DeliveredPlace")] ShipmentStatusHistory shipmentStatusHistory)
         {
 
            

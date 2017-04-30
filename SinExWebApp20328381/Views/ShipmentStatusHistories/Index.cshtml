@@ -56,7 +56,7 @@
                 {
                     <td colspan="1">&nbsp;</td>
                 }
-                <td colspan="1">@status.Time.ToString("HH:mm")</td>
+                <td colspan="1">@(status.Time == null ? string.Empty : status.Time.Value.ToString("HH:mm"))</td>
                 <td colspan="3">@status.Description</td>
                 <td colspan="2">@status.Location</td>
                 <td colspan="3">@status.Remarks</td>
