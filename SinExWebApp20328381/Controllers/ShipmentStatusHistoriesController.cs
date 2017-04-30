@@ -71,7 +71,7 @@ namespace SinExWebApp20328381.Controllers
                 //Retrieve shipmentStatusHistory
                 var statusQuery = from status in db.ShipmentStatusHistories
                                   where status.WaybillId == WaybillId
-                                  orderby status.DateAndTime descending
+                                  orderby status.Date descending, status.Time descending
                                   select status;
 
 
@@ -107,8 +107,9 @@ namespace SinExWebApp20328381.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create([Bind(Include = "WaybillId,ShipmentStatusHistoryId,Status,DateAndTime,Description,Location,Remark,DeliveredPerson,DeliveredPlace")] ShipmentStatusHistory shipmentStatusHistory)
+        public ActionResult Create([Bind(Include = "WaybillId,ShipmentStatusHistoryId,Status,Date,Time,Description,Location,Remarks,DeliveredPerson,DeliveredPlace")] ShipmentStatusHistory shipmentStatusHistory)
         {
+
            
             if (ModelState.IsValid)
             {
@@ -116,7 +117,7 @@ namespace SinExWebApp20328381.Controllers
                 shipment.Status = shipmentStatusHistory.Status;
                 if (shipmentStatusHistory.Status == "Delivered")
                 {
-                    shipment.DeliveredDate = shipmentStatusHistory.DateAndTime;
+                    shipment.DeliveredDate = shipmentStatusHistory.Date;
                     shipment.DeliveredPlace = shipmentStatusHistory.DeliveredPlace;
                     shipment.DeliveredPerson = shipmentStatusHistory.DeliveredPerson;
 
