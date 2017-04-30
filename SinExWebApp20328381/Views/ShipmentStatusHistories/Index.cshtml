@@ -47,16 +47,16 @@
         {
             //Display the date if it is dinstinct
                <tr>
-                @if (status.DateAndTime.Date != date)
+                @if (status.Date != date)
                 {
-                    date = status.DateAndTime.Date;
-                    <td colspan="1">@status.DateAndTime.ToString("dd/mm/yy")</td>
+                    date = status.Date.Date;
+                    <td colspan="1">@status.Date.ToString("dd/MM/yy")</td>
                 }
                 else
                 {
                     <td colspan="1">&nbsp;</td>
                 }
-                <td colspan="1">@status.DateAndTime.ToString("HH:mm")</td>
+                <td colspan="1">@(status.Time == null ? string.Empty : status.Time.Value.ToString("HH:mm"))</td>
                 <td colspan="3">@status.Description</td>
                 <td colspan="2">@status.Location</td>
                 <td colspan="3">@status.Remarks</td>

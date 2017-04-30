@@ -9,7 +9,29 @@ namespace SinExWebApp20328381.Models
         [Key]
         public virtual int ShipmentStatusHistoryId { get; set; }
         public virtual long WaybillId { get; set; }
-        public virtual DateTime DateAndTime { get; set; }
+        [Required]
+        [DataType(DataType.Date)]
+        [DisplayFormat(DataFormatString ="{0:dd/mm/yy}",ApplyFormatInEditMode =true)]
+        public virtual DateTime Date { get; set; }
+
+
+        [DataType(DataType.Time)]
+        [DisplayFormat(DataFormatString ="{0:hh:mm}", ApplyFormatInEditMode = true)]
+        public virtual DateTime? Time { get ; set; }
+
+        [Required]
+        [RegularExpression(@"^(?:[01]\d|2[0-3]):[0-5]\d$", ErrorMessage = "Enter the time in HH:mm 24-hour format! ")]
+        public virtual string TimeValue {
+            get {
+                 return Time.HasValue ? Time.Value.ToString("HH:mm") : string.Empty;
+            }
+
+            set
+            {
+                Time = DateTime.Parse(value);
+            }
+        }
+
         [Required]
         public virtual string Description { get; set; }
         [Required]

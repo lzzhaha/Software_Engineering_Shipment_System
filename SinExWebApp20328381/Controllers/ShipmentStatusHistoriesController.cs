@@ -7,6 +7,7 @@ using System.Net;
 using System.Web;
 using System.Web.Mvc;
 using SinExWebApp20328381.Models;
+using SinExWebApp20328381.ViewModels;
 using System.Net.Mail;
 namespace SinExWebApp20328381.Controllers
 {
@@ -14,53 +15,68 @@ namespace SinExWebApp20328381.Controllers
     {
         private SinExDatabaseContext db = new SinExDatabaseContext();
 
-
-        public ActionResult Search(string errorMessage) {
-            ViewBag.Error = errorMessage;
-            return View();
-        }
         // GET: ShipmentStatusHistories
+        public ActionResult Search(string errorMessage) {
+            SearchViewModel search_View = new SearchViewModel();
+            ViewData["Error"] = errorMessage;
+            return View(search_View);
+        }
+
+        
+        [HttpPost]
+        public ActionResult Search(SearchViewModel search_view) {
+            if (ModelState.IsValid)
+            {
+                long? _WaybillId = Int64.Parse(search_view.WaybillId);
+                return RedirectToAction("Index", new { WaybillId = _WaybillId });
+            }
+            else {
+                return View(search_view);
+            }
+        }
         /*
          Shipment Tracking Functionality
          Corresponding Shipment status will be displayed when customer enters the shipment waybill number
          */
+ 
         public ActionResult Index(long? WaybillId)
         {
-            if (WaybillId ==null ) {
-                return RedirectToAction("Search",new { errorMessage = "You should enter a waybill number"});
-            }
-            //Retrieve Shipment 
-            var shipment = db.Shipments.Include("Packages").Include("Packages.PackageType").Where(s => s.WaybillId == WaybillId).FirstOrDefault();
-            //Pass the property of the shipment to ViewData
-
-            if (shipment==null) {
-                return RedirectToAction("Search", new { errorMessage = "No such a waybill" });
-            }
             
-            ViewData["WaybillNumber"] = shipment.WaybillId.ToString().PadLeft(12, '0'); ;
-
-            ViewData["DeliveredPerson"] = shipment.DeliveredPerson==null? "Not Delivered": shipment.DeliveredPerson;
-
-            ViewData["Company"] = shipment.RecipientCompanyName;
-
-            ViewData["DeliveredPlace"] = shipment.DeliveredPlace==null? "Not Delivered": shipment.DeliveredPlace;
-
-            ViewData["Status"] = shipment.Status;
-
-            ViewData["ServiceType"] = shipment.ServiceType;
-
-            List<Package> Packages = shipment.Packages.ToList();
-            ViewData["Packages"] = Packages;
-
+                //Retrieve Shipment 
             
-            //Retrieve shipmentStatusHistory
-            var statusQuery = from status in db.ShipmentStatusHistories
-                              where status.WaybillId == WaybillId
-                              orderby status.DateAndTime descending
-                              select status;
+                var shipment = db.Shipments.Include("Packages").Include("Packages.PackageType").Where(s => s.WaybillId == WaybillId).FirstOrDefault();
+                //Pass the property of the shipment to ViewData
 
-         
-            return View(statusQuery.ToList());
+                if (shipment == null)
+                {
+                    return RedirectToAction("Search", new { errorMessage = "No such a waybill" });
+                }
+
+                ViewData["WaybillNumber"] = shipment.WaybillId.ToString().PadLeft(12, '0'); ;
+
+                ViewData["DeliveredPerson"] = shipment.DeliveredPerson == null ? "Not Delivered" : shipment.DeliveredPerson;
+
+                ViewData["Company"] = shipment.RecipientCompanyName;
+
+                ViewData["DeliveredPlace"] = shipment.DeliveredPlace == null ? "Not Delivered" : shipment.DeliveredPlace;
+
+                ViewData["Status"] = shipment.Status;
+
+                ViewData["ServiceType"] = shipment.ServiceType;
+
+                List<Package> Packages = shipment.Packages.ToList();
+                ViewData["Packages"] = Packages;
+
+
+                //Retrieve shipmentStatusHistory
+                var statusQuery = from status in db.ShipmentStatusHistories
+                                  where status.WaybillId == WaybillId
+                                  orderby status.Date descending, status.Time descending
+                                  select status;
+
+
+                return View(statusQuery.ToList());
+           
         }
 
         // GET: ShipmentStatusHistories/Details/5
@@ -91,8 +107,9 @@ namespace SinExWebApp20328381.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create([Bind(Include = "WaybillId,ShipmentStatusHistoryId,Status,DateAndTime,Description,Location,Remark,DeliveredPerson,DeliveredPlace")] ShipmentStatusHistory shipmentStatusHistory)
+        public ActionResult Create([Bind(Include = "WaybillId,ShipmentStatusHistoryId,Status,Date,TimeValue,Description,Location,Remarks,DeliveredPerson,DeliveredPlace")] ShipmentStatusHistory shipmentStatusHistory)
         {
+
            
             if (ModelState.IsValid)
             {
@@ -100,7 +117,7 @@ namespace SinExWebApp20328381.Controllers
                 shipment.Status = shipmentStatusHistory.Status;
                 if (shipmentStatusHistory.Status == "Delivered")
                 {
-                    shipment.DeliveredDate = shipmentStatusHistory.DateAndTime;
+                    shipment.DeliveredDate = shipmentStatusHistory.Date;
                     shipment.DeliveredPlace = shipmentStatusHistory.DeliveredPlace;
                     shipment.DeliveredPerson = shipmentStatusHistory.DeliveredPerson;
 
