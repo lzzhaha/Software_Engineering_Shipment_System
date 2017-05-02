@@ -23,7 +23,8 @@
 
 
         @Html.HiddenFor(model => model.ShippingAccountId, new { Value = @ViewBag.shipmentId })
-
+        @Html.HiddenFor(model => model.AddressId);
+  
 
         <div class="form-group">
             @Html.LabelFor(model => model.Building, htmlAttributes: new { @class = "control-label col-md-2" })

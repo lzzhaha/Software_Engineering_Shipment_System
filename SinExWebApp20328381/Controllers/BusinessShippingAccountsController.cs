@@ -170,7 +170,7 @@ namespace SinExWebApp20328381.Controllers
             return View(address);
         }
         [HttpPost]
-        public ActionResult EditRecipientAddress([Bind(Include = "NickName,ShippingAccountId,Building,Street,City,ServiceCity,PostalCode")] Address address)
+        public ActionResult EditRecipientAddress([Bind(Include = "NickName,AddressId,ShippingAccountId,Building,Street,City,ServiceCity,PostalCode")] Address address)
         {
             ShippingAccount shippingAccount = db.ShippingAccounts.Include("Addresses").SingleOrDefault(s => s.UserName == System.Web.HttpContext.Current.User.Identity.Name);
             if (shippingAccount is PersonalShippingAccount)
@@ -183,8 +183,18 @@ namespace SinExWebApp20328381.Controllers
             if (ModelState.IsValid)
             {
                 address.AddressType = "Recipient Address";
-                var temp = shippingAccount.Addresses.SingleOrDefault(s => s.AddressId == (int)TempData["addressId"]);
-                if (temp != null || (temp == null || address.NickName == TempData["nickname"].ToString()))
+                long tempId = 0;
+                if (TempData["addressId"] != null)
+                {
+                    tempId = (int)(TempData["addressId"]);
+                }
+                else
+                {
+                    tempId = address.AddressId;
+                }
+                var temp = shippingAccount.Addresses.SingleOrDefault(s => s.AddressId == tempId);
+                var nickNameQuery = shippingAccount.Addresses.Where(s => (s.AddressType == address.AddressType && s.NickName == address.NickName)).ToList();
+                if (temp != null && (((address.NickName == TempData["nickname"].ToString()) && (nickNameQuery.Count() > 0)) || (nickNameQuery.Count() == 0)))
                 {
 
                     address.AddressId = temp.AddressId;
@@ -202,7 +212,7 @@ namespace SinExWebApp20328381.Controllers
                     db.SaveChanges();
                     return RedirectToAction("ManageRecipientAddress", "BusinessShippingAccounts");
                 }
-
+                TempData["nickname"] = TempData["nickname"].ToString();
 
                 //var temp = db.Addresses.Where(s => (s.NickName == address.NickName) && (s.AddressType == address.AddressType));
                 /*if (temp.Count() == 0 || address.NickName == TempData["nickname"].ToString())
@@ -335,8 +345,18 @@ namespace SinExWebApp20328381.Controllers
             if (ModelState.IsValid)
             {
                 address.AddressType = "Pickup Location";
-                var temp = shippingAccount.Addresses.SingleOrDefault(s => s.AddressId == (int)TempData["addressId"]);
-                if (temp != null || (temp == null || address.NickName == TempData["nickname"].ToString()))
+                long tempId = 0;
+                if (TempData["addressId"] != null)
+                {
+                    tempId = (int)(TempData["addressId"]);
+                }
+                else
+                {
+                    tempId = address.AddressId;
+                }
+                var temp = shippingAccount.Addresses.SingleOrDefault(s => s.AddressId == tempId);
+                var nickNameQuery = shippingAccount.Addresses.Where(s => (s.AddressType == address.AddressType && s.NickName == address.NickName)).ToList();
+                if (temp != null && (((address.NickName == TempData["nickname"].ToString()) && (nickNameQuery.Count() > 0)) || (nickNameQuery.Count() == 0)))
                 {
 
                     address.AddressId = temp.AddressId;
@@ -353,6 +373,7 @@ namespace SinExWebApp20328381.Controllers
                     db.SaveChanges();
                     return RedirectToAction("ManagePickupLocation", "BusinessShippingAccounts");
                 }
+                TempData["nickname"] = TempData["nickname"].ToString();
             }
             ViewBag.shipmentId = shippingAccount.ShippingAccountId;
             ViewBag.unique = "No";
