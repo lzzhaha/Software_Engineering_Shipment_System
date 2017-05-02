@@ -455,14 +455,14 @@ namespace SinExWebApp20328381.Controllers
             var recipientAddress = invoice.shipment.RecipientBuildingAddress+" , "+invoice.shipment.RecipientStreetAddress + " , " + invoice.shipment.RecipientCityAddress+" , "+province;
             var creditCardType = shippingaccount.CreditCardType;
             var creditCardNumber = shippingaccount.CreditCardSecurityNumber;
-            string packagesContent = "<table class=\"table\"><tr><th>Package Type</th><th>Customer Weight</th><th>Actual Weight</th><th></th></tr>";
+            string packagesContent = "<table class=\"table\"><tr><th>Package Type</th><th>Customer Weight</th><th>Actual Weight</th><th>Cost</th></tr>";
             foreach(var package in invoice.shipment.Packages)
             {
                 packagesContent = packagesContent + "<tr><td>"+ package.PackageType.Type+ "  </td><td> ";
-
+                packagesContent = packagesContent + package.Weight + "  </td><td> ";
                 packagesContent = packagesContent + package.ActualWeight;
                 var cost = ConvertCurrency(invoice.TotalCostCurrency, package.Cost);
-                packagesContent = packagesContent + "</td><td>" + cost + invoice.TotalCostCurrency+"</td></tr>";
+                packagesContent = packagesContent + "</td><td>" + Math.Round(cost,2) + invoice.TotalCostCurrency+"</td></tr>";
                       
              }
             packagesContent = packagesContent + " </table>";

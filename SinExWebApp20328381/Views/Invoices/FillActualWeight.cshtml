@@ -4,6 +4,31 @@
     ViewBag.Title = "FillActualWeight";
 }
 
+@section CustomScripts{
+    <script>
+        $(document).ready(function () {
+            $('.Weighterror').hide();
+            $('.submit').click(function (event) {
+                var i = 0;
+                 $('.weight').each(function(){
+                     if (valid_weight($(this).val())) {
+                         $('.Weighterror').hide();
+                     } else {
+                         $('.Weighterror').show();
+                         event.preventDefault();
+                     }
+                });
+                    
+                
+            });
+        });
+
+        function valid_weight(weight) {
+            var patten = new RegExp(/^\d{1,18}(\.\d{1})?$|^-1/);
+            return patten.test(weight);
+        }
+    </script>
+}
 <h2>FillActualWeight</h2>
 @if(ViewBag.NoPickup == "Yes")
 {
@@ -44,9 +69,10 @@ else
             @Html.LabelFor(model => model.shipment.Tax, htmlAttributes: new { @class = "control-label col-md-2" })
             <div class="col-md-10">
                 @Html.EditorFor(model => model.shipment.Tax, new { htmlAttributes = new { @class = "form-control" } })
-                @Html.ValidationMessageFor(model => model.shipment.Tax, "", new { @class = "text-danger", id = "shipment.Tax" })
+               
             </div>
         </div>
+   
         <table class="table">
             <tr>
                 <th>
@@ -73,8 +99,8 @@ else
                             @Html.DisplayFor(modelItem => package.Weight)
                         </td>
                         <td>
-                            @Html.EditorFor(model => package.ActualWeight, new { htmlAttributes = new { @class = "form-control", id = "shipment.Packages[" + @i + "].ActualWeight", Name = "shipment.Packages[" + @i + "].ActualWeight" } })
-
+                            @Html.EditorFor(model => package.ActualWeight, new { htmlAttributes = new { @class = "form-control weight", id = "shipment.Packages[" + @i + "].ActualWeight", Name = "shipment.Packages[" + @i + "].ActualWeight" } })
+                           
                         </td>
 
 
@@ -82,11 +108,11 @@ else
                 i = i + 1;
 }
         </table>
-
+         <span class="Weighterror" style="color:red">The Actual weight can only be 1 decimal!</span>
 
         <div class="form-group">
             <div class="col-md-offset-2 col-md-10">
-                <input type="submit" value="Save" class="btn btn-default" />
+                <input type="submit" value="Save" class="btn btn-default submit" />
             </div>
         </div>
     </div>
