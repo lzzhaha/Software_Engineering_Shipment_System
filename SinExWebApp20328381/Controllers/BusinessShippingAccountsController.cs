@@ -8,7 +8,7 @@ using System.Web;
 using System.Web.Mvc;
 using SinExWebApp20328381.Models;
 using System.Net.Mail;
-
+using SinExWebApp20328381.ViewModels;
 namespace SinExWebApp20328381.Controllers
 {
     public class BusinessShippingAccountsController : BaseController
