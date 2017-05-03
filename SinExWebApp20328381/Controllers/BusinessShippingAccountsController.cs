@@ -57,16 +57,26 @@ namespace SinExWebApp20328381.Controllers
             {
                 return HttpNotFound();
             }
-            return View(businessShippingAccount);
+            RegisterCustomerViewModel rem = new RegisterCustomerViewModel();
+            rem.ProvinceList = PopulateProvinceDropdownList().ToList();
+            rem.BusinessInformation = businessShippingAccount;
+            return View(rem);
         }
 
+        private SelectList PopulateProvinceDropdownList()
+        {
+            // TODO: Construct the LINQ query to retrieve the unique list of shipping account ids.
+            var provinceQuery = db.Destinations.Select(s => s.ProvinceCode).Distinct().OrderBy(c => c);
+            return new SelectList(provinceQuery);
+        }
         // POST: BusinessShippingAccounts/Edit/5
         // 为了防止“过多发布”攻击，请启用要绑定到的特定属性，有关 
         // 详细信息，请参阅 http://go.microsoft.com/fwlink/?LinkId=317598。
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit([Bind(Include = "ShippingAccountId,MailingAddressBuilding,MailingAddressStreet,MailingAddressCity,MailingAddressProvinceCode,MailingAddressPostalCode,PhoneNumber,EmailAddress,CreditCardType,CreditCardNumber,CreditCardSecurityNumber,CreditCardHolderName,CreditCardExpiryMonth,CreditCardExpiryYear,UserName,ContactPersonName,CompanyName,DepartmentName")] BusinessShippingAccount businessShippingAccount)
+        public ActionResult Edit(RegisterCustomerViewModel regist)
         {
+            BusinessShippingAccount businessShippingAccount = regist.BusinessInformation;
             businessShippingAccount.UserName = System.Web.HttpContext.Current.User.Identity.Name;
             if (ModelState.IsValid)
             {
@@ -76,7 +86,6 @@ namespace SinExWebApp20328381.Controllers
             }
             return View(businessShippingAccount);
         }
-
         protected override void Dispose(bool disposing)
         {
             if (disposing)
