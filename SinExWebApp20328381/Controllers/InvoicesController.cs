@@ -309,7 +309,7 @@ namespace SinExWebApp20328381.Controllers
             }
             base.Dispose(disposing);
         }
-        //[Authorize(Roles = "Employee")]
+        [Authorize(Roles = "Employee")]
         public ActionResult SearchWayBill()
         {
             var selectIetm = db.Shipments.Select(x => new SelectListItem() { Value = x.WaybillId.ToString(), Text = x.WaybillId.ToString() }).ToList();
@@ -455,7 +455,7 @@ namespace SinExWebApp20328381.Controllers
             var recipientAddress = invoice.shipment.RecipientBuildingAddress+" , "+invoice.shipment.RecipientStreetAddress + " , " + invoice.shipment.RecipientCityAddress+" , "+province;
             var creditCardType = shippingaccount.CreditCardType;
             var creditCardNumber = shippingaccount.CreditCardSecurityNumber;
-            string packagesContent = "<table class=\"table\"><tr><th>Package Type</th><th>Customer Weight</th><th>Actual Weight</th><th>Cost</th></tr>";
+            string packagesContent = "<table class=\"table\" style=\"border:1px solid black\"><tr><th>Package Type</th><th>Customer Weight</th><th>Actual Weight</th><th>Cost</th></tr>";
             foreach(var package in invoice.shipment.Packages)
             {
                 packagesContent = packagesContent + "<tr><td>"+ package.PackageType.Type+ "  </td><td> ";
@@ -470,7 +470,7 @@ namespace SinExWebApp20328381.Controllers
                 message.IsBodyHtml = true;
             message.From = new MailAddress("comp3111_team105@cse.ust.hk");
             message.To.Add(emailAddress);
-            message.Body = "<!doctype html><html><head><meta charset = 'UTF-8'></head><div>Shipping Account ID: " + shipmentShippingAccountId + " </div> &nbsp; &nbsp;<div> WayBill ID:  " + WaybillId+ "</div><br/><div>Ship Date: ";
+            message.Body = "<!doctype html><html><head><meta charset = 'UTF-8'></head><div>Shipping Account ID: " + shipmentShippingAccountId.ToString("D12") + " </div> &nbsp; &nbsp;<div> WayBill ID:  " + WaybillId.ToString("D16")+ "</div><br/><div>Ship Date: ";
             message.Body = message.Body + shippedDate + " </div> &nbsp; &nbsp; &nbsp; &nbsp;<div>Service Type: " + serviceType + "</div><br/>";
             if (invoice.shipment.ReferenceNumber != null) {
                 message.Body = message.Body + "< div> Sender Reference Number:  " + referenceNumber + "</div>";
@@ -482,19 +482,19 @@ namespace SinExWebApp20328381.Controllers
             {
                 case "taxInvoice": {
                         message.Subject = "Tax and Duty Invoice";
-                        message.Body = message.Body + "<div>Duties Amounts: " + Math.Round(ConvertCurrency(invoice.shipment.DutyCurrency, invoice.shipment.Duty),2).ToString() + invoice.shipment.DutyCurrency+"</div> &nbsp;<div>Tax Amounts" + Math.Round(ConvertCurrency(invoice.shipment.TaxCurreny, invoice.shipment.Tax),2).ToString() + invoice.shipment.TaxCurreny + "</div> &nbsp;<div> Authorization Code: " + invoice.shipment.TaxAuthorizationCode + "</div><br/>";
+                        message.Body = message.Body + "<div>Duties Amounts: " + Math.Round(ConvertCurrency(invoice.shipment.DutyCurrency, invoice.shipment.Duty),2).ToString() + " "+invoice.shipment.DutyCurrency+"</div> &nbsp;<div>Tax Amounts: " + Math.Round(ConvertCurrency(invoice.shipment.TaxCurreny, invoice.shipment.Tax),2).ToString() + " " + invoice.shipment.TaxCurreny + "</div> &nbsp;<div> Authorization Code: " + invoice.shipment.TaxAuthorizationCode + "</div><br/>";
 
 
                         break; }
                 case "shipmentInvoice": {
                         message.Subject = "Shipment Invoice";
-                        message.Body = message.Body + "<div>Total Cost: " + Math.Round(ConvertCurrency(invoice.TotalCostCurrency, invoice.TotalCost),2).ToString() + invoice.TotalCostCurrency+"</div> &nbsp; <div> Authorization Code: " + invoice.shipment.ShipmentAuthorizationCode + "</div><br/>";
+                        message.Body = message.Body + "<div>Total Cost: " + Math.Round(ConvertCurrency(invoice.TotalCostCurrency, invoice.TotalCost),2).ToString() +" "+ invoice.TotalCostCurrency+"</div> &nbsp; <div> Authorization Code: " + invoice.shipment.ShipmentAuthorizationCode + "</div><br/>";
                         break;
                     }
                 case "CombinedInvoice": {
                         message.Subject = "Tax, Duty and Shipment  Invoice";
-                        message.Body = message.Body + "<div>Duties Amounts: " + Math.Round(ConvertCurrency(invoice.shipment.DutyCurrency, invoice.shipment.Duty), 2).ToString() + invoice.shipment.DutyCurrency + "</div> &nbsp;<div>Tax Amounts" + Math.Round(ConvertCurrency(invoice.shipment.TaxCurreny, invoice.shipment.Tax), 2).ToString() + invoice.shipment.TaxCurreny + "</div> &nbsp;<div> Authorization Code: " + invoice.shipment.TaxAuthorizationCode + "</div><br/>";
-                        message.Body = message.Body + "<div>Total Cost: " + Math.Round(ConvertCurrency(invoice.TotalCostCurrency, invoice.TotalCost),2).ToString() + "</div><br/>";
+                        message.Body = message.Body + "<div>Duties Amounts: " + Math.Round(ConvertCurrency(invoice.shipment.DutyCurrency, invoice.shipment.Duty), 2).ToString() +" "+ invoice.shipment.DutyCurrency + "</div> &nbsp;<div>Tax Amounts: " + Math.Round(ConvertCurrency(invoice.shipment.TaxCurreny, invoice.shipment.Tax), 2).ToString() + " "+invoice.shipment.TaxCurreny + "</div> &nbsp;<div> Authorization Code: " + invoice.shipment.TaxAuthorizationCode + "</div><br/>";
+                        message.Body = message.Body + "<div>Total Cost: " + Math.Round(ConvertCurrency(invoice.TotalCostCurrency, invoice.TotalCost),2).ToString() + " "+invoice.TotalCostCurrency+"</div><br/>";
                         break; }
             }
             message.Body = message.Body + "<body></body></html>";
