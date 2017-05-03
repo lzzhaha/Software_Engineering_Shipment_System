@@ -7,7 +7,7 @@ using System.Net;
 using System.Web;
 using System.Web.Mvc;
 using SinExWebApp20328381.Models;
-
+using SinExWebApp20328381.ViewModels;
 namespace SinExWebApp20328381.Controllers
 {
     public class PersonalShippingAccountsController : BaseController
@@ -58,16 +58,28 @@ namespace SinExWebApp20328381.Controllers
             {
                 return HttpNotFound();
             }
-            return View(personalShippingAccount);
-        }
 
+            RegisterCustomerViewModel regist = new RegisterCustomerViewModel();
+            regist.ProvinceList = PopulateProvinceDropdownList().ToList();
+      
+            regist.PersonalInformation = personalShippingAccount;
+           
+            return View(regist);
+        }
+        private SelectList PopulateProvinceDropdownList()
+        {
+            // TODO: Construct the LINQ query to retrieve the unique list of shipping account ids.
+            var provinceQuery = db.Destinations.Select(s => s.ProvinceCode).Distinct().OrderBy(c => c);
+            return new SelectList(provinceQuery);
+        }
         // POST: PersonalShippingAccounts/Edit/5
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit([Bind(Include = "ShippingAccountId,MailingAddressBuilding,MailingAddressStreet,MailingAddressCity,MailingAddressProvinceCode,MailingAddressPostalCode,PhoneNumber,EmailAddress,CreditCardType,CreditCardNumber,CreditCardSecurityNumber,CreditCardHolderName,CreditCardExpiryMonth,CreditCardExpiryYear,FirstName,LastName")] PersonalShippingAccount personalShippingAccount)
+        public ActionResult Edit(RegisterCustomerViewModel regist)
         {
+            PersonalShippingAccount personalShippingAccount = regist.PersonalInformation;
             personalShippingAccount.UserName = System.Web.HttpContext.Current.User.Identity.Name;
             if (ModelState.IsValid)
             {
