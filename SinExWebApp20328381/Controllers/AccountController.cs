@@ -257,6 +257,7 @@ namespace SinExWebApp20328381.Controllers
             }
 
             // If we got this far, something failed, redisplay form
+            model.ProvinceList = PopulateProvinceDropdownList().ToList();
             return View(model);
             //return RedirectToAction("Index", "Home");
         }
