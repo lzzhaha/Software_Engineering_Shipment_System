@@ -81,13 +81,27 @@ namespace SinExWebApp20328381.Controllers
         {
             PersonalShippingAccount personalShippingAccount = regist.PersonalInformation;
             personalShippingAccount.UserName = System.Web.HttpContext.Current.User.Identity.Name;
+
+            int y = int.Parse(personalShippingAccount.CreditCardExpiryYear);
+            int m = personalShippingAccount.CreditCardExpiryMonth;
+            if (y < DateTime.Now.Year)
+            {
+                ModelState.AddModelError("", "The card is expired.");
+
+            }
+
+            if (y == DateTime.Now.Year && m < DateTime.Now.Month)
+                ModelState.AddModelError("", "The card is expired.");
+
+
             if (ModelState.IsValid)
             {
                 db.Entry(personalShippingAccount).State = EntityState.Modified;
                 db.SaveChanges();
                 return RedirectToAction("Index", "Home");
             }
-            return View(personalShippingAccount);
+            regist.ProvinceList = PopulateProvinceDropdownList().ToList();
+            return View(regist);
         }
 
         // POST: PersonalShippingAccounts/Delete/5

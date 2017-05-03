@@ -24,11 +24,11 @@ namespace SinExWebApp20328381.Models
         public virtual string MailingAddressCity { get; set; }
         [Required]
         //[StringLength(2, MinimumLength = 2)]
-<<<<<<< HEAD
+
        // [RegularExpression(@"^[a-zA-Z]*$", ErrorMessage = "Please enter valid province code!")]
-=======
+
         //[RegularExpression(@"^[a-zA-Z]*$", ErrorMessage = "Please enter valid province code!")]
->>>>>>> master
+
         [Display(Name = "Province", Order = 8)]
         public virtual string MailingAddressProvinceCode { get; set; }
         [StringLength(6, MinimumLength = 5)]
