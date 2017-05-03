@@ -392,7 +392,7 @@ namespace SinExWebApp20328381.Controllers
             Address address = (Address)db.Addresses.Find(id);
             db.Addresses.Remove(address);
             db.SaveChanges();
-            return RedirectToAction("ManageRecipientAddress", "BusinessShippingAccounts");
+            return RedirectToAction("ManagePickupLocation", "BusinessShippingAccounts");
         }
         
        

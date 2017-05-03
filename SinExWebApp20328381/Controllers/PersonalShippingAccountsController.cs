@@ -407,19 +407,7 @@ namespace SinExWebApp20328381.Controllers
             Address address = (Address)db.Addresses.Find(id);
             db.Addresses.Remove(address);
             db.SaveChanges();
-            return RedirectToAction("ManageRecipientAddress", "PersonalShippingAccounts");
+            return RedirectToAction("ManagePickupLocation", "PersonalShippingAccounts");
         }
-        /*public ActionResult AddAddress()
-        {
-            ShippingAccount shippingAccount = db.ShippingAccounts.SingleOrDefault(s => s.UserName == System.Web.HttpContext.Current.User.Identity.Name);
-            if (shippingAccount is BusinessShippingAccount)
-            {
-                return RedirectToAction("Edit", "BusinessShippingAccounts");
-            }
-            else
-            {
-                shippingAccount.RecipientAddresses
-            }
-        }*/
     }
 }
