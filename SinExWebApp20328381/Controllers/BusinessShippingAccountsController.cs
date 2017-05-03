@@ -78,13 +78,26 @@ namespace SinExWebApp20328381.Controllers
         {
             BusinessShippingAccount businessShippingAccount = regist.BusinessInformation;
             businessShippingAccount.UserName = System.Web.HttpContext.Current.User.Identity.Name;
+
+            int y = int.Parse(businessShippingAccount.CreditCardExpiryYear);
+            int m = businessShippingAccount.CreditCardExpiryMonth;
+            if (y < DateTime.Now.Year)
+            {
+                ModelState.AddModelError("", "The card is expired.");
+
+            }
+
+            if (y == DateTime.Now.Year && m < DateTime.Now.Month)
+                ModelState.AddModelError("", "The card is expired.");
+
             if (ModelState.IsValid)
             {
                 db.Entry(businessShippingAccount).State = EntityState.Modified;
                 db.SaveChanges();
                 return RedirectToAction("Index", "Home");
             }
-            return View(businessShippingAccount);
+            regist.ProvinceList = PopulateCurrenciesDropdownList().ToList();
+            return View(regist);
         }
         protected override void Dispose(bool disposing)
         {

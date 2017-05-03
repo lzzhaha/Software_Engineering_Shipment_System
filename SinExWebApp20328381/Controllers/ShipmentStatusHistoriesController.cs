@@ -67,7 +67,7 @@ namespace SinExWebApp20328381.Controllers
                 List<Package> Packages = shipment.Packages.ToList();
                 ViewData["Packages"] = Packages;
 
-
+                 ViewData["Status_Informed"] = TempData["Status_Informed"];
                 //Retrieve shipmentStatusHistory
                 var statusQuery = from status in db.ShipmentStatusHistories
                                   where status.WaybillId == WaybillId
@@ -99,6 +99,11 @@ namespace SinExWebApp20328381.Controllers
         {
             ViewData["WaybillId"] = WaybillId;
             ViewData["Status"] = Status;
+            TempData["Status_Inform"] = "";
+            if (Status != "Confirmed" || Status != "PickedUp") {
+                TempData["Status_Inform"] = "Status of shipment can only be updated after it is confirmed and before it is delivered!";
+                return RedirectToAction("Index");
+            }
             return View();
         }
 

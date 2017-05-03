@@ -208,6 +208,46 @@ namespace SinExWebApp20328381.Migrations
                 new Shipment { WaybillId = 25, ReferenceNumber = "386456", ServiceType = "Same Day", ShippedDate = new DateTime(2017, 01, 05), DeliveredDate = new DateTime(2017, 01, 05), RecipientName = "Jerry Jia", NumberOfPackages = 1, Origin = "Beijing", Destination = "Hangzhou", Status = "Delivered", ShippingAccountId = 2 }
             );
             */
+
+       /*
+            context.ShipmentStatusHistories.AddOrUpdate(
+               new ShipmentStatusHistory { ShipmentStatusHistoryId = 1, WaybillId = , Date = new DateTime(2017, 04, 06), Time = new DateTime(2017, 04, 06, 13, 35, 00), TimeValue = "13:35", Description = "Picked up ", DeliveredPlace = null, DeliveredPerson = null, Location = "Hong Kong", Remarks = "Vehicle 34 ", Status = "PickedUp" },
+
+                new ShipmentStatusHistory { ShipmentStatusHistoryId = 2, WaybillId = , Date = new DateTime(2017, 04, 06), Time = new DateTime(2017, 04, 06, 16, 15, 00), TimeValue ="16:15" , Description = "At local sort facility", DeliveredPlace = null, DeliveredPerson = null, Location = "Tung Chung", Remarks = "", Status = "PickedUp" },
+                new ShipmentStatusHistory { ShipmentStatusHistoryId = 3, WaybillId = , Date = new DateTime(2017, 04, 06), Time = new DateTime(2017, 04, 06, 18, 05, 00), TimeValue = "18:05", Description = "Left origin ", DeliveredPlace = null,  DeliveredPerson = null, Location = "HKIA", Remarks = "CX0123 ", Status = "PickedUp" },
+                new ShipmentStatusHistory { ShipmentStatusHistoryId = 4, WaybillId = , Date = new DateTime(2017, 04, 06), Time = new DateTime(2017, 04, 06, 20, 18, 00), TimeValue = "20:18", Description = "At local sort facility ", DeliveredPlace = null, DeliveredPerson = null, Location = "Pudong", Remarks = "", Status = "PickedUp" },
+
+                new ShipmentStatusHistory { ShipmentStatusHistoryId = 5, WaybillId = , Date = new DateTime(2017, 04, 07), Time = new DateTime(2017, 04, 07, 06, 38, 00), TimeValue = "06:38", Description = "On vehicle for delivery", DeliveredPlace = null, DeliveredPerson = null, Location = "Pudong", Remarks = "Vehicle 1032", Status = "PickedUp" },
+                new ShipmentStatusHistory { ShipmentStatusHistoryId = 6, WaybillId = , Date = new DateTime(2017, 04, 07), Time = new DateTime(2017, 04, 07, 08, 48, 00), TimeValue = "08:48", Description = "Delivered ", DeliveredPlace = "Front door", DeliveredPerson = "Monica Mok", Location = "Shanghai ", Remarks = "", Status = "Delivered" },
+
+
+
+                new ShipmentStatusHistory { ShipmentStatusHistoryId = 7, WaybillId = , Date = new DateTime(2017, 04, 10), Time = new DateTime(2017, 04, 10, 16, 45, 00), TimeValue = "16:45", Description = "Picked up ", DeliveredPlace = null, DeliveredPerson = null, Location = "Hong Kong", Remarks = "Vehicle 12", Status = "PickedUp" },
+                new ShipmentStatusHistory { ShipmentStatusHistoryId = 8, WaybillId = , Date = new DateTime(2017, 04, 10), Time = new DateTime(2017, 04, 10, 20, 10, 00), TimeValue = "20:10", Description = "At local sort facility ", DeliveredPlace = null, DeliveredPerson = null, Location = "Tung Chung", Remarks = "", Status = "PickedUp" },
+
+                new ShipmentStatusHistory { ShipmentStatusHistoryId = 9, WaybillId = , Date = new DateTime(2017, 04, 11), Time = new DateTime(2017, 04, 11, 10, 18, 00), TimeValue ="10:18" , Description = "Left origin ", DeliveredPlace = null, DeliveredPerson = null, Location = "HKIA ", Remarks = "KA3845", Status = "PickedUp" },
+                new ShipmentStatusHistory { ShipmentStatusHistoryId = 10, WaybillId = , Date = new DateTime(2017, 04, 11), Time = new DateTime(2017, 04, 11, 15, 28, 00), TimeValue = "15:28", Description = "At local sort facility ", DeliveredPlace = null, DeliveredPerson = null, Location = "Lanzhou ", Remarks = , Status = "PickedUp" },
+
+                new ShipmentStatusHistory { ShipmentStatusHistoryId = 11, WaybillId = , Date = new DateTime(2017, 04, 12), Time = new DateTime(2017, 04, 12, 07, 38, 00), TimeValue ="07:38" , Description = "On vehicle for delivery ", DeliveredPlace  = null, DeliveredPerson = null, Location = "Lanzhou ", Remarks = "Vehicle 82", Status = "PickedUp" },
+                new ShipmentStatusHistory { ShipmentStatusHistoryId = 12, WaybillId = , Date = new DateTime(2017, 04, 12), Time = new DateTime(2017, 04, 12, 10, 13, 00), TimeValue = "10:13", Description = "Delivered", DeliveredPlace = "Front door", DeliveredPerson = "George Guo", Location = "Lanzhou ", Remarks = "", Status ="Delivered" },
+
+
+
+
+                new ShipmentStatusHistory { ShipmentStatusHistoryId = 13, WaybillId = , Date = new DateTime(2017, 04, 14), Time = new DateTime(2017, 04, 14, 07, 55, 00), TimeValue ="07:55" , Description = "Picked up", DeliveredPlace = null, DeliveredPerson = null, Location = "Hong Kong ", Remarks = "Vehicle 13", Status = "PickedUp" },
+                new ShipmentStatusHistory { ShipmentStatusHistoryId = 14, WaybillId = , Date = new DateTime(2017, 04, 14), Time = new DateTime(2017, 04, 14, 09, 08, 00), TimeValue = "09:08", Description = "At local sort facility ", DeliveredPlace = null, DeliveredPerson = null, Location = "Tung Chung", Remarks = "", Status = "PickedUp" },
+                new ShipmentStatusHistory { ShipmentStatusHistoryId = 15, WaybillId = , Date = new DateTime(2017, 04, 14), Time = new DateTime(2017, 04, 14, 10, 18, 00), TimeValue = "10:18", Description = "Left origin", DeliveredPlace = null, DeliveredPerson = null, Location = "HKIA", Remarks = "KA3845 ", Status = "PickedUp" },
+                new ShipmentStatusHistory { ShipmentStatusHistoryId = 16, WaybillId = , Date = new DateTime(2017, 04, 14), Time = new DateTime(2017, 04, 14, 15, 28, 00), TimeValue = "15:28", Description = "At local sort facility", DeliveredPlace = null, DeliveredPerson = null, Location = "Fuzhou", Remarks = "", Status = "PickedUp" },
+                new ShipmentStatusHistory { ShipmentStatusHistoryId = 17, WaybillId = , Date = new DateTime(2017, 04, 14), Time = new DateTime(2017, 04, 14, 15, 50, 00), TimeValue = "15:50", Description = "On vehicle for delivery", DeliveredPlace = null, DeliveredPerson = null, Location = "Fuzhou", Remarks = "Vehicle 82 ", Status = "PickedUp" },
+                new ShipmentStatusHistory { ShipmentStatusHistoryId = 18, WaybillId = , Date = new DateTime(2017, 04, 14), Time = new DateTime(2017, 04, 14, 16, 53, 00), TimeValue = "15:53", Description = "Delivered", DeliveredPlace = " Front door", DeliveredPerson = "Sammy So", Location = "Fuzhou", Remarks = "", Status = "Delivered" },
+
+
+
+                new ShipmentStatusHistory { ShipmentStatusHistoryId = 19, WaybillId = , Date = new DateTime(2017, 05, 02), Time = new DateTime(2017, 05, 02, 08, 30, 00), TimeValue = "08:30", Description = "Picked up", DeliveredPlace = null, DeliveredPerson = null, Location = "", Remarks = "Vehicle 12", Status = "PickedUp" },
+                new ShipmentStatusHistory { ShipmentStatusHistoryId = 20, WaybillId = , Date = new DateTime(2017, 05, 02), Time = new DateTime(2017, 05, 02, 10, 00, 00), TimeValue = "10:00", Description = "At local sort facility", DeliveredPlace =null , DeliveredPerson = null, Location = "", Remarks = "", Status = "PickedUp" },
+                new ShipmentStatusHistory { ShipmentStatusHistoryId = 21, WaybillId = , Date = new DateTime(2017, 05, 02), Time = new DateTime(2017, 05, 02, 10, 35, 00), TimeValue = "10:35", Description = "Left origin ", DeliveredPlace = null, DeliveredPerson = null , Location = "", Remarks = "Vehicle 667 ", Status = "PickedUp" }
+            );
+            */
         }
     }
 }
