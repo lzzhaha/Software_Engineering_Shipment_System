@@ -10,7 +10,7 @@ namespace SinExWebApp20328381.Models
     {
         [Required]
         [StringLength(70)]
-        [RegularExpression("^[A-Za-z]+$",ErrorMessage ="Please enter a valid person name")]
+        //[RegularExpression("^[A-Za-z]+$",ErrorMessage ="Please enter a valid person name")]
         public virtual string ContactPersonName { get; set; }
         [Required]
         [StringLength(40)]
