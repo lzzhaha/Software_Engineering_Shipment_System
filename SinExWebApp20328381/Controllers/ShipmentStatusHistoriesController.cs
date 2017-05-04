@@ -42,15 +42,18 @@ namespace SinExWebApp20328381.Controllers
         public ActionResult Index(long? WaybillId)
         {
             
+         
                 //Retrieve Shipment 
             
                 var shipment = db.Shipments.Include("Packages").Include("Packages.PackageType").Where(s => s.WaybillId == WaybillId).FirstOrDefault();
-                //Pass the property of the shipment to ViewData
+            //Pass the property of the shipment to ViewData
 
-                if (shipment == null)
-                {
-                    return RedirectToAction("Search", new { errorMessage = "No such a waybill" });
-                }
+            if (shipment == null)
+            {
+                return RedirectToAction("Search", new { errorMessage = "No such a waybill" });
+            } else if (shipment.Status == "Saved" || shipment.Status == "Cancelled") {
+                return RedirectToAction("Search", new { erroMessage ="The waybill is not yet picked up or already cancelled"});
+            }
 
                 ViewData["WaybillNumber"] = shipment.WaybillId.ToString().PadLeft(12, '0'); ;
 
@@ -100,7 +103,7 @@ namespace SinExWebApp20328381.Controllers
             ViewData["WaybillId"] = WaybillId;
             ViewData["Status"] = Status;
             TempData["Status_Inform"] = "";
-            if (Status != "Confirmed" || Status != "PickedUp") {
+            if (Status != "Confirmed" && Status != "PickedUp") {
                 TempData["Status_Inform"] = "Status of shipment can only be updated after it is confirmed and before it is delivered!";
                 return RedirectToAction("Index");
             }
@@ -114,8 +117,30 @@ namespace SinExWebApp20328381.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult Create([Bind(Include = "WaybillId,ShipmentStatusHistoryId,Status,Date,TimeValue,Description,Location,Remarks,DeliveredPerson,DeliveredPlace")] ShipmentStatusHistory shipmentStatusHistory)
         {
+            //Compare the Date with current time
+            DateTime statusDate = new DateTime(shipmentStatusHistory.Date.Year, shipmentStatusHistory.Date.Month,
+                shipmentStatusHistory.Date.Day, shipmentStatusHistory.Time.Value.Hour,shipmentStatusHistory.Time.Value.Minute,shipmentStatusHistory.Time.Value.Second);
+            if (statusDate > DateTime.Now) {
+                ModelState.AddModelError("","The specified date can not be set to be the time in the future!");
+                return View(shipmentStatusHistory);
+            }
 
-           
+            //Compare the Date with the previous time
+            var status_list = db.ShipmentStatusHistories.Select(s => s).ToList();
+            DateTime pastMax = new DateTime(1900,01,01,01,01,01);
+     
+            foreach (var status in status_list) {
+                DateTime eachDate = new DateTime(status.Date.Year, status.Date.Month, status.Date.Day, 
+                    status.Time.Value.Hour, status.Time.Value.Minute, status.Time.Value.Second);
+                if (eachDate > pastMax) {
+                    pastMax = eachDate;
+                }
+            }
+
+            if (statusDate <= pastMax) {
+                ModelState.AddModelError("", "The specified date is not valid!");
+                return View(shipmentStatusHistory);
+            }
             if (ModelState.IsValid)
             {
                 Shipment shipment = db.Shipments.Where(s => s.WaybillId == shipmentStatusHistory.WaybillId).SingleOrDefault();

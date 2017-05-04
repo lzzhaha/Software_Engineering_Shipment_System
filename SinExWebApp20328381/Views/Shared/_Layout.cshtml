@@ -39,15 +39,15 @@
                             @if (User.IsInRole("Customer"))
                             {
                             <li>@Html.ActionLink("Create Shipment", "Create", "Shipments")</li>
+                            <li>@Html.ActionLink("Manage Shipment", "Index", "Shipments")</li>
+                            <li>@Html.ActionLink("Create Address", "AddRecipientAddress","PersonalShippingAccounts")</li>
+                            <li>@Html.ActionLink("Manage Address","ManageRecipientAddress","PersonalShippingAccounts")</li>
                             }
                             @if (User.IsInRole("Employee"))
                             {
                                 <li>@Html.ActionLink("Create Invoice", "SearchWayBill", "Invoices")</li>
                             }
-                            @if (User.IsInRole("Customer"))
-                            {
-                                <li>@Html.ActionLink("Manage Shipment", "Index", "Shipments")</li>
-                            }
+                           
                         </ul>
                     </li>
                     @if (User.IsInRole("Employee") || User.IsInRole("Customer")) { 
