@@ -33,11 +33,13 @@
             postdata = { PackageName: data };
             $.post("/ServicePackageFees/GetSizeOfPackage", postdata, function (data, status) {
                 $(CurrentPostingObject).next().empty();
+                /*
                 if (data.length != 0)
                     $(CurrentPostingObject).next().attr("required", "required");
                 else {
                     $(CurrentPostingObject).next().removeAttr("required");
                 }
+                */
                 for (var size in data) {
                     $(CurrentPostingObject).next().append($('<option></option').text(data[size]));
                 }
