@@ -142,6 +142,15 @@ namespace SinExWebApp20328381.Controllers
                 return View(shipmentStatusHistory);
             }
             */
+
+            //Check whether the delivered information is entered while it is not delivered
+            if (shipmentStatusHistory.Status != "Delivered") {
+                if (shipmentStatusHistory.DeliveredPerson!=null || shipmentStatusHistory.DeliveredPlace!=null) {
+                    ModelState.AddModelError("", "The Delivered person and delivered place field cannot be entered unless the shipment is delivered");
+                    return View(shipmentStatusHistory);
+                }
+            }
+
             if (ModelState.IsValid)
             {
                 Shipment shipment = db.Shipments.Where(s => s.WaybillId == shipmentStatusHistory.WaybillId).SingleOrDefault();
