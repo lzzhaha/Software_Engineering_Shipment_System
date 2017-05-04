@@ -79,12 +79,6 @@
 
         function UpdateSizeReturn(data, status){
             $(CurrentPostingObject).next().empty();
-            if (data.length != 0)
-                $(CurrentPostingObject).next().attr("required", "required");
-            else {
-                $(CurrentPostingObject).next().removeAttr("required");
-                return;
-            }
             for (var size in data) {
                 $(CurrentPostingObject).next().append($('<option></option').text(data[size]));
             }
@@ -121,7 +115,6 @@
             for (var i = 0; i < Packages; i++)
             {
                 $("#dropdown" + i).attr("required", "required");
-                $("#size" + i).attr("required", "required");
                 $("#weight" + i).attr("required", "required");
                 $("#value" + i).attr("required", "required");
                 $("#description" + i).attr("required", "required");
@@ -327,7 +320,7 @@
         {
             @:<div class="row">
                 <input type="hidden" name="Packages[@(i)].PackageId" id="hidden@(i)" value="@(Model.Packages[i].PackageId)" />
-                @Html.DropDownListFor(a => a.Packages[i].PackageType, Model.SystemOutputSource.PackageTypes, "Please Select", htmlAttributes: new { @Class = "dropdown col-md-2", @id = "dropdown" + i, @onchange = "UpdateSize(this);" })
+                @Html.DropDownListFor(a => a.Packages[i].PackageType, Model.SystemOutputSource.PackageTypes, "Please Select", htmlAttributes: new { @Class = "dropdown col-md-2", @id = "dropdown" + i, @onchange = "UpdateSize(this);", @Required = "required" })
                 <select id="size@(i)" name="Packages[@(i)].Size" class="dropdown col-md-2"><option>Please Select</option></select>
                 @Html.TextBoxFor(a => a.Packages[i].Weight, new { @Class = "col-md-2", @Id = "weight" + i })
                 @Html.TextBoxFor(a => a.Packages[i].Value, new { @Class = "col-md-1", @Id = "value" + i })

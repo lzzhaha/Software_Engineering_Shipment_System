@@ -85,7 +85,10 @@
                 }*@
         </dd>
         -->
-        @*<dt>Manage Detail Information:</dt>
-    <dd>[ @Html.ActionLink("Manage", "Edit", "BusinessShippingAccounts") ]</dd>*@
+        @if (User.IsInRole("Customer"))
+        {
+            <dt>Manage Detail Information:</dt>
+            <dd>[ @Html.ActionLink("Manage", "Edit", "PersonalShippingAccounts") ]</dd>
+        }
     </dl>
 </div>
