@@ -24,15 +24,29 @@
         
         <!--put deliver person, deliver place, status or any other property here -->
         <div class="form-group">
-            @Html.LabelFor(model => model.Shipment.Status, htmlAttributes: new { @class = "control-label col-md-2" })
+         @if (ViewData["Status"].ToString() == "Confirmed")
+         {
+            @Html.LabelFor(model => model.Status, "Is the shipment picked up?", htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                
+                    @Html.RadioButtonFor(model => model.Status, "PickedUp");
+  
+                    @Html.ValidationMessageFor(model => model.Status, "", new { @class = "text-danger" })
+            </div>
+         }
+         else if (ViewData["Status"].ToString() == "PickedUp")
+         {
+            @Html.LabelFor(model => model.Status, "Is the shipment Delivered?", htmlAttributes: new { @class = "control-label col-md-2" })
             <div class="col-md-10">
 
-                @Html.DropDownListFor(model => model.Status, new List<SelectListItem>() { new SelectListItem { Selected = false, Text = "PickedUp", Value = "PickedUp" }, new SelectListItem { Selected = false, Text = "Delivered", Value = "Delivered" } }, "Select Status")
+                @Html.RadioButtonFor(model => model.Status, "Delivered");
+
                 @Html.ValidationMessageFor(model => model.Status, "", new { @class = "text-danger" })
             </div>
+         }
         </div>
+         
 
-        
         <!--When the Status is set to "Delivered", the following elements should be displayed -->
         <div class="form-group">
             @Html.Label("DeliveredPlace", htmlAttributes: new { @class = "control-label col-md-2" })
