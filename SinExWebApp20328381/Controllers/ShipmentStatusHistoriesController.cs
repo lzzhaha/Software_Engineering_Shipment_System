@@ -126,7 +126,7 @@ namespace SinExWebApp20328381.Controllers
             }
 
             //Compare the Date with the previous time
-            var status_list = db.ShipmentStatusHistories.Select(s => s).ToList();
+            /*var status_list = db.ShipmentStatusHistories.Select(s => s).ToList();
             DateTime pastMax = new DateTime(1900,01,01,01,01,01);
      
             foreach (var status in status_list) {
@@ -141,6 +141,7 @@ namespace SinExWebApp20328381.Controllers
                 ModelState.AddModelError("", "The specified date is not valid!");
                 return View(shipmentStatusHistory);
             }
+            */
             if (ModelState.IsValid)
             {
                 Shipment shipment = db.Shipments.Where(s => s.WaybillId == shipmentStatusHistory.WaybillId).SingleOrDefault();
