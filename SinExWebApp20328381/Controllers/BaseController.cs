@@ -55,6 +55,17 @@ namespace SinExWebApp20328381.Controllers
             return DropdownListsViewModel;
         }
 
+        protected DropdownListsViewModel PopulateDrownLists4Feecheck(DropdownListsViewModel DropdownListsViewModel)
+        {
+            DropdownListsViewModel.Destinations = PopulateDestinationsDropdownList().ToList();
+            DropdownListsViewModel.ServiceTypes = PopulateServiceTypesDropdownList().ToList();
+            DropdownListsViewModel.PackageTypes = PopulatePackageTypesDropdownList().ToList();
+            //DropdownListsViewModel.RecipientAddresses = PopulateRecipientAddressDropdownList().ToList();
+            //DropdownListsViewModel.PickupLocations = PopulatePickupLocationDropdownList().ToList();
+            DropdownListsViewModel.Exchange = db.Currencies.Select(s => s);
+            return DropdownListsViewModel;
+        }
+
         protected SelectList PopulatePackageTypesDropdownList()
         {
             var PackageTypeQuery = db.PackageTypes.Select(s => s.Type).Distinct().OrderBy(s => s);

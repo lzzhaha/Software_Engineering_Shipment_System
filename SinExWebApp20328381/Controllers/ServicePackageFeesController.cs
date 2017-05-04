@@ -220,7 +220,7 @@ namespace SinExWebApp20328381.Controllers
         public ActionResult FeeCheck(string ServiceType, ICollection<PackageInputViewModel> Packages)
         {
             var FeeCheckInput = new FeeCheckGenerateViewModel();
-            FeeCheckInput = (FeeCheckGenerateViewModel)PopulateDrownLists(FeeCheckInput);
+            FeeCheckInput = (FeeCheckGenerateViewModel)PopulateDrownLists4Feecheck(FeeCheckInput);
             FeeCheckInput.Fees = ProcessFeeCheck(ServiceType, Packages);
             return View(FeeCheckInput);
         }
