@@ -206,7 +206,8 @@ namespace SinExWebApp20328381.Controllers
                             }
                             else if (i.Weight > decimal.Parse(result[1].Value))
                             {
-                                fee += 500;
+                                
+                                fee += servicePackageFee.Penalty;
                             }
                         }
                         TotalFee += fee;

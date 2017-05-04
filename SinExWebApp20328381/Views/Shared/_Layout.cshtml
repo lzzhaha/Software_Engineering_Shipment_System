@@ -44,6 +44,10 @@
                             {
                                 <li>@Html.ActionLink("Create Invoice", "SearchWayBill", "Invoices")</li>
                             }
+                            @if (User.IsInRole("Customer"))
+                            {
+                                <li>@Html.ActionLink("Manage Shipment", "Index", "Shipments")</li>
+                            }
                         </ul>
                     </li>
                     @if (User.IsInRole("Employee") || User.IsInRole("Customer")) { 
