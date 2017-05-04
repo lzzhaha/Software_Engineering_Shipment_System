@@ -67,7 +67,7 @@
 
     @ViewData["Status_Informed"]
     <div>
-       @if (User.IsInRole("employee"))
+       @if (User.IsInRole("Employee"))
        {
         @Html.ActionLink("Update", "Create", new { WaybillId = ViewData["WaybillNumber"], Status = ViewData["Status"] })
        }

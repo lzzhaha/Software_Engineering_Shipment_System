@@ -56,8 +56,8 @@
                 @Html.EditorFor(model => model.BusinessInformation.MailingAddressCity, new { htmlAttributes = new { @class = "form-control" } })
                 @Html.ValidationMessageFor(model => model.BusinessInformation.MailingAddressCity, "", new { @class = "text-danger" })
             </div>
-            @Html.LabelFor(model => model.BusinessInformation.MailingAddressProvinceCode, htmlAttributes: new { @class = "control-label col-md-2" })
-            <div class="col-md-1">
+            @Html.LabelFor(model => model.BusinessInformation.MailingAddressProvinceCode, htmlAttributes: new { @class = "control-label col-md-1" })
+            <div class="col-md-2">
                 @Html.DropDownListFor(model => model.BusinessInformation.MailingAddressProvinceCode, Model.ProvinceList, "Select Province")
                 @Html.ValidationMessageFor(model => model.BusinessInformation.MailingAddressProvinceCode, "", new { @class = "text-danger" })
             </div>
