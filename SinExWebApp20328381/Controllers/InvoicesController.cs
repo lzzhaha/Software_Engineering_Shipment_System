@@ -498,9 +498,11 @@ namespace SinExWebApp20328381.Controllers
                         break; }
             }
             message.Body = message.Body + "<body></body></html>";
+            message.BodyEncoding = System.Text.Encoding.UTF8;
             return message;
             
         }
+
         public bool SendInvoice(MailMessage message)
         {
             if (sendEmail(message))
@@ -508,6 +510,84 @@ namespace SinExWebApp20328381.Controllers
                 return true;
             }
             return false;
+        }
+        public MailMessage SetEmailwithoutCurrency(string invoiceType, Invoice invoice, ShippingAccount shippingaccount, string province, string emailAddress)
+        {
+            var shipmentShippingAccountId = shippingaccount.ShippingAccountId;
+            var shippedDate = invoice.shipment.ShippedDate;
+            var WaybillId = invoice.shipment.WaybillId;
+            var serviceType = invoice.shipment.ServiceType;
+            var referenceNumber = invoice.shipment.ReferenceNumber;
+            string senderName = "";
+            if (shippingaccount is PersonalShippingAccount)
+            {
+                PersonalShippingAccount Paccount = (PersonalShippingAccount)(shippingaccount);
+                senderName = Paccount.FirstName + " " + Paccount.LastName;
+            }
+            else
+            {
+                BusinessShippingAccount Baccount = (BusinessShippingAccount)(shippingaccount);
+                senderName = Baccount.CompanyName;
+            }
+            senderName = shippingaccount.UserName;
+
+            var senderAddress = shippingaccount.MailingAddressBuilding + " , " + shippingaccount.MailingAddressStreet + shippingaccount.MailingAddressCity + " , " + shippingaccount.MailingAddressProvinceCode;
+            var recipientName = invoice.shipment.RecipientName;
+            var recipientAddress = invoice.shipment.RecipientBuildingAddress + " , " + invoice.shipment.RecipientStreetAddress + " , " + invoice.shipment.RecipientCityAddress + " , " + province;
+            var creditCardType = shippingaccount.CreditCardType;
+            var creditCardNumber = shippingaccount.CreditCardSecurityNumber;
+            string packagesContent = "<table class=\"table\" style=\"border:1px solid black\"><tr><th>Package Type</th><th>Customer Weight</th><th>Actual Weight</th><th>Cost</th></tr>";
+            foreach (var package in invoice.shipment.Packages)
+            {
+                packagesContent = packagesContent + "<tr><td>" + package.PackageType.Type + "</td><td>";
+                packagesContent = packagesContent + package.Weight + "</td><td>";
+                packagesContent = packagesContent + package.ActualWeight;
+                var cost =  package.Cost;
+                packagesContent = packagesContent + "</td><td>" + Math.Round(cost, 2) + invoice.TotalCostCurrency + "</td></tr>";
+
+            }
+            packagesContent = packagesContent + " </table>";
+            MailMessage message = new MailMessage();
+            message.IsBodyHtml = true;
+            message.From = new MailAddress("comp3111_team105@cse.ust.hk");
+            message.To.Add(emailAddress);
+            message.Body = "<!doctype html><html><head><meta charset = 'UTF-8'></head><div>Shipping Account ID: " + shipmentShippingAccountId.ToString("D12") + " </div> &nbsp; &nbsp;<div> WayBill ID:  " + WaybillId.ToString("D16") + "</div><br/>";
+            message.Body = message.Body  + "&nbsp; &nbsp; &nbsp; &nbsp;<div>Service Type: " + serviceType + "</div><br/>";
+            if (invoice.shipment.ReferenceNumber != null)
+            {
+                message.Body = message.Body + "<div> Sender Reference Number: " + referenceNumber + "</div>";
+
+            }
+            message.Body = message.Body + " <div> Sender Name: " + senderName + "</div><br/><div> Sender Address: " + senderAddress + " </div><br/><div> Recipient Name: " + recipientName + "</div><br/><div> Recipient Address: " + recipientAddress + "</div><br/><div> Credit Card Type: " + creditCardType + "</div> &nbsp; &nbsp;<div> Credit Card Number: " + creditCardNumber + "</div><br/>";
+            message.Body = message.Body + packagesContent;
+            switch (invoiceType)
+            {
+                case "taxInvoice":
+                    {
+                        message.Subject = "Tax and Duty Invoice";
+                        message.Body = message.Body + "<div>Duties Amounts: " + Math.Round( invoice.shipment.Duty, 2).ToString() + " " + invoice.shipment.DutyCurrency + "</div> &nbsp;<div>Tax Amounts: " + Math.Round(invoice.shipment.Tax, 2).ToString() + " " + invoice.shipment.TaxCurreny + "</div> &nbsp;<div> Authorization Code: " + invoice.shipment.TaxAuthorizationCode + "</div><br/>";
+
+
+                        break;
+                    }
+                case "shipmentInvoice":
+                    {
+                        message.Subject = "Shipment Invoice";
+                        message.Body = message.Body + "<div>Total Cost: " + Math.Round(invoice.TotalCost, 2).ToString() + " " + invoice.TotalCostCurrency + "</div> &nbsp; <div> Authorization Code: " + invoice.shipment.ShipmentAuthorizationCode + "</div><br/>";
+                        break;
+                    }
+                case "CombinedInvoice":
+                    {
+                        message.Subject = "Tax, Duty and Shipment  Invoice";
+                        message.Body = message.Body + "<div>Duties Amounts: " + Math.Round(invoice.shipment.Duty, 2).ToString() + " " + invoice.shipment.DutyCurrency + "</div> &nbsp;<div>Tax Amounts: " + Math.Round( invoice.shipment.Tax, 2).ToString() + " " + invoice.shipment.TaxCurreny + "</div> &nbsp;<div> Authorization Code: " + invoice.shipment.TaxAuthorizationCode + "</div><br/>";
+                        message.Body = message.Body + "<div>Total Cost: " + Math.Round(invoice.TotalCost, 2).ToString() + " " + invoice.TotalCostCurrency + "</div><br/>";
+                        break;
+                    }
+            }
+            message.Body = message.Body + "<body></body></html>";
+            message.BodyEncoding = System.Text.Encoding.UTF8;
+            return message;
+
         }
     }
 }

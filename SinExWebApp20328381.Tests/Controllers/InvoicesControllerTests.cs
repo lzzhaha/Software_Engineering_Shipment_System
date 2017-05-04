@@ -12,7 +12,7 @@ namespace SinExWebApp20328381.Controllers.Tests
 {
     [TestFixture()]
     public class InvoicesControllerTests
-    {/*
+    {
         Invoice invoice = new Invoice();
         Package package1 = new Package();
         Package package2 = new Package();
@@ -124,99 +124,120 @@ namespace SinExWebApp20328381.Controllers.Tests
             invoice.WaybillId = 1;
             shipment.invoice = invoice;
 
-        }*/
-        /*[Test()]
-        public void IndexTest()
-        {
-            Assert.Fail();
         }
-
         [Test()]
-        public void GenerateInvoiceReportTest()
-        {
-            Assert.Fail();
-        }
-
-        [Test()]
-        public void DetailsTest()
-        {
-            Assert.Fail();
-        }
-
-        [Test()]
-        public void CreateTest()
-        {
-            Assert.Fail();
-        }
-
-        [Test()]
-        public void CreateTest1()
-        {
-            Assert.Fail();
-        }
-
-        [Test()]
-        public void EditTest()
-        {
-            Assert.Fail();
-        }
-
-        [Test()]
-        public void EditTest1()
-        {
-            Assert.Fail();
-        }
-
-        [Test()]
-        public void DeleteTest()
-        {
-            Assert.Fail();
-        }
-
-        [Test()]
-        public void DeleteConfirmedTest()
-        {
-            Assert.Fail();
-        }
-
-        [Test()]
-        public void SearchWayBillTest()
-        {
-            Assert.Fail();
-        }
-
-        [Test()]
-        public void FillActualWeightTest()
-        {
-            Assert.Fail();
-        }
-
-        [Test()]
-        public void FillActualWeightTest1()
-        {
-            Assert.Fail();
-        }
-        */
-       /* [Test()]
-        public void SetEmailTest()
+        public void SetEmailwithoutCurrencyTest()
         {
             setUp();
             MailMessage message = new MailMessage();
             message.IsBodyHtml = true;
             message.From = new MailAddress("comp3111_team105@cse.ust.hk");
             message.To.Add("lchenbk@connect.ust.hk");
-            message.Body = "<!doctype html><html><head><meta charset = 'UTF-8'></head><div>Shipping Account ID: " + 1 + " </div> &nbsp; &nbsp;<div> WayBill ID:  " + 1 + "</div><br/><div>Ship Date: ";
-            message.Body = message.Body   + " </div> &nbsp; &nbsp; &nbsp; &nbsp;<div>Service Type: " + "Ground" + "</div><br/>";
-            message.Body = message.Body + " <div> Sender Name: " + "lchenbk" + "</div><br/><div> Sender Address: " +  "AB,HKUST,Hong Kong,HK"+ " </div><br/><div> Recipient Name: " + "CHEN,Lian" + "</div><br/><div> Recipient Address: " + "academic building,HKUST,Hong Kong,HK" + "</div><br/><div> Credit Card Type: " + "Visa" + "</div> &nbsp; &nbsp;<div> Credit Card Number: " + "1234567890" + "</div><br/>";
-            message.Body = message.Body + " < table class=\"table\"><tr><th>Package Type</th><th>Customer Weight</th><th>Actual Weight</th><th></th></tr>";
-            message.Body = message.Body + "<tr><td>Box</td><td> "+20+"</td><td>" + 160 + "HKD</td></tr>";
-            message.Body = message.Body + "<tr><td>Box</td><td> " + 14 + "</td><td>" + 180 + "HKD</td></tr>";
-            message.Body = message.Body + "<tr><td>Box</td><td> " + 300 + "</td><td>" + 4000 + "HKD</td></tr></table>";
+            message.Body = "<!doctype html><html><head><meta charset = 'UTF-8'></head><div>Shipping Account ID: " + "000000000001" + " </div> &nbsp; &nbsp;<div> WayBill ID:  " + "0000000000000001" + "</div><br/>";
+            message.Body = message.Body + "&nbsp; &nbsp; &nbsp; &nbsp;<div>Service Type: Ground</div><br/><div> Sender Reference Number: </div>" ;
+            message.Body = message.Body + " <div> Sender Name: " + "lchenbk" + "</div><br/><div> Sender Address: " + "AB , HKUSTHong Kong , HK" + " </div><br/><div> Recipient Name: " + "CHEN,Lian" + "</div><br/><div> Recipient Address: " + "academic building , HKUST , Hong Kong , HK" + "</div><br/><div> Credit Card Type: " + "Visa" + "</div> &nbsp; &nbsp;<div> Credit Card Number: 189</div><br/>";
+            message.Body = message.Body + "<table class=\"table\" style=\"border:1px solid black\"><tr><th>Package Type</th><th>Customer Weight</th><th>Actual Weight</th><th>Cost</th></tr>";
+            message.Body = message.Body + "<tr><td>Box</td><td>19</td><td>20</td><td>160HKD</td></tr><tr><td>Box</td><td>15</td><td>14</td><td>180HKD</td></tr><tr><td>Box</td><td>310</td><td>300</td><td>4000HKD</td></tr><tr><td>Box</td><td>15</td><td>14</td><td>180HKD</td></tr><tr><td>Box</td><td>310</td><td>300</td><td>4000HKD</td></tr> </table>";
             message.Subject = "Tax and Duty Invoice";
-            message.Body = message.Body + "<div>Duties Amounts: " + 300 + "HKD</div> &nbsp;<div>Tax Amounts" +30 + "HKD</div> &nbsp;<div> Authorization Code: " + 0083 + "</div><br/>";
+            message.Body = message.Body + "<div>Duties Amounts: 300 HKD</div> &nbsp;<div>Tax Amounts: 30 HKD</div> &nbsp;<div> Authorization Code: 0083</div><br/><body></body></html>";
+            message.BodyEncoding = System.Text.Encoding.UTF8;
+            MailMessage messageForTest = IC.SetEmailwithoutCurrency("taxInvoice", invoice, account, "HK", "lchenbk@connect.ust.hk");
+            Assert.That(messageForTest.Body, Is.EqualTo(message.Body));
+            Assert.That(messageForTest.From, Is.EqualTo(message.From));
+            Assert.That(messageForTest.BodyEncoding, Is.EqualTo(message.BodyEncoding));
+        }
+        /*[Test()]
+public void IndexTest()
+{
+   Assert.Fail();
+}
 
-            Assert.That(IC.SetEmail("taxInvoice", invoice, account, "HK", "lchenbk"), Is.EqualTo(message));
-        }*/
+[Test()]
+public void GenerateInvoiceReportTest()
+{
+   Assert.Fail();
+}
+
+[Test()]
+public void DetailsTest()
+{
+   Assert.Fail();
+}
+
+[Test()]
+public void CreateTest()
+{
+   Assert.Fail();
+}
+
+[Test()]
+public void CreateTest1()
+{
+   Assert.Fail();
+}
+
+[Test()]
+public void EditTest()
+{
+   Assert.Fail();
+}
+
+[Test()]
+public void EditTest1()
+{
+   Assert.Fail();
+}
+
+[Test()]
+public void DeleteTest()
+{
+   Assert.Fail();
+}
+
+[Test()]
+public void DeleteConfirmedTest()
+{
+   Assert.Fail();
+}
+
+[Test()]
+public void SearchWayBillTest()
+{
+   Assert.Fail();
+}
+
+[Test()]
+public void FillActualWeightTest()
+{
+   Assert.Fail();
+}
+
+[Test()]
+public void FillActualWeightTest1()
+{
+   Assert.Fail();
+}
+*/
+        /* [Test()]
+         public void SetEmailTest()
+         {
+             setUp();
+             MailMessage message = new MailMessage();
+             message.IsBodyHtml = true;
+             message.From = new MailAddress("comp3111_team105@cse.ust.hk");
+             message.To.Add("lchenbk@connect.ust.hk");
+             message.Body = "<!doctype html><html><head><meta charset = 'UTF-8'></head><div>Shipping Account ID: " + 1 + " </div> &nbsp; &nbsp;<div> WayBill ID:  " + 1 + "</div><br/><div>Ship Date: ";
+             message.Body = message.Body   + " </div> &nbsp; &nbsp; &nbsp; &nbsp;<div>Service Type: " + "Ground" + "</div><br/>";
+             message.Body = message.Body + " <div> Sender Name: " + "lchenbk" + "</div><br/><div> Sender Address: " +  "AB,HKUST,Hong Kong,HK"+ " </div><br/><div> Recipient Name: " + "CHEN,Lian" + "</div><br/><div> Recipient Address: " + "academic building,HKUST,Hong Kong,HK" + "</div><br/><div> Credit Card Type: " + "Visa" + "</div> &nbsp; &nbsp;<div> Credit Card Number: " + "1234567890" + "</div><br/>";
+             message.Body = message.Body + " < table class=\"table\"><tr><th>Package Type</th><th>Customer Weight</th><th>Actual Weight</th><th></th></tr>";
+             message.Body = message.Body + "<tr><td>Box</td><td> "+20+"</td><td>" + 160 + "HKD</td></tr>";
+             message.Body = message.Body + "<tr><td>Box</td><td> " + 14 + "</td><td>" + 180 + "HKD</td></tr>";
+             message.Body = message.Body + "<tr><td>Box</td><td> " + 300 + "</td><td>" + 4000 + "HKD</td></tr></table>";
+             message.Subject = "Tax and Duty Invoice";
+             message.Body = message.Body + "<div>Duties Amounts: " + 300 + "HKD</div> &nbsp;<div>Tax Amounts" +30 + "HKD</div> &nbsp;<div> Authorization Code: " + 0083 + "</div><br/>";
+
+             Assert.That(IC.SetEmail("taxInvoice", invoice, account, "HK", "lchenbk"), Is.EqualTo(message));
+         }*/
 
         /*[Test()]
         public void SendInvoiceTest()
