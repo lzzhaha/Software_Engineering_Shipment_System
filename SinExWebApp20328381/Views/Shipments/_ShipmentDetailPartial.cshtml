@@ -50,7 +50,7 @@
             {
                 <div class="col-md-2">@Model.Packages[i].ActualWeight</div>
             }
-            <div class="col-md-2">CNY @Model.SystemOutputSource.Fees[i]</div>
+            <div class="col-md-2">CNY @Math.Round(Model.SystemOutputSource.Fees[i], 2)</div>
         </div>
     }
     <hr />

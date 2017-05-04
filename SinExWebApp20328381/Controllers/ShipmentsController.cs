@@ -12,18 +12,18 @@ using X.PagedList;
 
 namespace SinExWebApp20328381.Controllers
 {
-    [Authorize(Roles = "Employee, Customer")]
     public class ShipmentsController : BaseController
     {
         private SinExDatabaseContext db = new SinExDatabaseContext();
 
         // GET: Shipments
+        [Authorize(Roles = "Customer")]
         public ActionResult Index()
         {
             ShippingAccount CurrentShippingAccount = GetCurrentShippingAccount();
             return View(db.Shipments.Where(s => s.ShippingAccountId == CurrentShippingAccount.ShippingAccountId).ToList());
         }
-
+        [Authorize(Roles = "Customer")]
         public ActionResult Confirm(long? id)
         {
             if (id == null)
@@ -50,7 +50,7 @@ namespace SinExWebApp20328381.Controllers
             Pickup.PickupType = "immediate";
             return View(Pickup);
         }
-
+        [Authorize(Roles = "Customer")]
         [HttpPost, ActionName("Confirm")]
         [ValidateAntiForgeryToken]
         public ActionResult Confirm(PickupInformationInputViewModel PickupInformation, long id)
@@ -85,7 +85,7 @@ namespace SinExWebApp20328381.Controllers
             db.SaveChanges();
             return RedirectToAction("Index");
         }
-
+        [Authorize(Roles = "Customer")]
         // GET: Shipments/Details/5
         public ActionResult Details(long? id)
         {
@@ -108,6 +108,7 @@ namespace SinExWebApp20328381.Controllers
         }
 
         // GET: Shipments/GenerateHistoryReport
+        [Authorize(Roles = "Customer, Employee")]
         public ActionResult GenerateHistoryReport(long? ShippingAccountId, string sortOrder, int? CurrentShippingAccountId, int? page, DateTime? ShippedStartDate, DateTime? ShippedEndDate, DateTime? CurrentShippedStartDate, DateTime? CurrentShippedEndDate)
         {
             // Instantiate an instance of the ShipmentsReportViewModel and the ShipmentsSearchViewModel.
@@ -272,14 +273,14 @@ namespace SinExWebApp20328381.Controllers
 
             return View(shipmentSearch);
         }
-
+        
         private SelectList PopulateShippingAccountsDropdownList()
         {
             // TODO: Construct the LINQ query to retrieve the unique list of shipping account ids.
             var shippingAccountQuery = db.Shipments.Select(s => s.ShippingAccountId).Distinct().OrderBy(c => c);
             return new SelectList(shippingAccountQuery);
         }
-
+        [Authorize(Roles = "Customer")]
         // GET: Shipments/Create
         public ActionResult Create()
         {
@@ -294,7 +295,7 @@ namespace SinExWebApp20328381.Controllers
             result.CurrentShippingAccount = GetCurrentShippingAccount();
             return View(result);
         }
-
+        [Authorize(Roles = "Customer")]
         [HttpPost]
         public ActionResult Create(ShipmentInputViewModel NewShipment)
         {
@@ -481,27 +482,8 @@ namespace SinExWebApp20328381.Controllers
             return Package;
         }
 
-       
-        // POST: Shipments/Create
-        // 为了防止“过多发布”攻击，请启用要绑定到的特定属性，有关 
-        // 详细信息，请参阅 http://go.microsoft.com/fwlink/?LinkId=317598。
-        /*
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult Create([Bind(Include = "WaybillId,ReferenceNumber,ServiceType,ShippedDate,DeliveredDate,RecipientName,NumberOfPackages,Origin,Destination,Status,ShippingAccountId,Packages")] Shipment shipment)
-        {
-            if (ModelState.IsValid)
-            {
-                db.Shipments.Add(shipment);
-                db.SaveChanges();
-                return RedirectToAction("Index");
-            }
-
-            return View(shipment);
-        }
-        */
-
         // GET: Shipments/Edit/5
+        [Authorize(Roles = "Customer")]
         public ActionResult Edit(long? id)
         {
             ViewBag.WaybillId = id;
@@ -542,29 +524,12 @@ namespace SinExWebApp20328381.Controllers
             return View(NewShipment);
         }
 
-        /*
-    // GET: Shipments/Edit/5
-    public ActionResult Edit(int? id)
-    {
-
-        if (id == null)
-        {
-            return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
-        }
-        Shipment shipment = db.Shipments.Find(id);
-        if (shipment == null)
-        {
-            return HttpNotFound();
-        }
-        return View(shipment);
-    }
-    */
-
         // POST: Shipments/Edit/5
         // 为了防止“过多发布”攻击，请启用要绑定到的特定属性，有关 
         // 详细信息，请参阅 http://go.microsoft.com/fwlink/?LinkId=317598。
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Customer")]
         public ActionResult Edit(ShipmentInputViewModel NewShipment, long WaybillId)
         {
             bool InputError = false;
@@ -635,20 +600,9 @@ namespace SinExWebApp20328381.Controllers
             }
             return View(NewShipment);
         }
-        /*
-        public ActionResult Edit([Bind(Include = "WaybillId,ReferenceNumber,ServiceType,ShippedDate,DeliveredDate,RecipientName,NumberOfPackages,Origin,Destination,Status,ShippingAccountId")] Shipment shipment)
-        {
-            if (ModelState.IsValid)
-            {
-                db.Entry(shipment).State = EntityState.Modified;
-                db.SaveChanges();
-                return RedirectToAction("Index");
-            }
-            return View(shipment);
-        }
-        */
 
         // GET: Shipments/Delete/5
+        [Authorize(Roles = "Customer")]
         public ActionResult Delete(long? id)
         {
             if (id == null)
@@ -676,6 +630,7 @@ namespace SinExWebApp20328381.Controllers
         // POST: Shipments/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Customer")]
         public ActionResult DeleteConfirmed(long id)
         {
             ShippingAccount CurrentShippingAccount = GetCurrentShippingAccount();
@@ -685,6 +640,7 @@ namespace SinExWebApp20328381.Controllers
             return RedirectToAction("Index");
         }
 
+        [Authorize(Roles = "Customer")]
         public ActionResult Cancel(long? id)
         {
             if (id == null)
@@ -711,6 +667,7 @@ namespace SinExWebApp20328381.Controllers
         
         [HttpPost, ActionName("Cancel")]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Customer")]
         public ActionResult CancelConfirmed(long id)
         {
             ShippingAccount CurrentShippingAccount = GetCurrentShippingAccount();
