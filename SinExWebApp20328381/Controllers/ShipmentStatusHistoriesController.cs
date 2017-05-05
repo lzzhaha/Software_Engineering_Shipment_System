@@ -81,7 +81,36 @@ namespace SinExWebApp20328381.Controllers
                 return View(statusQuery.ToList());
            
         }
+        public ActionResult PassIndex() {
 
+            Shipment shipment = new Shipment();
+            shipment.WaybillId = 1;
+            ViewData["WaybillNumber"] = shipment.WaybillId.ToString().PadLeft(12, '0'); ;
+
+            shipment.DeliveredPerson = "HAHA";
+            ViewData["DeliveredPerson"] = shipment.DeliveredPerson == null ? "Not Delivered" : shipment.DeliveredPerson;
+
+            shipment.RecipientCompanyName = "haha";
+            ViewData["Company"] = shipment.RecipientCompanyName;
+
+            shipment.DeliveredPlace = "HK";
+            ViewData["DeliveredPlace"] = shipment.DeliveredPlace == null ? "Not Delivered" : shipment.DeliveredPlace;
+
+            shipment.Status = "Delivered";
+            ViewData["Status"] = shipment.Status;
+
+            shipment.ServiceType = "Same Day";
+            ViewData["ServiceType"] = shipment.ServiceType;
+
+            shipment.Packages = new Package[] { new Package() };
+            
+            
+            ViewData["Status_Informed"] = TempData["Status_Informed"];
+
+            ShipmentStatusHistory sta = new ShipmentStatusHistory();
+            sta.Shipment = shipment;
+            return View(sta);
+        }
         // GET: ShipmentStatusHistories/Details/5
        /* public ActionResult Details(int? id)
         {

@@ -1,0 +1,78 @@
+﻿@model IEnumerable<SinExWebApp20328381.Models.ShipmentStatusHistory>
+
+    @{
+        ViewBag.Title = "Pass_Index";
+    }
+
+    <h2>Pass_Index</h2>
+
+    <h2>Shipment Tracking Information</h2>
+
+    <table class="table table-bordered">
+        <!-- Display the information of shipment -->
+        <tr>
+            <td colspan="5">
+                Waybill number: &nbsp;@ViewData["WaybillNumber"] <br>
+                Delivered to: &nbsp;@ViewData["DeliveredPerson"]<br>
+                Delivered at: &nbsp;@ViewData["DeliveredPlace"]<br>
+                Status: &nbsp;@ViewData["Status"]
+            </td>
+            <td colspan="5">
+                Service type:&nbsp;@ViewData["ServiceType"]<br>
+
+                Package type:
+                @foreach (var package in ViewData["Packages"] as List<SinExWebApp20328381.Models.Package>)
+            {
+                    @:&nbsp; @package.PackageType.Type
+        }
+                <br>
+                Weight:
+                @foreach (var package in ViewData["Packages"] as List<SinExWebApp20328381.Models.Package>)
+            {
+                    @:&nbsp; @package.Weight.ToString("0.0")<text>kg</text>
+        }
+
+
+
+            </td>
+        </tr>
+        <!--Display shipment status history-->
+        <tr>
+            <th colspan="1">Date</th>
+            <th colspan="1">Time</th>
+            <th colspan="3">Description</th>
+            <th colspan="2">Location</th>
+            <th colspan="3">Remark</th>
+        </tr>
+        @{ DateTime? date = null;}
+
+
+        @foreach (var status in Model)
+        {
+            //Display the date if it is dinstinct
+            <tr>
+                @if (status.Date != date)
+                {
+                    date = status.Date.Date;
+                    <td colspan="1">@status.Date.ToString("dd/MM/yy")</td>
+                }
+                else
+                {
+                    <td colspan="1">&nbsp;</td>
+                }
+                <td colspan="1">@(status.Time == null ? string.Empty : status.Time.Value.ToString("HH:mm"))</td>
+                <td colspan="3">@status.Description</td>
+                <td colspan="2">@status.Location</td>
+                <td colspan="3">@status.Remarks</td>
+            </tr>
+
+        }
+    </table>
+
+    @ViewData["Status_Informed"]
+    <div>
+        @if (User.IsInRole("Employee"))
+        {
+            @Html.ActionLink("Update", "Create", new { WaybillId = ViewData["WaybillNumber"], Status = ViewData["Status"] })
+        }
+    </div>

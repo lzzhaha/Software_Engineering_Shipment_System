@@ -96,6 +96,7 @@
   <ItemGroup>
     <Compile Include="Controllers\BaseControllerTests.cs" />
     <Compile Include="Controllers\InvoicesControllerTests.cs" />
+    <Compile Include="Controllers\ShipmentStatusHistoriesControllerTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Controllers\HomeControllerTest.cs" />
   </ItemGroup>
