@@ -206,6 +206,7 @@ namespace SinExWebApp20328381.Controllers
                        " <div>Building:&nbsp" + shipment.RecipientBuildingAddress + "</div><br />"+
                        "<div>Delivery Date:&nbsp"+ shipment.DeliveredDate.ToString("dd-mm-yyyy")+"</div>";
                     DMail.Body += "< body ></ body ></ html >";
+                    DMail.BodyEncoding = System.Text.Encoding.UTF8;
                     sendEmail(DMail);
                   } else if (shipmentStatusHistory.Status=="PickedUp") {
 
@@ -219,10 +220,10 @@ namespace SinExWebApp20328381.Controllers
                     }
                     string SenderName;
                     if (IsPerson) {
-                        PersonalShippingAccount sender = new PersonalShippingAccount();
+                        PersonalShippingAccount sender = (PersonalShippingAccount)(shipment.ShippingAccount);
                         SenderName = sender.FirstName + " " + sender.LastName;
                     } else {
-                        BusinessShippingAccount sender = new BusinessShippingAccount();
+                        BusinessShippingAccount sender = (BusinessShippingAccount)(shipment.ShippingAccount);
                         SenderName = "Company Name: " + sender.CompanyName + ", Contact Person: " + sender.ContactPersonName;
                     }
 
@@ -235,15 +236,15 @@ namespace SinExWebApp20328381.Controllers
 
 
                     DMail.Body = "<!doctype html><html><head><meta charset = 'UTF-8'></head>";
-                    DMail.Body += "<div>Your shipment has been successfully delivered to:&nbsp " + shipment.RecipientName + "</div> <br /> " +
-                        "<div>A shipment (WaybillId:&nbsp"+ shipment.WaybillId+ ") for you has been successfully picked up from: </div><br />" +
+                    DMail.Body += 
+                        "<div>A shipment (WaybillId:&nbsp"+ shipment.WaybillId.ToString("D16") + ") for you has been successfully picked up.</div><br />" +
                         "<div>Sender:&nbsp"+ SenderName+"</div><br />"+
                        "<div>City:&nbsp" + shipment.ShippingAccount.MailingAddressCity + ",</div> <br />" +
                        "<div>Street:&nbsp" + shipment.ShippingAccount.MailingAddressStreet + "</div><br />" +
                        " <div>Building:&nbsp" + shipment.ShippingAccount.MailingAddressBuilding + "</div><br />" +
                        "<div>Delivery Date:&nbsp" + shipment.ShippedDate.ToString("dd-mm-yyyy") + "</div>";
                     DMail.Body += "< body ></ body ></ html >";
-
+                   DMail.BodyEncoding = System.Text.Encoding.UTF8;
                     sendEmail(DMail);
 
                 }
@@ -258,6 +259,77 @@ namespace SinExWebApp20328381.Controllers
 
             return View(shipmentStatusHistory);
         }
+
+        public MailMessage Send_Email(Shipment shipment)
+        {
+            MailMessage DMail = new MailMessage();
+            if (shipment.Status == "Delivered")
+            {
+              
+                //Send Email to sender
+
+               
+                DMail.From = new MailAddress("comp3111_team105@cse.ust.hk");
+                DMail.To.Add(shipment.ShippingAccount.EmailAddress);
+                DMail.Subject = "Delivered Notification";
+                DMail.Body = "<!doctype html><html><head><meta charset = 'UTF-8'></head>";
+                DMail.Body += "<div>Your shipment has been successfully delivered to:&nbsp " + shipment.RecipientName + "</div> <br /> " +
+                    "<div>Delivered Location:</div><br />" +
+                   "<div>City:&nbsp" + shipment.RecipientCityAddress + ",</div> <br />" +
+                   "<div>Street:&nbsp" + shipment.RecipientStreetAddress + "</div><br />" +
+                   " <div>Building:&nbsp" + shipment.RecipientBuildingAddress + "</div><br />" +
+                   "<div>Delivery Date:&nbsp" + shipment.DeliveredDate.ToString("dd-mm-yyyy") + "</div>";
+                DMail.Body += "< body ></ body ></ html >";
+                
+            }
+            else if (shipment.Status == "PickedUp")
+            {
+
+                //Send Email to recipient
+
+                bool IsPerson;
+                if (shipment.ShippingAccount is PersonalShippingAccount)
+                {
+                    IsPerson = true;
+                }
+                else
+                {
+                    IsPerson = false;
+                }
+                string SenderName;
+                if (IsPerson)
+                {
+                    PersonalShippingAccount sender = (PersonalShippingAccount)(shipment.ShippingAccount);
+                    SenderName = sender.FirstName + " " + sender.LastName;
+                }
+                else
+                {
+                    BusinessShippingAccount sender = (BusinessShippingAccount)(shipment.ShippingAccount);
+                    SenderName = "Company Name: " + sender.CompanyName + ", Contact Person: " + sender.ContactPersonName;
+                }
+
+             
+                DMail.From = new MailAddress("comp3111_team105@cse.ust.hk");
+                DMail.To.Add(shipment.RecipientEmailAddress);
+                DMail.Subject = "PickedUp Notification";
+
+
+
+
+                DMail.Body = "<!doctype html><html><head><meta charset = 'UTF-8'></head>";
+                DMail.Body +=
+                    "<div>A shipment (WaybillId:&nbsp" + shipment.WaybillId.ToString("D16") + ") for you has been successfully picked up.</div><br />" +
+                    "<div>Sender:&nbsp" + SenderName + "</div><br />" +
+                   "<div>City:&nbsp" + shipment.ShippingAccount.MailingAddressCity + ",</div> <br />" +
+                   "<div>Street:&nbsp" + shipment.ShippingAccount.MailingAddressStreet + "</div><br />" +
+                   " <div>Building:&nbsp" + shipment.ShippingAccount.MailingAddressBuilding + "</div><br />" +
+                   "<div>Delivery Date:&nbsp" + shipment.ShippedDate.ToString("dd-MM-yyyy") + "</div>";
+                DMail.Body += "< body ></ body ></ html >";
+            }
+            DMail.BodyEncoding = System.Text.Encoding.UTF8;
+            return DMail;
+        }
+
 
         // GET: ShipmentStatusHistories/Edit/5
         public ActionResult Edit(long? WaybillId)
