@@ -418,6 +418,7 @@
     <Content Include="Views\Invoices\_InvoiceSearchPartial.cshtml" />
     <Content Include="Views\Invoices\_InvoiceListPartial.cshtml" />
     <Content Include="Views\Invoices\_InvoicePagingPartial.cshtml" />
+    <Content Include="Views\ShipmentStatusHistories\Pass_Index.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

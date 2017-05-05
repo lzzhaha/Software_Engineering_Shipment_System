@@ -10,7 +10,7 @@
         <hr />
         @if (ViewBag.unique.ToString() == "No")
         {
-            @:The nickname is not uniquess,please refill the form!
+            @:The nickname is already used ,please refill the form!
         }
         @Html.ValidationSummary(true, "", new { @class = "text-danger" })
         <div class="form-group">
@@ -23,7 +23,7 @@
 
 
         @Html.HiddenFor(model => model.ShippingAccountId, new { Value = @ViewBag.shipmentId })
-        @Html.HiddenFor(model => model.AddressId);
+        @Html.HiddenFor(model => model.AddressId)
   
 
         <div class="form-group">

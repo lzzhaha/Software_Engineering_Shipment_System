@@ -44,7 +44,8 @@ else
                     @Html.DisplayFor(modelItem => item.NickName)
                 </td>
                 <td>
-                    @Html.DisplayFor(modelItem => item.ShippingAccountId)
+                    @{string id = Convert.ToInt64(item.ShippingAccountId.Value).ToString("D12"); }
+                    @id
                 </td>
                 <td>
                     @Html.DisplayFor(modelItem => item.Building)
