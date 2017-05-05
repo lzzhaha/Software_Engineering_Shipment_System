@@ -15,7 +15,7 @@ else
                 @Html.DisplayNameFor(model => model.NickName)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.ShippingAccountId)
+                @Html.DisplayNameFor(model => model.ShippingAccountId.ToString().PadLeft(12, '0'))
             </th>
             <th>
                 @Html.DisplayNameFor(model => model.Building)
@@ -44,7 +44,7 @@ else
                     @Html.DisplayFor(modelItem => item.NickName)
                 </td>
                 <td>
-                    @Html.DisplayFor(modelItem => item.ShippingAccountId)
+                    @Html.DisplayFor(modelItem => item.ShippingAccountId.ToString().PadLeft(12, '0'))
                 </td>
                 <td>
                     @Html.DisplayFor(modelItem => item.Building)
