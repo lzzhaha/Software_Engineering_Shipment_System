@@ -9,6 +9,10 @@
 @Html.Partial("_ShipmentDetailPartial", Model)
 
 <p>
-    @Html.ActionLink("Edit", "Edit", new { id = Model.WaybillId }) |
-    @Html.ActionLink("Back to List", "Index")
+    @if(ViewBag.Status == "Saved") {
+        @Html.ActionLink("Edit", "Edit", new { id = Model.WaybillId })
+    }
+    <div>
+        @Html.ActionLink("Back to List", "Index")
+    </div>
 </p>

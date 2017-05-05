@@ -44,7 +44,8 @@
         <th></th>
     </tr>
 
-@foreach (var item in Model) {
+@foreach (var item in Model)
+{
     <tr>
         <td>
             @Html.DisplayFor(modelItem => item.ReferenceNumber)
@@ -54,7 +55,7 @@
         </td>
         <td>
             @if (DateTime.Compare(item.ShippedDate, new DateTime(1900, 1, 1, 0, 0, 0)) == 0)
-                {
+            {
                 <b>Not Yet Picked Up</b>
             }
             else
@@ -64,7 +65,7 @@
         </td>
         <td>
             @if (DateTime.Compare(item.DeliveredDate, new DateTime(1900, 1, 1, 0, 0, 0)) == 0)
-                {
+            {
                 <b>Not Yet Delivered</b>
             }
             else
@@ -89,7 +90,8 @@
             @Html.DisplayFor(modelItem => item.Status)
         </td>
         <td>
-            @Html.DisplayFor(modelItem => item.ShippingAccountId)
+            @{ string Id = Convert.ToInt64(item.ShippingAccountId).ToString("D12");}
+            @Id
         </td>
         <td>
             @if (item.Status == "Saved")

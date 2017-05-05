@@ -98,6 +98,7 @@ namespace SinExWebApp20328381.Controllers
         }
         */
         // GET: ShipmentStatusHistories/Create
+        [Authorize(Roles = "Employee")]
         public ActionResult Create(long? WaybillId, string Status)
         {
             ViewData["WaybillId"] = WaybillId;
@@ -115,6 +116,7 @@ namespace SinExWebApp20328381.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Employee")]
         public ActionResult Create([Bind(Include = "WaybillId,ShipmentStatusHistoryId,Status,Date,TimeValue,Description,Location,Remarks,DeliveredPerson,DeliveredPlace")] ShipmentStatusHistory shipmentStatusHistory)
         {
             //Compare the Date with current time

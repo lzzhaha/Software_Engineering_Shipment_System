@@ -95,6 +95,7 @@ namespace SinExWebApp20328381.Controllers
             }
             ShippingAccount CurrentShippingAccount = GetCurrentShippingAccount();
             Shipment shipment = db.Shipments.Include(s => s.Packages).SingleOrDefault(s => (s.WaybillId == id && s.ShippingAccountId == CurrentShippingAccount.ShippingAccountId));
+            ViewBag.Status = shipment.Status;
             if (shipment == null)
             {
                 return HttpNotFound();
@@ -109,7 +110,7 @@ namespace SinExWebApp20328381.Controllers
 
         // GET: Shipments/GenerateHistoryReport
         [Authorize(Roles = "Customer, Employee")]
-        public ActionResult GenerateHistoryReport(long? ShippingAccountId, string sortOrder, int? CurrentShippingAccountId, int? page, DateTime? ShippedStartDate, DateTime? ShippedEndDate, DateTime? CurrentShippedStartDate, DateTime? CurrentShippedEndDate)
+        public ActionResult GenerateHistoBryReport(long? ShippingAccountId, string sortOrder, int? CurrentShippingAccountId, int? page, DateTime? ShippedStartDate, DateTime? ShippedEndDate, DateTime? CurrentShippedStartDate, DateTime? CurrentShippedEndDate)
         {
             // Instantiate an instance of the ShipmentsReportViewModel and the ShipmentsSearchViewModel.
             var shipmentSearch = new ShipmentsReportViewModel();
@@ -493,6 +494,7 @@ namespace SinExWebApp20328381.Controllers
             }
             var CurrentShippingAccountId = GetCurrentShippingAccount().ShippingAccountId;
             Shipment shipment = db.Shipments.Include("Packages").SingleOrDefault(s => (s.WaybillId == id && s.ShippingAccountId == CurrentShippingAccountId));
+            ViewBag.Status = shipment.Status;
             if (shipment == null || shipment.Status != "Saved")
             {
                 return HttpNotFound();
@@ -536,7 +538,6 @@ namespace SinExWebApp20328381.Controllers
             var OutputGenerater = new ServicePackageFeesController();
             NewShipment.SystemOutputSource = (FeeCheckGenerateViewModel)PopulateDrownLists(new FeeCheckGenerateViewModel());
             NewShipment.CurrentShippingAccount = GetCurrentShippingAccount();
-            ViewBag.WaybillId = WaybillId;
             if (NewShipment.ShipmentPayer == "recipient" || NewShipment.DaTPayer == "recipient")
             {
                 if (NewShipment.RecipientAccountId == null)
