@@ -42,6 +42,9 @@
                             <li>@Html.ActionLink("Manage Shipment", "Index", "Shipments")</li>
                             <li>@Html.ActionLink("Create Address", "AddRecipientAddress","PersonalShippingAccounts")</li>
                             <li>@Html.ActionLink("Manage Address","ManageRecipientAddress","PersonalShippingAccounts")</li>
+                            <li>@Html.ActionLink("Create PickUp Location","AddPickUpLocation","PersonalShippingAccounts")</li>
+                            <li>@Html.ActionLink("Manage PickUp Location","EditPickUpLocation","PersonalShippingAccounts")</li>
+
                             }
                             @if (User.IsInRole("Employee"))
                             {
