@@ -29,7 +29,6 @@ namespace SinExWebApp20328381.ViewModels
         public virtual string RecipientStreetAddress { get; set; }
         [Required]
         public virtual string RecipientCityAddress { get; set; }
-        [Required]
         [StringLength(6, MinimumLength = 5)]
         [RegularExpression(@"^\d{5,6}$", ErrorMessage = "Please enter a valid postal code.")]
         public virtual string RecipientPostalCode { get; set; }
@@ -60,7 +59,8 @@ namespace SinExWebApp20328381.ViewModels
         public virtual string TaxCurrency { get; set; }
         public virtual decimal Duty { get; set; }
         public virtual string DutyCurrency { get; set; }
-        public virtual string AuthorizationCode { get; set; }
+        public virtual string TaxAuthorizationCode { get; set; }
+        public virtual string ShipmentAuthorizationCode { get; set; }
         public ShipmentInputViewModel()
         {
             ShippedDate = new DateTime(1900, 1, 1, 0, 0, 0);

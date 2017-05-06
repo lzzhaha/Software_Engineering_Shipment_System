@@ -326,7 +326,9 @@ namespace SinExWebApp20328381.Controllers
             var ShipmentObject = ShipmentViewModelToShipment(NewShipment);
             db.Shipments.Add(ShipmentObject);
             db.SaveChanges();
-            return RedirectToAction("Index");
+            db.Entry(ShipmentObject).Reload();
+            ViewBag.Message = "Successfully Created.";
+            return RedirectToAction("Edit", new { id = ShipmentObject.WaybillId });
         }
 
         private ShipmentInputViewModel ShipmentToShipmentViewModel(Shipment input)
@@ -378,7 +380,8 @@ namespace SinExWebApp20328381.Controllers
             Shipment.WaybillId = input.WaybillId;
             Shipment.Tax = input.Tax;
             Shipment.Duty = input.Duty;
-            Shipment.AuthorizationCode = input.TaxAuthorizationCode;
+            Shipment.TaxAuthorizationCode = input.TaxAuthorizationCode;
+            Shipment.ShipmentAuthorizationCode = input.ShipmentAuthorizationCode;
             Shipment.TaxCurrency = input.TaxCurreny;
             Shipment.DutyCurrency = input.DutyCurrency;
             Shipment.PickupType = input.PickupType;
@@ -461,7 +464,7 @@ namespace SinExWebApp20328381.Controllers
         {
             Package Package = new Package();
             Package.Weight = decimal.Round((decimal)input.Weight, 1);
-            Package.Value = decimal.Round((decimal)input.Value, 1);
+            Package.Value = decimal.Round((decimal)input.Value, 2);
             Package.ValueCurrency = input.ValueCurrency;
             Package.Description = input.Description;
             Package.PackageTypeID = db.PackageTypes.SingleOrDefault(s => s.Type == input.PackageType).PackageTypeID;

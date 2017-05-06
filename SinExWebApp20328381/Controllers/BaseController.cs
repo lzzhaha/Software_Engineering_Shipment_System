@@ -124,7 +124,7 @@ namespace SinExWebApp20328381.Controllers
         {
             PackageInputViewModel PackageInputViewModel = new PackageInputViewModel();
             PackageInputViewModel.Weight = decimal.Round(input.Weight, 1);
-            PackageInputViewModel.Value = decimal.Round(input.Value, 1);
+            PackageInputViewModel.Value = decimal.Round(input.Value, 2);
             PackageInputViewModel.ValueCurrency = input.ValueCurrency;
             PackageInputViewModel.Description = input.Description;
             PackageType PackageTypeRes = db.PackageTypes.SingleOrDefault(s => s.PackageTypeID == input.PackageTypeID);
@@ -138,7 +138,7 @@ namespace SinExWebApp20328381.Controllers
                 PackageInputViewModel.Size = null;
             }
             PackageInputViewModel.PackageId = input.PackageId;
-            PackageInputViewModel.ActualWeight = input.ActualWeight;
+            PackageInputViewModel.ActualWeight = decimal.Round(input.ActualWeight, 1);
             return PackageInputViewModel;
         }
 
