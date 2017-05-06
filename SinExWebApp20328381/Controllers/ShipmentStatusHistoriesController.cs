@@ -214,7 +214,7 @@ namespace SinExWebApp20328381.Controllers
                        "<div>City:&nbsp;"+ shipment.RecipientCityAddress + ",</div> <br />" +
                        "<div>Street:&nbsp;" + shipment.RecipientStreetAddress + "</div><br />"+
                        " <div>Building:&nbsp;" + shipment.RecipientBuildingAddress + "</div><br />"+
-                       "<div>Delivery Date:&nbsp;"+ shipment.DeliveredDate.ToString("dd-mm-yyyy")+"</div>";
+                       "<div>Delivery Date:&nbsp;"+ shipment.DeliveredDate.ToString("dd-MM-yyyy")+"</div>";
                     DMail.Body += "</ body ></ html >";
                     DMail.BodyEncoding = System.Text.Encoding.UTF8;
                     sendEmail(DMail);
@@ -252,7 +252,7 @@ namespace SinExWebApp20328381.Controllers
                        "<div>City:&nbsp;" + shipment.ShippingAccount.MailingAddressCity + ",</div> <br />" +
                        "<div>Street:&nbsp;" + shipment.ShippingAccount.MailingAddressStreet + "</div><br />" +
                        " <div>Building:&nbsp;" + shipment.ShippingAccount.MailingAddressBuilding + "</div><br />" +
-                       "<div>Delivery Date:&nbsp;" + shipment.ShippedDate.ToString("dd-mm-yyyy") + "</div>";
+                       "<div>Delivery Date:&nbsp;" + shipment.ShippedDate.ToString("dd-MM-yyyy") + "</div>";
                     DMail.Body += "</ body ></ html >";
                    DMail.BodyEncoding = System.Text.Encoding.UTF8;
                     sendEmail(DMail);
@@ -289,7 +289,7 @@ namespace SinExWebApp20328381.Controllers
                    "<div>City:&nbsp;" + shipment.RecipientCityAddress + ",</div> <br />" +
                    "<div>Street:&nbsp;" + shipment.RecipientStreetAddress + "</div><br />" +
                    " <div>Building:&nbsp;" + shipment.RecipientBuildingAddress + "</div><br />" +
-                   "<div>Delivery Date:&nbsp;" + shipment.DeliveredDate.ToString("dd-mm-yyyy") + "</div>";
+                   "<div>Delivery Date:&nbsp;" + shipment.DeliveredDate.ToString("dd-MM-yyyy") + "</div>";
                 DMail.Body += "</ body ></ html >";
                 
             }
