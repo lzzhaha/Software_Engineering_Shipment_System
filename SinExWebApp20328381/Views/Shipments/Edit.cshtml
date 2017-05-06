@@ -35,7 +35,6 @@
                 return;
             }
             $("#dropdown" + Packages).show().attr("required", "required");
-            $("#size" + Packages).show().attr("required", "required");
             $("#weight" + Packages).show().attr("required", "required");
             $("#value" + Packages).show().attr("required", "required");
             $("#currencydropdown" + Packages).show().attr("required", "required");
@@ -53,7 +52,6 @@
             Packages--;
             $("#hidden" + Packages).val("");
             $("#dropdown" + Packages).val("").hide().removeAttr("required");
-            $("#size" + Packages).val("").hide().removeAttr("required");
             $("#weight" + Packages).val("").hide().removeAttr("required");
             $("#value" + Packages).val("").hide().removeAttr("required");
             $("#currencydropdown" + Packages).val("CNY").hide().removeAttr("required");

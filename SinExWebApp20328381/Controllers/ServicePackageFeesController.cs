@@ -200,11 +200,11 @@ namespace SinExWebApp20328381.Controllers
                         {
                             packageTypelimit = db.PackageTypeSizes.SingleOrDefault(s => s.size == i.Size).limit;
                             var result = reg.Match(packageTypelimit).Groups;
-                            if (result[1].Value == "")
+                            if (i.PackageType == "Envelope")
                             {
-                                fee = servicePackageFee.Fee;
+                                fee = servicePackageFee.MinimumFee;
                             }
-                            else if (i.Weight > decimal.Parse(result[1].Value))
+                            else if (result[1].Value != "" && decimalweight > decimal.Parse(result[1].Value))
                             {
                                 
                                 fee += servicePackageFee.Penalty;

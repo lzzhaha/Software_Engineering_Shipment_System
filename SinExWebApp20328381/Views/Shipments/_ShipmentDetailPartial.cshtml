@@ -100,27 +100,37 @@
     <div class="row">
         @if (Model.DutyCurrency == null)
         {
-            <div class="col-md-3"><b>Duties amount:</b> Not Updated</div>
+            <div class="col-md-5"><b>Duties amount:</b> Not Updated</div>
         }
         else
         {
-            <div class="col-md-3"><b>Duties amount:</b> @Model.DutyCurrency @Model.Duty</div>
+            <div class="col-md-5"><b>Duties amount:</b> @Model.DutyCurrency @Model.Duty</div>
         }
         @if (Model.TaxCurrency == null)
         {
-            <div class="col-md-3"><b>Taxes amount:</b> Not Updated</div>
+            <div class="col-md-5"><b>Taxes amount:</b> Not Updated</div>
         }
         else
         {
-            <div class="col-md-3"><b>Taxes amount:</b> @Model.TaxCurrency @Model.Tax</div>
+            <div class="col-md-5"><b>Taxes amount:</b> @Model.TaxCurrency @Model.Tax</div>
         }
-        @if (Model.AuthorizationCode == null)
+    </div>
+    <div class="row">
+        @if (Model.ShipmentAuthorizationCode == null)
         {
-            <div class="col-md-3"><b>Authorization Code:</b> Not Updated</div>
+            <div class="col-md-5"><b>Shipment Authorization Code:</b> Not Updated</div>
         }
         else
         {
-            <div class="col-md-3"><b>Authorization Code:</b> @Model.AuthorizationCode</div>
+            <div class="col-md-5"><b>Shipment Authorization Code:</b> @Model.TaxAuthorizationCode</div>
+        }
+        @if (Model.TaxAuthorizationCode == null)
+        {
+            <div class="col-md-5"><b>Tax Authorization Code:</b> Not Updated</div>
+        }
+        else
+        {
+            <div class="col-md-5"><b>Tax Authorization Code:</b> @Model.TaxAuthorizationCode</div>
         }
     </div>
 
