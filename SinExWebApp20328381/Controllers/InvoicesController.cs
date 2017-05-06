@@ -373,10 +373,10 @@ namespace SinExWebApp20328381.Controllers
             shipment.Duty = invoice.shipment.Duty;
             long shipmentShippingAccountId = Convert.ToInt64(shipment.ShipmentShippingAccountId);
             var provinceCode = db.ShippingAccounts.SingleOrDefault(s => s.ShippingAccountId == shipmentShippingAccountId).MailingAddressProvinceCode;
-            invoice.TotalCostCurrency = db.Destinations.SingleOrDefault(s => s.ProvinceCode == provinceCode).CurrencyCode;
+            invoice.TotalCostCurrency = db.Destinations.FirstOrDefault(s => s.ProvinceCode == provinceCode).CurrencyCode;
             long taxShippingAccountID = Convert.ToInt64(shipment.TaxAndDutyShippingAccountId);
             var provinceCode2 = db.ShippingAccounts.SingleOrDefault(s => s.ShippingAccountId == taxShippingAccountID).MailingAddressProvinceCode;
-            shipment.TaxCurreny = db.Destinations.SingleOrDefault(s => s.ProvinceCode == provinceCode2).CurrencyCode;
+            shipment.TaxCurreny = db.Destinations.FirstOrDefault(s => s.ProvinceCode == provinceCode2).CurrencyCode;
             shipment.DutyCurrency = shipment.TaxCurreny;
             List<PackageInputViewModel> Packages = new List<PackageInputViewModel>();
             foreach (var item in shipment.Packages)
@@ -488,13 +488,15 @@ namespace SinExWebApp20328381.Controllers
                         break; }
                 case "shipmentInvoice": {
                         message.Subject = "Shipment Invoice";
-                        message.Body = message.Body + "<div>Total Cost: " + Math.Round(ConvertCurrency(invoice.TotalCostCurrency, invoice.TotalCost),2).ToString() +" "+ invoice.TotalCostCurrency+"</div> &nbsp; <div> Authorization Code: " + invoice.shipment.ShipmentAuthorizationCode + "</div><br/>";
+                        message.Body = message.Body + "<div>Packahges Total Cost: " + Math.Round(ConvertCurrency(invoice.TotalCostCurrency, invoice.TotalCost),2).ToString() +" "+ invoice.TotalCostCurrency+"</div> &nbsp; <div> Authorization Code: " + invoice.shipment.ShipmentAuthorizationCode + "</div><br/>";
                         break;
                     }
                 case "CombinedInvoice": {
                         message.Subject = "Tax, Duty and Shipment  Invoice";
+                        message.Body = message.Body + "<div>Packages Total Cost: " + Math.Round(ConvertCurrency(invoice.TotalCostCurrency, invoice.TotalCost), 2).ToString() + " " + invoice.TotalCostCurrency + "</div><br/>";
                         message.Body = message.Body + "<div>Duties Amounts: " + Math.Round(ConvertCurrency(invoice.shipment.DutyCurrency, invoice.shipment.Duty), 2).ToString() +" "+ invoice.shipment.DutyCurrency + "</div> &nbsp;<div>Tax Amounts: " + Math.Round(ConvertCurrency(invoice.shipment.TaxCurreny, invoice.shipment.Tax), 2).ToString() + " "+invoice.shipment.TaxCurreny + "</div> &nbsp;<div> Authorization Code: " + invoice.shipment.TaxAuthorizationCode + "</div><br/>";
-                        message.Body = message.Body + "<div>Total Cost: " + Math.Round(ConvertCurrency(invoice.TotalCostCurrency, invoice.TotalCost),2).ToString() + " "+invoice.TotalCostCurrency+"</div><br/>";
+                        var tempTotal = invoice.shipment.Duty + invoice.shipment.Tax + invoice.TotalCost;
+                        message.Body = message.Body + "<div>Total Cost: " + Math.Round(ConvertCurrency(invoice.TotalCostCurrency, tempTotal),2).ToString() + " "+invoice.TotalCostCurrency+"</div><br/>";
                         break; }
             }
             message.Body = message.Body + "<body></body></html>";
