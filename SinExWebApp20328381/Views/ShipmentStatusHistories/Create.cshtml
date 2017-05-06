@@ -29,8 +29,8 @@
             @Html.LabelFor(model => model.Status, "Is the shipment picked up?", htmlAttributes: new { @class = "control-label col-md-2" })
             <div class="col-md-10">
                 
-                    @Html.RadioButtonFor(model => model.Status, "PickedUp");
-  
+                    Yes: @Html.RadioButtonFor(model => model.Status, "PickedUp")
+                    No: @Html.RadioButtonFor(model => model.Status, "Confirmed")
                     @Html.ValidationMessageFor(model => model.Status, "", new { @class = "text-danger" })
             </div>
          }
@@ -39,11 +39,14 @@
             @Html.LabelFor(model => model.Status, "Is the shipment Delivered?", htmlAttributes: new { @class = "control-label col-md-2" })
             <div class="col-md-10">
 
-                @Html.RadioButtonFor(model => model.Status, "Delivered");
-
+               Yes: @Html.RadioButtonFor(model => model.Status, "Delivered")
+                No: @Html.RadioButtonFor(model => model.Status, "PickedUp")
                 @Html.ValidationMessageFor(model => model.Status, "", new { @class = "text-danger" })
             </div>
+         } else if (ViewData["Status"].ToString() == "Delivered") {
+             @Html.HiddenFor(model => model.Status, new {id = "Status" , Value = "Delivered"})
          }
+
         </div>
          
 
