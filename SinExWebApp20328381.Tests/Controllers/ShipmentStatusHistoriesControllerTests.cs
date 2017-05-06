@@ -108,17 +108,17 @@ namespace SinExWebApp20328381.Controllers.Tests
             message.From = new MailAddress("comp3111_team105@cse.ust.hk");
             message.To.Add("lchenbk@connect.ust.hk");
             message.Subject = "Delivered Notification";
-            message.Body = "<!doctype html><html><head><meta charset = 'UTF-8'></head>";
+            message.Body = "<!doctype html><html><head><meta charset = 'UTF-8'></head><body>";
 
             message.Body +=
-                    "<div>A shipment (WaybillId:&nbsp0000000000000001) for you has been successfully picked up.</div><br />" +
-                    "<div>Sender:&nbspTom Jerry</div><br />" +
-                   "<div>City:&nbspBeijing,</div> <br />" +
-                   "<div>Street:&nbspTian</div><br />" +
-                   " <div>Building:&nbspLSK</div><br />" +
-                   "<div>Delivery Date:&nbsp05-05-2017</div>";
+                    "<div>A shipment (WaybillId:&nbsp;0000000000000001) for you has been successfully picked up.</div><br />" +
+                    "<div>Sender:&nbsp;Tom Jerry</div><br />" +
+                   "<div>City:&nbsp;Beijing,</div> <br />" +
+                   "<div>Street:&nbsp;Tian</div><br />" +
+                   " <div>Building:&nbsp;LSK</div><br />" +
+                   "<div>Delivery Date:&nbsp;05-05-2017</div>";
             
-            message.Body += "< body ></ body ></ html >";
+            message.Body += "</ body ></ html >";
             message.BodyEncoding = System.Text.Encoding.UTF8;
             MailMessage messageForTest = SC.Send_Email(shipment);
             Assert.That(messageForTest.Body, Is.EqualTo(message.Body));
