@@ -9,6 +9,7 @@ namespace SinExWebApp20328381.Models
 {
     public class Address
     {
+        [Required]
         public virtual string NickName { get; set; }
         [Key]
         public virtual int AddressId { get; set; }

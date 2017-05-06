@@ -195,6 +195,7 @@ namespace SinExWebApp20328381.Controllers
                     //Send Email to sender
                    
                     MailMessage DMail = new MailMessage();
+                    DMail.IsBodyHtml = true;
                     DMail.From = new MailAddress("comp3111_team105@cse.ust.hk");
                     DMail.To.Add(shipment.ShippingAccount.EmailAddress);
                     DMail.Subject = "Delivered Notification";
@@ -234,7 +235,7 @@ namespace SinExWebApp20328381.Controllers
 
 
 
-
+                    DMail.IsBodyHtml = true;
                     DMail.Body = "<!doctype html><html><head><meta charset = 'UTF-8'></head>";
                     DMail.Body += 
                         "<div>A shipment (WaybillId:&nbsp"+ shipment.WaybillId.ToString("D16") + ") for you has been successfully picked up.</div><br />" +
@@ -263,12 +264,13 @@ namespace SinExWebApp20328381.Controllers
         public MailMessage Send_Email(Shipment shipment)
         {
             MailMessage DMail = new MailMessage();
+            DMail.IsBodyHtml = true;
             if (shipment.Status == "Delivered")
             {
-              
+
                 //Send Email to sender
 
-               
+                
                 DMail.From = new MailAddress("comp3111_team105@cse.ust.hk");
                 DMail.To.Add(shipment.ShippingAccount.EmailAddress);
                 DMail.Subject = "Delivered Notification";
