@@ -1,4 +1,6 @@
 ﻿@model IEnumerable<SinExWebApp20328381.Models.Address>
+
+<h4>Manage Pickup Location</h4>
 <p>
     @Html.ActionLink("Add New One", "AddPickupLocation")
 </p>
@@ -42,7 +44,8 @@ else
                         @Html.DisplayFor(modelItem => item.NickName)
                     </td>
                     <td>
-                        @Html.DisplayFor(modelItem => item.ShippingAccountId)
+                        @{ string id = item.ShippingAccountId.Value.ToString("D12");}
+                        @id
                     </td>
                     <td>
                         @Html.DisplayFor(modelItem => item.Building)
