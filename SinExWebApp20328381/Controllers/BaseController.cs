@@ -104,7 +104,7 @@ namespace SinExWebApp20328381.Controllers
         }
         protected  bool sendEmail(MailMessage message)
         {
-            using (var smtp = new SmtpClient())
+            /*using (var smtp = new SmtpClient())
             {
                 var credential = new NetworkCredential
                 {
@@ -118,7 +118,10 @@ namespace SinExWebApp20328381.Controllers
                 smtp.Send(message);
                 return true;
 
-            }
+            }*/
+            SmtpClient emailServer = new SmtpClient("smtp.cse.ust.hk");
+            emailServer.Send(message);
+            return true;
         }
         protected PackageInputViewModel PackageToPackageViewModel(Package input)
         {
