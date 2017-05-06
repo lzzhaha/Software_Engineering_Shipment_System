@@ -52,7 +52,7 @@ namespace SinExWebApp20328381.Controllers
             {
                 return RedirectToAction("Search", new { errorMessage = "No such a waybill" });
             } else if (shipment.Status == "Saved" || shipment.Status == "Cancelled") {
-                return RedirectToAction("Search", new { erroMessage ="The waybill is not yet picked up or already cancelled"});
+                return RedirectToAction("Search", new { errorMessage = "The waybill is not yet picked up or already cancelled"});
             }
 
                 ViewData["WaybillNumber"] = shipment.WaybillId.ToString().PadLeft(12, '0'); ;
@@ -70,7 +70,7 @@ namespace SinExWebApp20328381.Controllers
                 List<Package> Packages = shipment.Packages.ToList();
                 ViewData["Packages"] = Packages;
 
-                 ViewData["Status_Informed"] = TempData["Status_Informed"];
+                 ViewData["Status_Inform"] = TempData["Status_Inform"];
                 //Retrieve shipmentStatusHistory
                 var statusQuery = from status in db.ShipmentStatusHistories
                                   where status.WaybillId == WaybillId
@@ -105,7 +105,7 @@ namespace SinExWebApp20328381.Controllers
             shipment.Packages = new Package[] { new Package() };
             
             
-            ViewData["Status_Informed"] = TempData["Status_Informed"];
+            ViewData["Status_Informed"] = TempData["Status_Inform"];
 
             ShipmentStatusHistory sta = new ShipmentStatusHistory();
             sta.Shipment = shipment;
@@ -135,7 +135,7 @@ namespace SinExWebApp20328381.Controllers
             TempData["Status_Inform"] = "";
             if (Status != "Confirmed" && Status != "PickedUp") {
                 TempData["Status_Inform"] = "Status of shipment can only be updated after it is confirmed and before it is delivered!";
-                return RedirectToAction("Index");
+                return RedirectToAction("Index", new { WaybillId = WaybillId });
             }
             return View();
         }
@@ -151,13 +151,9 @@ namespace SinExWebApp20328381.Controllers
             //Compare the Date with current time
             DateTime statusDate = new DateTime(shipmentStatusHistory.Date.Year, shipmentStatusHistory.Date.Month,
                 shipmentStatusHistory.Date.Day, shipmentStatusHistory.Time.Value.Hour,shipmentStatusHistory.Time.Value.Minute,shipmentStatusHistory.Time.Value.Second);
-            if (statusDate > DateTime.Now) {
-                ModelState.AddModelError("","The specified date can not be set to be the time in the future!");
-                return View(shipmentStatusHistory);
-            }
 
             //Compare the Date with the previous time
-            /*var status_list = db.ShipmentStatusHistories.Select(s => s).ToList();
+           var status_list = db.ShipmentStatusHistories.Where(s => s.WaybillId == shipmentStatusHistory.WaybillId).ToList();
             DateTime pastMax = new DateTime(1900,01,01,01,01,01);
      
             foreach (var status in status_list) {
@@ -169,17 +165,30 @@ namespace SinExWebApp20328381.Controllers
             }
 
             if (statusDate <= pastMax) {
-                ModelState.AddModelError("", "The specified date is not valid!");
+                ModelState.AddModelError("", "The specified date is not valid! The added date should be later than the date and time of last status!");
+                ViewData["WaybillId"] = shipmentStatusHistory.WaybillId;
+                ViewData["Status"] = shipmentStatusHistory.Status;
                 return View(shipmentStatusHistory);
             }
-            */
+
 
             //Check whether the delivered information is entered while it is not delivered
-            if (shipmentStatusHistory.Status != "Delivered") {
-                if (shipmentStatusHistory.DeliveredPerson!=null || shipmentStatusHistory.DeliveredPlace!=null) {
+            if (shipmentStatusHistory.Status != "Delivered")
+            {
+                if (shipmentStatusHistory.DeliveredPerson != null || shipmentStatusHistory.DeliveredPlace != null)
+                {
                     ModelState.AddModelError("", "The Delivered person and delivered place field cannot be entered unless the shipment is delivered");
+                    ViewData["WaybillId"] = shipmentStatusHistory.WaybillId;
+                    ViewData["Status"] = shipmentStatusHistory.Status;
                     return View(shipmentStatusHistory);
                 }
+            }
+            else if(shipmentStatusHistory.DeliveredPerson == null || shipmentStatusHistory.DeliveredPlace == null)
+            {
+                ModelState.AddModelError("", "The Delivered person and delivered place field should be specified when the shipment is delivered");
+                ViewData["WaybillId"] = shipmentStatusHistory.WaybillId;
+                ViewData["Status"] = shipmentStatusHistory.Status;
+                return View(shipmentStatusHistory);
             }
 
             if (ModelState.IsValid)
@@ -195,17 +204,18 @@ namespace SinExWebApp20328381.Controllers
                     //Send Email to sender
                    
                     MailMessage DMail = new MailMessage();
+                    DMail.IsBodyHtml = true;
                     DMail.From = new MailAddress("comp3111_team105@cse.ust.hk");
                     DMail.To.Add(shipment.ShippingAccount.EmailAddress);
                     DMail.Subject = "Delivered Notification";
-                    DMail.Body = "<!doctype html><html><head><meta charset = 'UTF-8'></head>";
-                    DMail.Body += "<div>Your shipment has been successfully delivered to:&nbsp " + shipment.RecipientName + "</div> <br /> " +
+                    DMail.Body = "<!doctype html><html><head><meta charset = 'UTF-8'></head><body>";
+                    DMail.Body += "<div>Your shipment has been successfully delivered to:&nbsp; " + shipment.RecipientName + "</div> <br /> " +
                         "<div>Delivered Location:</div><br />"+
-                       "<div>City:&nbsp"+ shipment.RecipientCityAddress + ",</div> <br />" +
-                       "<div>Street:&nbsp" + shipment.RecipientStreetAddress + "</div><br />"+
-                       " <div>Building:&nbsp" + shipment.RecipientBuildingAddress + "</div><br />"+
-                       "<div>Delivery Date:&nbsp"+ shipment.DeliveredDate.ToString("dd-mm-yyyy")+"</div>";
-                    DMail.Body += "< body ></ body ></ html >";
+                       "<div>City:&nbsp;"+ shipment.RecipientCityAddress + ",</div> <br />" +
+                       "<div>Street:&nbsp;" + shipment.RecipientStreetAddress + "</div><br />"+
+                       " <div>Building:&nbsp;" + shipment.RecipientBuildingAddress + "</div><br />"+
+                       "<div>Delivery Date:&nbsp;"+ shipment.DeliveredDate.ToString("dd-MM-yyyy")+"</div>";
+                    DMail.Body += "</ body ></ html >";
                     DMail.BodyEncoding = System.Text.Encoding.UTF8;
                     sendEmail(DMail);
                   } else if (shipmentStatusHistory.Status=="PickedUp") {
@@ -234,16 +244,16 @@ namespace SinExWebApp20328381.Controllers
 
 
 
-
-                    DMail.Body = "<!doctype html><html><head><meta charset = 'UTF-8'></head>";
+                    DMail.IsBodyHtml = true;
+                    DMail.Body = "<!doctype html><html><head><meta charset = 'UTF-8'></head><body>";
                     DMail.Body += 
-                        "<div>A shipment (WaybillId:&nbsp"+ shipment.WaybillId.ToString("D16") + ") for you has been successfully picked up.</div><br />" +
-                        "<div>Sender:&nbsp"+ SenderName+"</div><br />"+
-                       "<div>City:&nbsp" + shipment.ShippingAccount.MailingAddressCity + ",</div> <br />" +
-                       "<div>Street:&nbsp" + shipment.ShippingAccount.MailingAddressStreet + "</div><br />" +
-                       " <div>Building:&nbsp" + shipment.ShippingAccount.MailingAddressBuilding + "</div><br />" +
-                       "<div>Delivery Date:&nbsp" + shipment.ShippedDate.ToString("dd-mm-yyyy") + "</div>";
-                    DMail.Body += "< body ></ body ></ html >";
+                        "<div>A shipment (WaybillId:&nbsp;"+ shipment.WaybillId.ToString("D16") + ") for you has been successfully picked up.</div><br />" +
+                        "<div>Sender:&nbsp;"+ SenderName+"</div><br />"+
+                       "<div>City:&nbsp;" + shipment.ShippingAccount.MailingAddressCity + ",</div> <br />" +
+                       "<div>Street:&nbsp;" + shipment.ShippingAccount.MailingAddressStreet + "</div><br />" +
+                       " <div>Building:&nbsp;" + shipment.ShippingAccount.MailingAddressBuilding + "</div><br />" +
+                       "<div>Delivery Date:&nbsp;" + shipment.ShippedDate.ToString("dd-MM-yyyy") + "</div>";
+                    DMail.Body += "</ body ></ html >";
                    DMail.BodyEncoding = System.Text.Encoding.UTF8;
                     sendEmail(DMail);
 
@@ -263,23 +273,24 @@ namespace SinExWebApp20328381.Controllers
         public MailMessage Send_Email(Shipment shipment)
         {
             MailMessage DMail = new MailMessage();
+            DMail.IsBodyHtml = true;
             if (shipment.Status == "Delivered")
             {
-              
+
                 //Send Email to sender
 
-               
+                
                 DMail.From = new MailAddress("comp3111_team105@cse.ust.hk");
                 DMail.To.Add(shipment.ShippingAccount.EmailAddress);
                 DMail.Subject = "Delivered Notification";
-                DMail.Body = "<!doctype html><html><head><meta charset = 'UTF-8'></head>";
-                DMail.Body += "<div>Your shipment has been successfully delivered to:&nbsp " + shipment.RecipientName + "</div> <br /> " +
+                DMail.Body = "<!doctype html><html><head><meta charset = 'UTF-8'></head><body>";
+                DMail.Body += "<div>Your shipment has been successfully delivered to:&nbsp; " + shipment.RecipientName + "</div> <br /> " +
                     "<div>Delivered Location:</div><br />" +
-                   "<div>City:&nbsp" + shipment.RecipientCityAddress + ",</div> <br />" +
-                   "<div>Street:&nbsp" + shipment.RecipientStreetAddress + "</div><br />" +
-                   " <div>Building:&nbsp" + shipment.RecipientBuildingAddress + "</div><br />" +
-                   "<div>Delivery Date:&nbsp" + shipment.DeliveredDate.ToString("dd-mm-yyyy") + "</div>";
-                DMail.Body += "< body ></ body ></ html >";
+                   "<div>City:&nbsp;" + shipment.RecipientCityAddress + ",</div> <br />" +
+                   "<div>Street:&nbsp;" + shipment.RecipientStreetAddress + "</div><br />" +
+                   " <div>Building:&nbsp;" + shipment.RecipientBuildingAddress + "</div><br />" +
+                   "<div>Delivery Date:&nbsp;" + shipment.DeliveredDate.ToString("dd-MM-yyyy") + "</div>";
+                DMail.Body += "</ body ></ html >";
                 
             }
             else if (shipment.Status == "PickedUp")
@@ -316,15 +327,15 @@ namespace SinExWebApp20328381.Controllers
 
 
 
-                DMail.Body = "<!doctype html><html><head><meta charset = 'UTF-8'></head>";
+                DMail.Body = "<!doctype html><html><head><meta charset = 'UTF-8'></head><body>";
                 DMail.Body +=
-                    "<div>A shipment (WaybillId:&nbsp" + shipment.WaybillId.ToString("D16") + ") for you has been successfully picked up.</div><br />" +
-                    "<div>Sender:&nbsp" + SenderName + "</div><br />" +
-                   "<div>City:&nbsp" + shipment.ShippingAccount.MailingAddressCity + ",</div> <br />" +
-                   "<div>Street:&nbsp" + shipment.ShippingAccount.MailingAddressStreet + "</div><br />" +
-                   " <div>Building:&nbsp" + shipment.ShippingAccount.MailingAddressBuilding + "</div><br />" +
-                   "<div>Delivery Date:&nbsp" + shipment.ShippedDate.ToString("dd-MM-yyyy") + "</div>";
-                DMail.Body += "< body ></ body ></ html >";
+                    "<div>A shipment (WaybillId:&nbsp;" + shipment.WaybillId.ToString("D16") + ") for you has been successfully picked up.</div><br />" +
+                    "<div>Sender:&nbsp;" + SenderName + "</div><br />" +
+                   "<div>City:&nbsp;" + shipment.ShippingAccount.MailingAddressCity + ",</div> <br />" +
+                   "<div>Street:&nbsp;" + shipment.ShippingAccount.MailingAddressStreet + "</div><br />" +
+                   " <div>Building:&nbsp;" + shipment.ShippingAccount.MailingAddressBuilding + "</div><br />" +
+                   "<div>Delivery Date:&nbsp;" + shipment.ShippedDate.ToString("dd-MM-yyyy") + "</div>";
+                DMail.Body += "</ body ></ html >";
             }
             DMail.BodyEncoding = System.Text.Encoding.UTF8;
             return DMail;
