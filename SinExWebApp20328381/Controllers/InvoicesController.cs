@@ -195,7 +195,46 @@ namespace SinExWebApp20328381.Controllers
 
             return View(invoiceSearch);
         }
+        public ActionResult SwitchSortOrder(string sortOrder) {
+            ViewBag.ServiceTypeParm = sortOrder == "ServiceType" ? "ServiceType_dest" : "ServiceType";
+            ViewBag.ShippedDateParm = sortOrder == "ShippedDate" ? "ShippedDate_dest" : "ShippedDate";
+            ViewBag.DeliveredDateParm = sortOrder == "DeliveredDate" ? "DeliveredDate_dest" : "DeliveredDate";
+            ViewBag.RecipentNameParm = sortOrder == "RecipentName" ? "RecipentName_dest" : "RecipentName";
+            ViewBag.OriginParm = sortOrder == "Origin" ? "Origin_dest" : "Origin";
+            ViewBag.DestinationParm = sortOrder == "Destination" ? "Destination_dest" : "Destination";
+            ViewBag.CostParm = sortOrder == "Cost" ? "Cost_dest" : "Cost";
+            return View();
+        }
+        public ActionResult GenerateInvoiceReportInvalidDateCheck(DateTime? CurrentShippedStartDate, DateTime? CurrentShippedEndDate, DateTime? ShippedStartDate, DateTime? ShippedEndDate) {
+            
+            // Populate the ShippingAccountId dropdown list.
+            
 
+            ShippedStartDate = ShippedStartDate == null ? CurrentShippedStartDate : ShippedStartDate;
+            ShippedEndDate = ShippedEndDate == null ? CurrentShippedEndDate : ShippedEndDate;
+            if (ShippedStartDate == null)
+            {
+                ViewBag.CurrentShippedStartDate = null;
+            }
+            else
+            {
+                ViewBag.CurrentShippedStartDate = Convert.ToDateTime(ShippedStartDate);
+            }
+            if (ShippedEndDate == null)
+            {
+                ViewBag.CurrentShippedEndDate = null;
+            }
+            else
+            {
+                ViewBag.CurrentShippedEndDate = Convert.ToDateTime(ShippedEndDate);
+            }
+            if ((Convert.ToDateTime(ShippedStartDate) > Convert.ToDateTime(ShippedEndDate)) || (ShippedStartDate == null && ShippedEndDate != null) || (ShippedStartDate != null && ShippedEndDate == null))
+            {
+                ViewBag.ErrorMessage = "Date range is invalid.";
+                
+            }
+            return View();
+        }
         private SelectList PopulateShippingAccountsDropdownList()
         {
             // TODO: Construct the LINQ query to retrieve the unique list of shipping account ids.
