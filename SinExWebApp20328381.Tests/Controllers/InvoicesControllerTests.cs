@@ -104,7 +104,7 @@ namespace SinExWebApp20328381.Controllers.Tests
             shipment.Tax = 30;
             shipment.TaxAndDutyShippingAccountId = "1";
             shipment.TaxAuthorizationCode = "0083";
-            shipment.TaxCurreny = "HKD";
+            shipment.TaxCurrency = "HKD";
             shipment.WaybillId = 1;
             List<Package> pList = new List<Package>();
             pList.Add(package1);

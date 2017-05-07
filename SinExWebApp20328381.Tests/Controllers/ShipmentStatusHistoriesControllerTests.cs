@@ -54,7 +54,7 @@ namespace SinExWebApp20328381.Controllers.Tests
         shipment.ShippingAccountId =1;
         shipment.ShippedDate = new DateTime(2017,05,05);
         shipment.DeliveredDate = new DateTime(2017,06,06);
-        shipment.TaxCurreny="CNY";
+        shipment.TaxCurrency="CNY";
         
         shipment.DutyCurrency="";
         shipment.TaxAndDutyShippingAccountId = "111111111111";

@@ -376,8 +376,8 @@ namespace SinExWebApp20328381.Controllers
             invoice.TotalCostCurrency = db.Destinations.FirstOrDefault(s => s.ProvinceCode == provinceCode).CurrencyCode;
             long taxShippingAccountID = Convert.ToInt64(shipment.TaxAndDutyShippingAccountId);
             var provinceCode2 = db.ShippingAccounts.SingleOrDefault(s => s.ShippingAccountId == taxShippingAccountID).MailingAddressProvinceCode;
-            shipment.TaxCurreny = db.Destinations.FirstOrDefault(s => s.ProvinceCode == provinceCode2).CurrencyCode;
-            shipment.DutyCurrency = shipment.TaxCurreny;
+            shipment.TaxCurrency = db.Destinations.FirstOrDefault(s => s.ProvinceCode == provinceCode2).CurrencyCode;
+            shipment.DutyCurrency = shipment.TaxCurrency;
             List<PackageInputViewModel> Packages = new List<PackageInputViewModel>();
             foreach (var item in shipment.Packages)
             {
@@ -482,7 +482,7 @@ namespace SinExWebApp20328381.Controllers
             {
                 case "taxInvoice": {
                         message.Subject = "Tax and Duty Invoice";
-                        message.Body = message.Body + "<div>Duties Amounts: " + Math.Round(ConvertCurrency(invoice.shipment.DutyCurrency, invoice.shipment.Duty),2).ToString() + " "+invoice.shipment.DutyCurrency+"</div> &nbsp;<div>Tax Amounts: " + Math.Round(ConvertCurrency(invoice.shipment.TaxCurreny, invoice.shipment.Tax),2).ToString() + " " + invoice.shipment.TaxCurreny + "</div> &nbsp;<div> Authorization Code: " + invoice.shipment.TaxAuthorizationCode + "</div><br/>";
+                        message.Body = message.Body + "<div>Duties Amounts: " + Math.Round(ConvertCurrency(invoice.shipment.DutyCurrency, invoice.shipment.Duty),2).ToString() + " "+invoice.shipment.DutyCurrency+"</div> &nbsp;<div>Tax Amounts: " + Math.Round(ConvertCurrency(invoice.shipment.TaxCurrency, invoice.shipment.Tax),2).ToString() + " " + invoice.shipment.TaxCurrency + "</div> &nbsp;<div> Authorization Code: " + invoice.shipment.TaxAuthorizationCode + "</div><br/>";
 
 
                         break; }
@@ -494,7 +494,7 @@ namespace SinExWebApp20328381.Controllers
                 case "CombinedInvoice": {
                         message.Subject = "Tax, Duty and Shipment  Invoice";
                         message.Body = message.Body + "<div>Packages Total Cost: " + Math.Round(ConvertCurrency(invoice.TotalCostCurrency, invoice.TotalCost), 2).ToString() + " " + invoice.TotalCostCurrency + "</div><br/>";
-                        message.Body = message.Body + "<div>Duties Amounts: " + Math.Round(ConvertCurrency(invoice.shipment.DutyCurrency, invoice.shipment.Duty), 2).ToString() +" "+ invoice.shipment.DutyCurrency + "</div> &nbsp;<div>Tax Amounts: " + Math.Round(ConvertCurrency(invoice.shipment.TaxCurreny, invoice.shipment.Tax), 2).ToString() + " "+invoice.shipment.TaxCurreny + "</div> &nbsp;<div> Authorization Code: " + invoice.shipment.TaxAuthorizationCode + "</div><br/>";
+                        message.Body = message.Body + "<div>Duties Amounts: " + Math.Round(ConvertCurrency(invoice.shipment.DutyCurrency, invoice.shipment.Duty), 2).ToString() +" "+ invoice.shipment.DutyCurrency + "</div> &nbsp;<div>Tax Amounts: " + Math.Round(ConvertCurrency(invoice.shipment.TaxCurrency, invoice.shipment.Tax), 2).ToString() + " "+invoice.shipment.TaxCurrency + "</div> &nbsp;<div> Authorization Code: " + invoice.shipment.TaxAuthorizationCode + "</div><br/>";
                         var tempTotal = invoice.shipment.Duty + invoice.shipment.Tax + invoice.TotalCost;
                         message.Body = message.Body + "<div>Total Cost: " + Math.Round(ConvertCurrency(invoice.TotalCostCurrency, tempTotal),2).ToString() + " "+invoice.TotalCostCurrency+"</div><br/>";
                         break; }
@@ -567,7 +567,7 @@ namespace SinExWebApp20328381.Controllers
                 case "taxInvoice":
                     {
                         message.Subject = "Tax and Duty Invoice";
-                        message.Body = message.Body + "<div>Duties Amounts: " + Math.Round( invoice.shipment.Duty, 2).ToString() + " " + invoice.shipment.DutyCurrency + "</div> &nbsp;<div>Tax Amounts: " + Math.Round(invoice.shipment.Tax, 2).ToString() + " " + invoice.shipment.TaxCurreny + "</div> &nbsp;<div> Authorization Code: " + invoice.shipment.TaxAuthorizationCode + "</div><br/>";
+                        message.Body = message.Body + "<div>Duties Amounts: " + Math.Round( invoice.shipment.Duty, 2).ToString() + " " + invoice.shipment.DutyCurrency + "</div> &nbsp;<div>Tax Amounts: " + Math.Round(invoice.shipment.Tax, 2).ToString() + " " + invoice.shipment.TaxCurrency + "</div> &nbsp;<div> Authorization Code: " + invoice.shipment.TaxAuthorizationCode + "</div><br/>";
 
 
                         break;
@@ -581,7 +581,7 @@ namespace SinExWebApp20328381.Controllers
                 case "CombinedInvoice":
                     {
                         message.Subject = "Tax, Duty and Shipment  Invoice";
-                        message.Body = message.Body + "<div>Duties Amounts: " + Math.Round(invoice.shipment.Duty, 2).ToString() + " " + invoice.shipment.DutyCurrency + "</div> &nbsp;<div>Tax Amounts: " + Math.Round( invoice.shipment.Tax, 2).ToString() + " " + invoice.shipment.TaxCurreny + "</div> &nbsp;<div> Authorization Code: " + invoice.shipment.TaxAuthorizationCode + "</div><br/>";
+                        message.Body = message.Body + "<div>Duties Amounts: " + Math.Round(invoice.shipment.Duty, 2).ToString() + " " + invoice.shipment.DutyCurrency + "</div> &nbsp;<div>Tax Amounts: " + Math.Round( invoice.shipment.Tax, 2).ToString() + " " + invoice.shipment.TaxCurrency + "</div> &nbsp;<div> Authorization Code: " + invoice.shipment.TaxAuthorizationCode + "</div><br/>";
                         message.Body = message.Body + "<div>Total Cost: " + Math.Round(invoice.TotalCost, 2).ToString() + " " + invoice.TotalCostCurrency + "</div><br/>";
                         break;
                     }
