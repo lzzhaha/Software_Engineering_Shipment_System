@@ -25,7 +25,16 @@
             <div class="navbar-collapse collapse">
                 <ul class="nav navbar-nav">
                     <li>@Html.ActionLink("Home", "Index", "Home")</li>
-                    <li>@Html.ActionLink("About", "About", "Home")</li>
+                    <li class="dropdown">
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown">Admin Services<b class="caret"></b></a>
+                        <ul class="dropdown-menu">
+                            <li>@Html.ActionLink("Shipment Activity", "Search", "ShipmentStatusHistories")</li>
+                            <li>@Html.ActionLink("Shipment Pickup", "SearchWayBill", "Invoices")</li>
+                            <li>@Html.ActionLink("Add City", "Index", "Destinations")</li>
+                            <li>@Html.ActionLink("Change Fee", "Index", "ServicePackageFees")</li>
+                            <li>@Html.ActionLink("Change Currency", "Index", "Currencies")</li>
+                        </ul>
+                    </li>
                     <li class="dropdown">
                         <a href="#" class="dropdown-toggle" data-toggle="dropdown">Services<b class="caret"></b></a>
                         <ul class="dropdown-menu">
@@ -45,10 +54,6 @@
                             <li>@Html.ActionLink("Create PickUp Location","AddPickUpLocation","PersonalShippingAccounts")</li>
                             <li>@Html.ActionLink("Manage PickUp Location", "ManagePickUpLocation", "PersonalShippingAccounts")</li>
 
-                            }
-                            @if (User.IsInRole("Employee"))
-                            {
-                                <li>@Html.ActionLink("Create Invoice", "SearchWayBill", "Invoices")</li>
                             }
                            
                         </ul>

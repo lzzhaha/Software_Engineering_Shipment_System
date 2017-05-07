@@ -5,12 +5,11 @@
 }
 
 <h2>Destinations</h2>
-@if (User.IsInRole("Employee") || User.IsInRole("Customer"))
-{
+
     <p>
         @Html.ActionLink("add service cities", "Create", "Destinations")
     </p>
-}
+
 <table class="table">
     <tr>
         <th>

@@ -383,7 +383,7 @@ namespace SinExWebApp20328381.Controllers
             }
             base.Dispose(disposing);
         }
-        [Authorize(Roles = "Employee")]
+       // [Authorize(Roles = "Employee")]
         public ActionResult SearchWayBill()
         {
             var selectIetm = db.Shipments.Select(x => new SelectListItem() { Value = x.WaybillId.ToString(), Text = x.WaybillId.ToString() }).ToList();
