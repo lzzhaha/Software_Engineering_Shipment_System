@@ -82,7 +82,10 @@
             </td>
             <td>
                 @*Html.ActionLink("Edit", "Edit", new { id = item.WaybillId }) |*@
-                @Html.ActionLink("Details", "Details", new { id = item.WaybillId }) 
+                @if (User.IsInRole("Customer"))
+                {
+                    @Html.ActionLink("Details", "Details", new { id = item.WaybillId })
+                }
                 @*Html.ActionLink("Delete", "Delete", new { id = item.WaybillId })*@
             </td>
         </tr>
