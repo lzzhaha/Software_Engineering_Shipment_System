@@ -30,7 +30,7 @@ namespace SinExWebApp20328381.Models
         public virtual string Status { get; set; } // 5 status: Saved, Confirmed, PickedUp, Delivered, Cancelled
         public virtual long? ShippingAccountId { get; set; }
         public virtual decimal Tax { get; set; }
-        public virtual string TaxCurreny { get; set; }
+        public virtual string TaxCurrency { get; set; }
         public virtual decimal Duty { get; set; }
         public virtual string DutyCurrency { get; set; }
         public virtual string TaxAndDutyShippingAccountId { get; set; }
