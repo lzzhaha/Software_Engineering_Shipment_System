@@ -96,7 +96,7 @@ namespace SinExWebApp20328381.Controllers
                                     ShippedDate = s.shipment.ShippedDate,
                                     DeliveredDate = s.shipment.DeliveredDate,
                                     RecipientName = s.shipment.RecipientName,
-                                    TotalInvoiceAmount = s.TotalCost,
+                                    TotalInvoiceAmount = s.TotalCost+s.shipment.Tax+s.shipment.Duty,
                                     Origin = s.shipment.Origin,
                                     Destination = s.shipment.Destination,
                                     ShippingAccountId = (long)s.ShippingAccountId
@@ -244,6 +244,7 @@ namespace SinExWebApp20328381.Controllers
         // GET: Invoices/Details/5
         public ActionResult Details(long? id)
         {
+
             if (id == null)
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
@@ -253,7 +254,41 @@ namespace SinExWebApp20328381.Controllers
             {
                 return HttpNotFound();
             }
-            return View(invoice);
+            long waybillId = invoice.WaybillId;
+            ShippingAccount CurrentShippingAccount = GetCurrentShippingAccount();
+            Shipment shipment = db.Shipments.Include(s => s.Packages).SingleOrDefault(s => (s.WaybillId == waybillId && s.ShippingAccountId == CurrentShippingAccount.ShippingAccountId));
+            //ViewBag.Status = shipment.Status;
+            if (shipment == null)
+            {
+                return HttpNotFound();
+            }
+            InvoiceDetailViewModel Res = new InvoiceDetailViewModel();
+            Res.invoice = invoice;
+            Res.shipment = invoice.shipment;
+            ShippingAccount payer = CurrentShippingAccount;
+            ShippingAccount sender = invoice.shipment.ShippingAccount;
+            string senderName = CurrentShippingAccount.CreditCardHolderName;
+
+            Res.Packages = new List<PackageInputViewModel>();
+            foreach (var Package in invoice.shipment.Packages)
+            {
+                Res.Packages.Add(PackageToPackageViewModel(Package));
+            }
+            for (int i = Res.Packages.Count; i < 10; i++)
+            {
+                Res.Packages.Add(new PackageInputViewModel());
+            }
+
+            Res.creditCardNumber = payer.CreditCardNumber.Substring(payer.CreditCardNumber.Length - 4);
+            Res.mailingAddress = sender.MailingAddressCity + sender.MailingAddressStreet + sender.MailingAddressBuilding;
+            Res.deliveryAddress = invoice.shipment.RecipientCityAddress + invoice.shipment.RecipientStreetAddress + invoice.shipment.RecipientBuildingAddress;
+            Res.NumberOfPackages = invoice.shipment.NumberOfPackages;
+            Res.payer = payer;
+            Res.sender = sender;
+            Res.senderName = senderName;
+            Res.SystemOutputSource = new FeeCheckGenerateViewModel();
+            Res.SystemOutputSource.Fees = new ServicePackageFeesController().ProcessFeeCheck(Res.shipment.ServiceType, Res.Packages);
+            return View(Res);
         }
 
         // GET: Invoices/Create

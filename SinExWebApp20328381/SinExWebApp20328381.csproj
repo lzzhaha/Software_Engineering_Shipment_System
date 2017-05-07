@@ -251,6 +251,7 @@
     <Compile Include="Startup.cs" />
     <Compile Include="ViewModels\AddressJson.cs" />
     <Compile Include="ViewModels\DropdownListsViewModel.cs" />
+    <Compile Include="ViewModels\InvoiceDetailViewModel.cs" />
     <Compile Include="ViewModels\InvoiceReportViewModel.cs" />
     <Compile Include="ViewModels\PickupInformationInputViewModel.cs" />
     <Compile Include="ViewModels\SearchViewModel.cs" />
