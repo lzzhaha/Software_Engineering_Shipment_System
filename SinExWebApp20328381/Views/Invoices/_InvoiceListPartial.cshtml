@@ -40,7 +40,7 @@
         {
             <tr>
                 <td>
-                    @Html.DisplayFor(modelItem => item.WaybillId)
+                    @item.WaybillId.ToString("D16")
                 </td>
                 <td>
                     @Html.DisplayFor(modelItem => item.ServiceType)
@@ -78,7 +78,7 @@
                     @Html.DisplayFor(modelItem => item.Destination)
                 </td>
                 <td>
-                    @Html.DisplayFor(modelItem => item.ShippingAccountId)
+                    @item.ShippingAccountId.ToString("D12")
                 </td>
                 <td>
                     @*Html.ActionLink("Edit", "Edit", new { id = item.WaybillId }) |*@

@@ -9,6 +9,10 @@
         $(document).ready(function () {
             $('.Weighterror').hide();
             $('.Weighterror2').hide();
+            $('.Taxerror').hide();
+            $('.Taxerror2').hide();
+            $('.dutyerror').hide();
+            $('.dutyerror2').hide();
             $('.submit').click(function (event) {
                 var i = 0;
                  $('.weight').each(function(){
@@ -97,7 +101,7 @@ else
         @Html.HiddenFor(model => model.WaybillId)
 
     
-        Please input the value of tax and duty based onCNY. This system will translate it to corresponding currency when user see the invoice!
+        Please input the value of tax and duty based on <b class="text-danger" style="font-size:2em">CNY</b>. This system will translate it to corresponding currency when user see the invoice!
 
         <div class="form-group">
             @Html.LabelFor(model => model.shipment.Duty, htmlAttributes: new { @class = "control-label col-md-2" })

@@ -25,7 +25,13 @@
         <br>
         Weight:
         @foreach (var package in ViewData["Packages"] as List<SinExWebApp20328381.Models.Package>) {
-            @:&nbsp; @package.Weight.ToString("0.0")<text>kg</text>
+            @:&nbsp; @if (package.PackageType.Type == "Envelope")
+            {
+                @:<text>N/A</text>
+            }
+            else {
+                @package.ActualWeight.ToString("0.0")@:<text>kg</text>
+            } 
         }
         
 
