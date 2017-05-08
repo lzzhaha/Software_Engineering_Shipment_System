@@ -63,10 +63,10 @@
                 return;
             if ($(sel).val() == "Envelope")
             {
-                $(sel).next().next().val("1").attr("disabled", "disabled");
+                $(sel).next().next().val("1").attr("readonly", "readonly");
             }
             else{
-                $(sel).next().next().empty().removeAttr("disabled");
+                $(sel).next().next().empty().removeAttr("readonly");
             }
             CurrentPostingObject = sel;
             var data = $(sel).val();
