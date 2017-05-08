@@ -16,6 +16,7 @@ namespace SinExWebApp20328381.ViewModels
         [StringLength(10)]
         public virtual string ReferenceNumber { get; set; }
         [Required]
+        [StringLength(70)]
         public virtual string RecipientName { get; set; }
         [Required]
         [StringLength(14, MinimumLength = 8)]
@@ -35,6 +36,7 @@ namespace SinExWebApp20328381.ViewModels
         public virtual string PickupAddress { get; set; }
         [Required]
         [EmailAddress(ErrorMessage = "Please enter a valid Email address.")]
+        [StringLength(30)]
         public virtual string RecipientEmailAddress { get; set; }
         [StringLength(12, MinimumLength = 12, ErrorMessage = "The Account ID must be 12 digits.")]
         [Remote("ValidateAccountId", "Account", ErrorMessage = "The Account ID is not valid.")]

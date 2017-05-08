@@ -441,6 +441,7 @@ namespace SinExWebApp20328381.Controllers
         [Authorize(Roles = "Customer")]
         public ActionResult Edit(ShipmentInputViewModel NewShipment, long WaybillId)
         {
+            ViewBag.WaybillId = WaybillId;
             bool InputError = false;
             var OutputGenerater = new ServicePackageFeesController();
             NewShipment.SystemOutputSource = (FeeCheckGenerateViewModel)PopulateDrownLists(new FeeCheckGenerateViewModel());
