@@ -478,8 +478,8 @@ namespace SinExWebApp20328381.Controllers
                 var taxCode = creditCard_request(tax_account.CreditCardNumber, tax_account.CreditCardSecurityNumber, invoice.shipment.Tax).Item2;
                 invoice.shipment.TaxAuthorizationCode = taxCode.ToString();
                 invoice.shipment.ShipmentAuthorizationCode = creditCard_request(shipment_fee_account.CreditCardNumber, shipment_fee_account.CreditCardSecurityNumber, invoice.TotalCost).Item2.ToString();
-                SendInvoice(SetEmail("taxInvoice", invoice, tax_account, province, tax_account.EmailAddress));
-                SendInvoice(SetEmail("shipmentInvoice", invoice, shipment_fee_account, province, shipment_fee_account.EmailAddress));
+                SendInvoice(SetEmail("taxInvoice", invoice, shipment_fee_account,tax_account, province, tax_account.EmailAddress));
+                SendInvoice(SetEmail("shipmentInvoice", invoice, shipment_fee_account, shipment_fee_account, province, shipment_fee_account.EmailAddress));
             }
             else
             {
@@ -495,7 +495,7 @@ namespace SinExWebApp20328381.Controllers
                 var taxCode = creditCard_request(shipment_fee_account.CreditCardNumber, shipment_fee_account.CreditCardSecurityNumber, invoice.shipment.Tax).Item2;
                 invoice.shipment.TaxAuthorizationCode = taxCode.ToString();
                 invoice.shipment.ShipmentAuthorizationCode = creditCard_request(shipment_fee_account.CreditCardNumber, shipment_fee_account.CreditCardSecurityNumber, invoice.TotalCost).Item2.ToString();
-                SendInvoice(SetEmail("CombinedInvoice", invoice, shipment_fee_account, province, shipment_fee_account.EmailAddress));
+                SendInvoice(SetEmail("CombinedInvoice", invoice, shipment_fee_account, shipment_fee_account, province, shipment_fee_account.EmailAddress));
             }
 
             invoice.shipment.invoice = invoice;
@@ -504,9 +504,9 @@ namespace SinExWebApp20328381.Controllers
             db.SaveChanges();
              return RedirectToAction("SearchWayBill");
         }
-        public MailMessage SetEmail(string invoiceType,Invoice invoice,ShippingAccount shippingaccount,string province,string emailAddress)
+        public MailMessage SetEmail(string invoiceType,Invoice invoice,ShippingAccount shippingaccount,ShippingAccount payeraccount,string province,string emailAddress)
         {
-            var shipmentShippingAccountId = shippingaccount.ShippingAccountId;
+            var shipmentShippingAccountId = payeraccount.ShippingAccountId;
             var shippedDate = invoice.shipment.ShippedDate;
             var WaybillId = invoice.shipment.WaybillId;
             var serviceType = invoice.shipment.ServiceType;
@@ -527,8 +527,8 @@ namespace SinExWebApp20328381.Controllers
             var senderAddress = shippingaccount.MailingAddressBuilding + " , " + shippingaccount.MailingAddressStreet + shippingaccount.MailingAddressCity + " , " + shippingaccount.MailingAddressProvinceCode;
             var recipientName = invoice.shipment.RecipientName;
             var recipientAddress = invoice.shipment.RecipientBuildingAddress+" , "+invoice.shipment.RecipientStreetAddress + " , " + invoice.shipment.RecipientCityAddress+" , "+province;
-            var creditCardType = shippingaccount.CreditCardType;
-            var creditCardNumber = shippingaccount.CreditCardSecurityNumber;
+            var creditCardType = payeraccount.CreditCardType;
+            var creditCardNumber = payeraccount.CreditCardSecurityNumber;
             string packagesContent = "<table class=\"table\" style=\"border:1px solid black\"><tr><th>Package Type</th><th>Customer Weight</th><th>Actual Weight</th><th>Cost</th></tr>";
             foreach(var package in invoice.shipment.Packages)
             {
