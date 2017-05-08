@@ -219,7 +219,7 @@ namespace SinExWebApp20328381.Migrations
             new Invoice { InvoiceId = 1,WaybillId = 1, TotalCostCurrency = "CNY", TotalCost=(decimal)280.00,ShippingAccountId=2 },
             new Invoice { InvoiceId = 2, WaybillId = 2, TotalCostCurrency = "CNY", TotalCost = (decimal)50.00, ShippingAccountId = 1 },
             new Invoice { InvoiceId = 3, WaybillId = 3, TotalCostCurrency = "CNY", TotalCost = (decimal)413.00, ShippingAccountId = 1 },
-            new Invoice { InvoiceId = 4, WaybillId = 4, TotalCostCurrency = "CNY", TotalCost = (decimal)200.00, ShippingAccountId = 1 }
+            new Invoice { InvoiceId = 4, WaybillId = 4, TotalCostCurrency = "CNY", TotalCost = (decimal)200.00, ShippingAccountId = 3 }
             );*/
         }
     }
