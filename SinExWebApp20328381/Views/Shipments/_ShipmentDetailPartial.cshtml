@@ -9,6 +9,50 @@
         <div class="col-md-4"><b>Sender User Name:</b> @Html.DisplayFor(model => model.CurrentShippingAccount.UserName)</div>
         <div class="col-md-4"><b>Service Type:</b> @Html.DisplayFor(model => model.ServiceType)</div>
     </div>
+    <div class="row">
+        <div class="col-md-4">
+            <b>Shipping Account ID:</b> <span>@Model.CurrentShippingAccount.ShippingAccountId.ToString().PadLeft(12, '0')</span>
+        </div>
+        <div class="col-md-4">
+            <b>Sender's Name:</b>
+            @if (Model.CurrentShippingAccount is SinExWebApp20328381.Models.PersonalShippingAccount)
+            {
+                <span>@(((SinExWebApp20328381.Models.PersonalShippingAccount)Model.CurrentShippingAccount).FirstName + " " + ((SinExWebApp20328381.Models.PersonalShippingAccount)Model.CurrentShippingAccount).LastName)</span>
+            }
+            else
+            {
+                @:<span>@(((SinExWebApp20328381.Models.BusinessShippingAccount)Model.CurrentShippingAccount).ContactPersonName)</span>
+                }
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-4">
+            <b>Sender's Building Address:</b>
+            <span>@Model.CurrentShippingAccount.MailingAddressBuilding</span>
+        </div>
+        <div class="col-md-4">
+            <b>Sender's Street Address:</b>
+            <span>@Model.CurrentShippingAccount.MailingAddressStreet</span>
+        </div>
+        <div class="col-md-2">
+            <b>Sender's City:</b>
+            <span>@Model.CurrentShippingAccount.MailingAddressCity</span>
+        </div>
+        <div class="col-md-2">
+            <b>Sender's Province:</b>
+            <span>@Model.CurrentShippingAccount.MailingAddressProvinceCode</span>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-4">
+            <b>Sender's Phone:</b>
+            <span>@Model.CurrentShippingAccount.PhoneNumber</span>
+        </div>
+        <div class="col-md-4">
+            <b>Sender's Email Address:</b>
+            <span>@Model.CurrentShippingAccount.EmailAddress</span>
+        </div>
+    </div>
     <hr />
     <h5>Recipient Information</h5>
     <div class="row">

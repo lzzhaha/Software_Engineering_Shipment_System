@@ -520,9 +520,9 @@ namespace SinExWebApp20328381.Controllers
             else
             {
                 BusinessShippingAccount Baccount = (BusinessShippingAccount)(shippingaccount);
-                senderName = Baccount.CompanyName;
+                senderName = Baccount.ContactPersonName;
             }
-            senderName = shippingaccount.UserName;
+            //senderName = shippingaccount.UserName;
             
             var senderAddress = shippingaccount.MailingAddressBuilding + " , " + shippingaccount.MailingAddressStreet + shippingaccount.MailingAddressCity + " , " + shippingaccount.MailingAddressProvinceCode;
             var recipientName = invoice.shipment.RecipientName;
