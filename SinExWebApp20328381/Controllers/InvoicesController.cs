@@ -398,7 +398,7 @@ namespace SinExWebApp20328381.Controllers
             Shipment shipment=db.Shipments.Include("Packages").SingleOrDefault(s => s.WaybillId == waybillID);
             
             Invoice invoice = new Invoice();
-            if (shipment.Status == "Saved" || shipment.Status == " Confirmed")
+            if (shipment.Status !="PickedUp")
             {
                 ViewBag.NoPickup = "Yes";
                 return View(invoice);
