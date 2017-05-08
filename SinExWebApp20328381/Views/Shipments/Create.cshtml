@@ -61,6 +61,13 @@
         function UpdateSize(sel) {
             if ($(sel).val() == "Please Select")
                 return;
+            if ($(sel).val() == "Envelope")
+            {
+                $(sel).next().next().val("1").attr("disabled", "disabled");
+            }
+            else{
+                $(sel).next().next().empty().removeAttr("disabled");
+            }
             CurrentPostingObject = sel;
             var data = $(sel).val();
             var postdata = new Object();
