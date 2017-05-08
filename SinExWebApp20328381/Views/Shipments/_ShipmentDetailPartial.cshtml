@@ -85,8 +85,19 @@
             <div class="col-md-2">@Model.Packages[i].PackageType</div>
             <div class="col-md-2">@Model.Packages[i].Description</div>
             <div class="col-md-2">@Model.Packages[i].ValueCurrency @Model.Packages[i].Value</div>
-            <div class="col-md-2">@Model.Packages[i].Weight</div>
-            @if (Model.Packages[i].ActualWeight == -1)
+            @if (@Model.Packages[i].PackageType == "Envelope")
+            {
+                <div class="col-md-2">N/A</div>
+            }
+            else
+            {
+                <div class="col-md-2">@Model.Packages[i].Weight</div>
+            }
+            @if (@Model.Packages[i].PackageType == "Envelope")
+            {
+                <div class="col-md-2">N/A</div>
+            }
+            else if (Model.Packages[i].ActualWeight == -1)
             {
                 <div class="col-md-2">Not Updated</div>
             }
