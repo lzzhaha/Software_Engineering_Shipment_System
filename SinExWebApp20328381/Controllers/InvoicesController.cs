@@ -557,7 +557,7 @@ namespace SinExWebApp20328381.Controllers
                 case "taxInvoice": {
                         message.Subject = "Tax and Duty Invoice";
                         decimal totalPay = invoice.shipment.Tax + invoice.shipment.Duty;
-                        message.Body = message.Body + "<div>Duties Amounts: " + Math.Round(ConvertCurrency(invoice.shipment.DutyCurrency, invoice.shipment.Duty),2).ToString() + " "+invoice.shipment.DutyCurrency+"</div> &nbsp;<div>Tax Amounts: " + Math.Round(ConvertCurrency(invoice.shipment.TaxCurrency, invoice.shipment.Tax),2).ToString() + " " + invoice.shipment.TaxCurrency + "</div> &nbsp;<div> Total Payable: " + Math.Round(ConvertCurrency(invoice.TotalCostCurrency, totalPay), 2).ToString() + " " + invoice.TotalCostCurrency + " </div> &nbsp;<div> Authorization Code: " + invoice.shipment.TaxAuthorizationCode + "</div><br/>";
+                        message.Body = message.Body + "<div>Duties Amounts: " + Math.Round(ConvertCurrency(invoice.shipment.DutyCurrency, invoice.shipment.Duty),2).ToString() + " "+invoice.shipment.DutyCurrency+"</div> &nbsp;<div>Tax Amounts: " + Math.Round(ConvertCurrency(invoice.shipment.TaxCurrency, invoice.shipment.Tax),2).ToString() + " " + invoice.shipment.TaxCurrency + "</div> &nbsp;<div> Total Payable: " + Math.Round(ConvertCurrency(invoice.shipment.DutyCurrency, totalPay), 2).ToString() + " " + invoice.shipment.DutyCurrency + " </div> &nbsp;<div> Authorization Code: " + invoice.shipment.TaxAuthorizationCode + "</div><br/>";
 
 
                         break; }
