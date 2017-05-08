@@ -127,16 +127,19 @@ namespace SinExWebApp20328381.Controllers
         }
         */
         // GET: ShipmentStatusHistories/Create
-        [Authorize(Roles = "Employee")]
-        public ActionResult Create(long? WaybillId, string Status)
+        
+        public ActionResult Create(long? WaybillId)
         {
             ViewData["WaybillId"] = WaybillId;
+            var waybill = db.Shipments.SingleOrDefault(s => s.WaybillId == WaybillId);
+            string Status = waybill.Status;
             ViewData["Status"] = Status;
             TempData["Status_Inform"] = "";
             if (Status != "Confirmed" && Status != "PickedUp") {
                 TempData["Status_Inform"] = "Status of shipment can only be updated after it is confirmed and before it is delivered!";
                 return RedirectToAction("Index", new { WaybillId = WaybillId });
             }
+            
             return View();
         }
 
@@ -145,7 +148,7 @@ namespace SinExWebApp20328381.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        [Authorize(Roles = "Employee")]
+        
         public ActionResult Create([Bind(Include = "WaybillId,ShipmentStatusHistoryId,Status,Date,TimeValue,Description,Location,Remarks,DeliveredPerson,DeliveredPlace")] ShipmentStatusHistory shipmentStatusHistory)
         {
             //Compare the Date with current time
