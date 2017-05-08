@@ -31,7 +31,21 @@ namespace SinExWebApp20328381.Controllers
             UserManager = userManager;
             SignInManager = signInManager;
         }
+        public ActionResult CreditCardExpiryCheck(string CreditCardExpiryYear, int CreditCardExpiryMonth)
+        {
+            int y = int.Parse(CreditCardExpiryYear);
+            int m = CreditCardExpiryMonth;
+            if (y < DateTime.Now.Year)
+            {
+                ViewBag.ExpiryMessage="The card is expired.";
 
+            }
+
+            if (y == DateTime.Now.Year && m < DateTime.Now.Month)
+                ViewBag.ExpiryMessage="The card is expired.";
+            return View();
+                
+        }
         public ApplicationSignInManager SignInManager
         {
             get

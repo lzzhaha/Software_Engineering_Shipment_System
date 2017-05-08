@@ -274,7 +274,48 @@ namespace SinExWebApp20328381.Controllers
 
             return View(shipmentSearch);
         }
-        
+        public ActionResult SwitchSortOrder(string sortOrder)
+        {
+            ViewBag.ServiceTypeParm = sortOrder == "ServiceType" ? "ServiceType_dest" : "ServiceType";
+            ViewBag.ShippedDateParm = sortOrder == "ShippedDate" ? "ShippedDate_dest" : "ShippedDate";
+            ViewBag.DeliveredDateParm = sortOrder == "DeliveredDate" ? "DeliveredDate_dest" : "DeliveredDate";
+            ViewBag.RecipentNameParm = sortOrder == "RecipentName" ? "RecipentName_dest" : "RecipentName";
+            ViewBag.OriginParm = sortOrder == "Origin" ? "Origin_dest" : "Origin";
+            ViewBag.DestinationParm = sortOrder == "Destination" ? "Destination_dest" : "Destination";
+            ViewBag.CostParm = sortOrder == "Cost" ? "Cost_dest" : "Cost";
+            return View();
+        }
+        public ActionResult GenerateShipmentReportInvalidDateCheck(DateTime? CurrentShippedStartDate, DateTime? CurrentShippedEndDate, DateTime? ShippedStartDate, DateTime? ShippedEndDate)
+        {
+
+            // Populate the ShippingAccountId dropdown list.
+
+
+            ShippedStartDate = ShippedStartDate == null ? CurrentShippedStartDate : ShippedStartDate;
+            ShippedEndDate = ShippedEndDate == null ? CurrentShippedEndDate : ShippedEndDate;
+            if (ShippedStartDate == null)
+            {
+                ViewBag.CurrentShippedStartDate = null;
+            }
+            else
+            {
+                ViewBag.CurrentShippedStartDate = Convert.ToDateTime(ShippedStartDate);
+            }
+            if (ShippedEndDate == null)
+            {
+                ViewBag.CurrentShippedEndDate = null;
+            }
+            else
+            {
+                ViewBag.CurrentShippedEndDate = Convert.ToDateTime(ShippedEndDate);
+            }
+            if ((Convert.ToDateTime(ShippedStartDate) > Convert.ToDateTime(ShippedEndDate)) || (ShippedStartDate == null && ShippedEndDate != null) || (ShippedStartDate != null && ShippedEndDate == null))
+            {
+                ViewBag.ErrorMessage = "Date range is invalid.";
+
+            }
+            return View();
+        }
         private SelectList PopulateShippingAccountsDropdownList()
         {
             // TODO: Construct the LINQ query to retrieve the unique list of shipping account ids.
@@ -331,123 +372,9 @@ namespace SinExWebApp20328381.Controllers
             ViewBag.Message = "Successfully Created.";
             return RedirectToAction("Edit", new { id = ShipmentObject.WaybillId });
         }
+        
 
-        private ShipmentInputViewModel ShipmentToShipmentViewModel(Shipment input)
-        {
-            var Shipment = new ShipmentInputViewModel();
-            Shipment.ReferenceNumber = input.ReferenceNumber;
-            Shipment.RecipientName = input.RecipientName;
-            Shipment.RecipientCompanyName = input.RecipientCompanyName;
-            Shipment.RecipientDepartmentName = input.RecipientDepartmentName;
-            Shipment.RecipientPhoneNumber = input.RecipientPhoneNumber;
-            Shipment.RecipientEmailAddress = input.RecipientEmailAddress;
-            if (long.Parse(input.ShipmentShippingAccountId) == GetCurrentShippingAccount().ShippingAccountId)
-            {
-                Shipment.ShipmentPayer = "sender";
-            }
-            else
-            {
-                Shipment.ShipmentPayer = "recipient";
-                Shipment.RecipientAccountId = input.ShipmentShippingAccountId;
-            }
-            if (long.Parse(input.TaxAndDutyShippingAccountId) == GetCurrentShippingAccount().ShippingAccountId)
-            {
-                Shipment.DaTPayer = "sender";
-            }
-            else
-            {
-                Shipment.DaTPayer = "recipient";
-                Shipment.RecipientAccountId = input.TaxAndDutyShippingAccountId;
-            }
-            Shipment.DeliverEmail = input.EmailWhenDeliver == false ? "0" : "1";
-            Shipment.PickupEmail = input.EmailWhenPickup == false ? "0" : "1";
-            Shipment.NumberOfPackages = input.NumberOfPackages;
-            Shipment.Packages = new List<PackageInputViewModel>();
-            foreach (var Package in input.Packages)
-            {
-                Shipment.Packages.Add(PackageToPackageViewModel(Package));
-            }
-            for (int i = Shipment.Packages.Count; i<10; i++)
-            {
-                Shipment.Packages.Add(new PackageInputViewModel());
-            }
-            Shipment.ServiceType = input.ServiceType;
-            Shipment.Origin = input.Origin;
-            Shipment.Destination = input.Destination;
-            Shipment.RecipientBuildingAddress = input.RecipientBuildingAddress;
-            Shipment.RecipientCityAddress = input.RecipientCityAddress;
-            Shipment.RecipientStreetAddress = input.RecipientStreetAddress;
-            Shipment.RecipientPostalCode = input.RecipientPostalCode;
-            Shipment.WaybillId = input.WaybillId;
-            Shipment.Tax = input.Tax;
-            Shipment.Duty = input.Duty;
-            Shipment.TaxAuthorizationCode = input.TaxAuthorizationCode;
-            Shipment.ShipmentAuthorizationCode = input.ShipmentAuthorizationCode;
-            Shipment.TaxCurrency = input.TaxCurreny;
-            Shipment.DutyCurrency = input.DutyCurrency;
-            Shipment.PickupType = input.PickupType;
-            Shipment.PickupAddress = input.PickupAddress;
-            Shipment.ShippedDate = input.ShippedDate;
-            Shipment.DeliveredDate = input.DeliveredDate;
-            return Shipment;
-        }
-
-        private Shipment ShipmentViewModelToShipment(ShipmentInputViewModel input)
-        {
-            var Shipment = new Shipment();
-            ShipmentViewModelToShipment(input, ref Shipment);
-            //undefined: PickupType, ShippedDate, DeliveredDate
-            return Shipment;
-        }
-
-        private void ShipmentViewModelToShipment(ShipmentInputViewModel input, ref Shipment Shipment)
-        {
-            ShipmentViewModelToShipmentWithoutPackage(input, ref Shipment);
-            Shipment.Packages = new List<Package>();
-            for (int i = 0; i < input.NumberOfPackages; i++)
-            {
-                Shipment.Packages.Add(PackageViewModelToPackage(input.Packages[i]));
-            }
-        }
-
-        private void ShipmentViewModelToShipmentWithoutPackage(ShipmentInputViewModel input, ref Shipment Shipment)
-        {
-            Shipment.ReferenceNumber = input.ReferenceNumber;
-            Shipment.RecipientName = input.RecipientName;
-            Shipment.RecipientCompanyName = input.RecipientCompanyName;
-            Shipment.RecipientDepartmentName = input.RecipientDepartmentName;
-            Shipment.RecipientPhoneNumber = input.RecipientPhoneNumber;
-            Shipment.RecipientEmailAddress = input.RecipientEmailAddress;
-            if (input.ShipmentPayer == "sender")
-            {
-                Shipment.ShipmentShippingAccountId = GetCurrentShippingAccount().ShippingAccountId.ToString().PadLeft(12, '0');
-            }
-            else
-            {
-                Shipment.ShipmentShippingAccountId = input.RecipientAccountId;
-            }
-            if (input.DaTPayer == "sender")
-            {
-                Shipment.TaxAndDutyShippingAccountId = GetCurrentShippingAccount().ShippingAccountId.ToString().PadLeft(12, '0');
-            }
-            else
-            {
-                Shipment.TaxAndDutyShippingAccountId = input.RecipientAccountId;
-            }
-            Shipment.EmailWhenDeliver = input.DeliverEmail == "0" ? false : true;
-            Shipment.EmailWhenPickup = input.PickupEmail == "0" ? false : true;
-            Shipment.NumberOfPackages = input.NumberOfPackages;
-            Shipment.Status = "Saved";
-            Shipment.ShippingAccountId = GetCurrentShippingAccount().ShippingAccountId;
-            Shipment.ServiceType = input.ServiceType;
-            Shipment.Origin = input.Origin;
-            Shipment.Destination = input.Destination;
-            Shipment.RecipientBuildingAddress = input.RecipientBuildingAddress;
-            Shipment.RecipientCityAddress = input.RecipientCityAddress;
-            Shipment.RecipientStreetAddress = input.RecipientStreetAddress;
-            Shipment.RecipientPostalCode = input.RecipientPostalCode;
-            Shipment.PickupType = input.PickupType;
-        }
+        
         public JsonResult GetAddress(AddressJson Address)
         {
             var ShippingAccountId = GetCurrentShippingAccount().ShippingAccountId;
@@ -461,30 +388,7 @@ namespace SinExWebApp20328381.Controllers
             res["ServiceCity"] = AddRes.ServiceCity;
             return Json(res);
         }
-        private Package PackageViewModelToPackage (PackageInputViewModel input)
-        {
-            Package Package = new Package();
-            Package.Weight = decimal.Round((decimal)input.Weight, 1);
-            Package.Value = decimal.Round((decimal)input.Value, 2);
-            Package.ValueCurrency = input.ValueCurrency;
-            Package.Description = input.Description;
-            Package.PackageTypeID = db.PackageTypes.SingleOrDefault(s => s.Type == input.PackageType).PackageTypeID;
-            if (input.Size != null)
-            {
-                Package.PackageTypeSizeID = db.PackageTypeSizes.SingleOrDefault(s => (s.size == input.Size && s.PackageTypeID == Package.PackageTypeID)).PackageTypeSizeID;
-            }
-            else
-            {
-                Package.PackageTypeSizeID = 0;
-            }
-            if (input.PackageId != null)
-                Package.PackageId = (int)input.PackageId;
-            if (input.ActualWeight != null)
-                Package.ActualWeight = (decimal)input.ActualWeight;
-            else
-                Package.ActualWeight = -1;
-            return Package;
-        }
+        
 
         // GET: Shipments/Edit/5
         [Authorize(Roles = "Customer")]
@@ -561,7 +465,6 @@ namespace SinExWebApp20328381.Controllers
 
             NewShipment.SystemOutputSource.Fees = OutputGenerater.ProcessFeeCheck(NewShipment.ServiceType, NewShipment.Packages);
             var DBShipment = db.Shipments.Include("Packages").SingleOrDefault(s => s.WaybillId == WaybillId);
-            //ShipmentViewModelToShipmentWithoutPackage(NewShipment, ref DBShipment);
             //db.Entry(DBShipment).State = EntityState.Modified;
             var shipment = ShipmentViewModelToShipment(NewShipment);
             shipment.WaybillId = WaybillId;

@@ -226,6 +226,7 @@
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
     <Compile Include="Migrations\AspIdentityConfiguration.cs" />
+    <Compile Include="Migrations\ShipmentInvoiceConfiguration.cs" />
     <Compile Include="Migrations\SinExConfiguration.cs" />
     <Compile Include="Models\AccountViewModels.cs" />
     <Compile Include="Models\Address.cs" />
@@ -250,6 +251,7 @@
     <Compile Include="Startup.cs" />
     <Compile Include="ViewModels\AddressJson.cs" />
     <Compile Include="ViewModels\DropdownListsViewModel.cs" />
+    <Compile Include="ViewModels\InvoiceDetailViewModel.cs" />
     <Compile Include="ViewModels\InvoiceReportViewModel.cs" />
     <Compile Include="ViewModels\PickupInformationInputViewModel.cs" />
     <Compile Include="ViewModels\SearchViewModel.cs" />

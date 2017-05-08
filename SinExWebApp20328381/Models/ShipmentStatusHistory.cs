@@ -34,7 +34,7 @@ namespace SinExWebApp20328381.Models
 
         [Required]
         public virtual string Description { get; set; }
-        [Required]
+        //[Required]
         public virtual string Location { get; set; }
         public virtual string Remarks { get; set; }
         [StringLength(70)]

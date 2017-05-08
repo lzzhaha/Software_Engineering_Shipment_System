@@ -123,13 +123,10 @@ namespace SinExWebApp20328381.Controllers
             emailServer.Send(message);
             return true;
         }
-        protected PackageInputViewModel PackageToPackageViewModel(Package input)
+        public PackageInputViewModel PackageToPackageViewModel(Package input)
         {
             PackageInputViewModel PackageInputViewModel = new PackageInputViewModel();
-            PackageInputViewModel.Weight = decimal.Round(input.Weight, 1);
-            PackageInputViewModel.Value = decimal.Round(input.Value, 2);
-            PackageInputViewModel.ValueCurrency = input.ValueCurrency;
-            PackageInputViewModel.Description = input.Description;
+            PackageToPackageViewModelWithoutDB(ref input, ref PackageInputViewModel);
             PackageType PackageTypeRes = db.PackageTypes.SingleOrDefault(s => s.PackageTypeID == input.PackageTypeID);
             PackageInputViewModel.PackageType = PackageTypeRes.Type;
             if (PackageTypeRes.PackageTypeSizes.Count != 0)
@@ -140,9 +137,164 @@ namespace SinExWebApp20328381.Controllers
             {
                 PackageInputViewModel.Size = null;
             }
+            return PackageInputViewModel;
+        }
+
+        public void PackageToPackageViewModelWithoutDB (ref Package input, ref PackageInputViewModel PackageInputViewModel)
+        {
+            PackageInputViewModel.Weight = decimal.Round(input.Weight, 1);
+            PackageInputViewModel.Value = decimal.Round(input.Value, 2);
+            PackageInputViewModel.ValueCurrency = input.ValueCurrency;
+            PackageInputViewModel.Description = input.Description;
             PackageInputViewModel.PackageId = input.PackageId;
             PackageInputViewModel.ActualWeight = decimal.Round(input.ActualWeight, 1);
-            return PackageInputViewModel;
+        }
+        public Package PackageViewModelToPackage(PackageInputViewModel input)
+        {
+            Package Package = new Package();
+            PackageViewModelToPackageWithoutDB(ref input, ref Package);
+            Package.PackageTypeID = db.PackageTypes.SingleOrDefault(s => s.Type == input.PackageType).PackageTypeID;
+            if (input.Size != null)
+            {
+                Package.PackageTypeSizeID = db.PackageTypeSizes.SingleOrDefault(s => (s.size == input.Size && s.PackageTypeID == Package.PackageTypeID)).PackageTypeSizeID;
+            }
+            else
+            {
+                Package.PackageTypeSizeID = 0;
+            }
+            
+            return Package;
+        }
+
+        public void PackageViewModelToPackageWithoutDB(ref PackageInputViewModel input, ref Package Package)
+        {
+            Package.Weight = decimal.Round((decimal)input.Weight, 1);
+            Package.Value = decimal.Round((decimal)input.Value, 2);
+            Package.ValueCurrency = input.ValueCurrency;
+            Package.Description = input.Description;
+            if (input.PackageId != null)
+                Package.PackageId = (int)input.PackageId;
+            if (input.ActualWeight != null)
+                Package.ActualWeight = decimal.Round((decimal)input.ActualWeight, 1);
+            else
+                Package.ActualWeight = -1;
+        }
+        public ShipmentInputViewModel ShipmentToShipmentViewModel(Shipment input)
+        {
+            var Shipment = new ShipmentInputViewModel();
+            ShipmentToShipmentViewModelWithoutDB(ref input, ref Shipment);
+            if (long.Parse(input.ShipmentShippingAccountId) == GetCurrentShippingAccount().ShippingAccountId)
+            {
+                Shipment.ShipmentPayer = "sender";
+            }
+            else
+            {
+                Shipment.ShipmentPayer = "recipient";
+                Shipment.RecipientAccountId = input.ShipmentShippingAccountId;
+            }
+            if (long.Parse(input.TaxAndDutyShippingAccountId) == GetCurrentShippingAccount().ShippingAccountId)
+            {
+                Shipment.DaTPayer = "sender";
+            }
+            else
+            {
+                Shipment.DaTPayer = "recipient";
+                Shipment.RecipientAccountId = input.TaxAndDutyShippingAccountId;
+            }
+            Shipment.Packages = new List<PackageInputViewModel>();
+            foreach (var Package in input.Packages)
+            {
+                Shipment.Packages.Add(PackageToPackageViewModel(Package));
+            }
+            for (int i = Shipment.Packages.Count; i < 10; i++)
+            {
+                Shipment.Packages.Add(new PackageInputViewModel());
+            }
+            return Shipment;
+        }
+
+        public void ShipmentToShipmentViewModelWithoutDB(ref Shipment input, ref ShipmentInputViewModel Shipment)
+        {
+            Shipment.ReferenceNumber = input.ReferenceNumber;
+            Shipment.RecipientName = input.RecipientName;
+            Shipment.RecipientCompanyName = input.RecipientCompanyName;
+            Shipment.RecipientDepartmentName = input.RecipientDepartmentName;
+            Shipment.RecipientPhoneNumber = input.RecipientPhoneNumber;
+            Shipment.RecipientEmailAddress = input.RecipientEmailAddress;
+            Shipment.ServiceType = input.ServiceType;
+            Shipment.Origin = input.Origin;
+            Shipment.Destination = input.Destination;
+            Shipment.RecipientBuildingAddress = input.RecipientBuildingAddress;
+            Shipment.RecipientCityAddress = input.RecipientCityAddress;
+            Shipment.RecipientStreetAddress = input.RecipientStreetAddress;
+            Shipment.RecipientPostalCode = input.RecipientPostalCode;
+            Shipment.WaybillId = input.WaybillId;
+            Shipment.Tax = input.Tax;
+            Shipment.Duty = input.Duty;
+            Shipment.TaxAuthorizationCode = input.TaxAuthorizationCode;
+            Shipment.ShipmentAuthorizationCode = input.ShipmentAuthorizationCode;
+            Shipment.TaxCurrency = input.TaxCurrency;
+            Shipment.DutyCurrency = input.DutyCurrency;
+            Shipment.PickupType = input.PickupType;
+            Shipment.PickupAddress = input.PickupAddress;
+            Shipment.ShippedDate = input.ShippedDate;
+            Shipment.DeliveredDate = input.DeliveredDate;
+            Shipment.DeliverEmail = input.EmailWhenDeliver == false ? "0" : "1";
+            Shipment.PickupEmail = input.EmailWhenPickup == false ? "0" : "1";
+            Shipment.NumberOfPackages = input.NumberOfPackages;
+        }
+
+        // usage: when saving or editing shipment
+        public Shipment ShipmentViewModelToShipment(ShipmentInputViewModel input)
+        {
+            var Shipment = new Shipment();
+            ShipmentViewModelToShipmentWithoutDB(ref input, ref Shipment);
+            Shipment.ShippingAccountId = GetCurrentShippingAccount().ShippingAccountId;
+            if (input.ShipmentPayer == "sender")
+            {
+                Shipment.ShipmentShippingAccountId = GetCurrentShippingAccount().ShippingAccountId.ToString().PadLeft(12, '0');
+            }
+            else
+            {
+                Shipment.ShipmentShippingAccountId = input.RecipientAccountId;
+            }
+            if (input.DaTPayer == "sender")
+            {
+                Shipment.TaxAndDutyShippingAccountId = GetCurrentShippingAccount().ShippingAccountId.ToString().PadLeft(12, '0');
+            }
+            else
+            {
+                Shipment.TaxAndDutyShippingAccountId = input.RecipientAccountId;
+            }
+            Shipment.Packages = new List<Package>();
+            for (int i = 0; i < input.NumberOfPackages; i++)
+            {
+                Shipment.Packages.Add(PackageViewModelToPackage(input.Packages[i]));
+            }
+            //undefined: PickupType, ShippedDate, DeliveredDate
+            return Shipment;
+        }
+
+        public void ShipmentViewModelToShipmentWithoutDB(ref ShipmentInputViewModel input, ref Shipment Shipment)
+        {
+            Shipment.ReferenceNumber = input.ReferenceNumber;
+            Shipment.RecipientName = input.RecipientName;
+            Shipment.RecipientCompanyName = input.RecipientCompanyName;
+            Shipment.RecipientDepartmentName = input.RecipientDepartmentName;
+            Shipment.RecipientPhoneNumber = input.RecipientPhoneNumber;
+            Shipment.RecipientEmailAddress = input.RecipientEmailAddress;
+            Shipment.EmailWhenDeliver = input.DeliverEmail == "0" ? false : true;
+            Shipment.EmailWhenPickup = input.PickupEmail == "0" ? false : true;
+            Shipment.NumberOfPackages = input.NumberOfPackages;
+            Shipment.Status = "Saved";
+            Shipment.ServiceType = input.ServiceType;
+            Shipment.Origin = input.Origin;
+            Shipment.Destination = input.Destination;
+            Shipment.RecipientBuildingAddress = input.RecipientBuildingAddress;
+            Shipment.RecipientCityAddress = input.RecipientCityAddress;
+            Shipment.RecipientStreetAddress = input.RecipientStreetAddress;
+            Shipment.RecipientPostalCode = input.RecipientPostalCode;
+            Shipment.PickupType = input.PickupType;
         }
 
         // Mimicing Credit card authorization system

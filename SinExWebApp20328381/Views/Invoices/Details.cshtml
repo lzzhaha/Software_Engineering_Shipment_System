@@ -1,4 +1,4 @@
-﻿@model SinExWebApp20328381.Models.Invoice
+﻿@model SinExWebApp20328381.ViewModels.InvoiceDetailViewModel
 
 @{
     ViewBag.Title = "Details";
@@ -11,44 +11,162 @@
     <hr />
     <dl class="dl-horizontal">
         <dt>
-            @Html.DisplayNameFor(model => model.shipment.ReferenceNumber)
+            Shipping account number of the payer: 
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.shipment.ShipmentShippingAccountId)
+        </dd>
+
+        
+        <dt>
+            Shipment waybill number:
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.shipment.WaybillId)
+        </dd>
+
+
+        <dt>
+            @Html.DisplayNameFor(model => model.shipment.ShippedDate) :
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.shipment.ShippedDate)
+        </dd>
+
+
+        <dt>
+            @Html.DisplayNameFor(model => model.shipment.ServiceType) :
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.shipment.ServiceType)
+        </dd>
+
+
+        <dt>
+            Sender's reference number:
         </dt>
 
         <dd>
             @Html.DisplayFor(model => model.shipment.ReferenceNumber)
         </dd>
-
         <dt>
-            @Html.DisplayNameFor(model => model.WaybillId)
+            Sender's full name:
         </dt>
 
         <dd>
-            @Html.DisplayFor(model => model.WaybillId)
+            @Html.DisplayFor(model => model.senderName)
         </dd>
-
         <dt>
-            @Html.DisplayNameFor(model => model.TotalCostCurrency)
+            Mailing address:
         </dt>
 
         <dd>
-            @Html.DisplayFor(model => model.TotalCostCurrency)
+            @Html.DisplayFor(model => model.mailingAddress)
         </dd>
 
         <dt>
-            @Html.DisplayNameFor(model => model.TotalCost)
+            Recipient's full name:
         </dt>
 
         <dd>
-            @Html.DisplayFor(model => model.TotalCost)
+            @Html.DisplayFor(model => model.shipment.RecipientName)
+        </dd>
+        <dt>
+            Delivery address:
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.deliveryAddress)
         </dd>
 
         <dt>
-            @Html.DisplayNameFor(model => model.ShippingAccountId)
+            Credit card type:
         </dt>
 
         <dd>
-            @Html.DisplayFor(model => model.ShippingAccountId)
+            @Html.DisplayFor(model => model.payer.CreditCardType)
         </dd>
+
+        <dt>
+            Credit card number(last 4 digits):
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model =>model.creditCardNumber)
+        </dd>
+
+        <dt>
+            Shipment Authorization Code:
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.shipment.ShipmentAuthorizationCode)
+        </dd>
+        <dt>
+            Tax & Duty Authorization Code:
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.shipment.TaxAuthorizationCode)
+        </dd>
+        <dt>
+            Shipment Payable:
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.invoice.TotalCost)
+        </dd>
+        <dt>
+            Currency(Shipment):
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.invoice.TotalCostCurrency)
+        </dd>
+        <dt>
+            Tax Payable:
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model =>model.shipment.Tax)
+        </dd>
+        <dt>
+            Duty Payable:
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.shipment.Duty)
+        </dd>
+        <dt>
+            Currency(Tax & Duty):
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.shipment.TaxCurreny)
+        </dd>
+        
+        @for (int i = 0; i < Model.NumberOfPackages; i++)
+        {
+            <div class="row">
+                <div class="col-md-2">@Model.Packages[i].PackageType</div>
+                <div class="col-md-2">@Model.Packages[i].Description</div>
+                <div class="col-md-2">@Model.Packages[i].ValueCurrency @Model.Packages[i].Value</div>
+                <div class="col-md-2">@Model.Packages[i].Weight</div>
+                @if (Model.Packages[i].ActualWeight == -1)
+                {
+                    <div class="col-md-2">Not Updated</div>
+                }
+                else
+                {
+                    <div class="col-md-2">@Model.Packages[i].ActualWeight</div>
+                }
+                <div class="col-md-2">CNY @Math.Round(Model.SystemOutputSource.Fees[i], 2)</div>
+            </div>
+        }
 
     </dl>
 </div>

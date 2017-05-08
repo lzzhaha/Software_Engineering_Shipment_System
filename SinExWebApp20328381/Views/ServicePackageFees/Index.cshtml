@@ -55,13 +55,12 @@
         <td>
             @Html.DisplayFor(modelItem => item.Penalty)
         </td>
-        @if (User.IsInRole("Employee"))
-        {
+        
             <td>
                 @Html.ActionLink("Edit", "Edit", new { id = item.ServicePackageFeeID }) |
 
             </td>
-        }
+        
     </tr>
 }
 

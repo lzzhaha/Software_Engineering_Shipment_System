@@ -96,7 +96,7 @@ namespace SinExWebApp20328381.Controllers
                                     ShippedDate = s.shipment.ShippedDate,
                                     DeliveredDate = s.shipment.DeliveredDate,
                                     RecipientName = s.shipment.RecipientName,
-                                    TotalInvoiceAmount = s.TotalCost,
+                                    TotalInvoiceAmount = s.TotalCost+s.shipment.Tax+s.shipment.Duty,
                                     Origin = s.shipment.Origin,
                                     Destination = s.shipment.Destination,
                                     ShippingAccountId = (long)s.ShippingAccountId
@@ -195,7 +195,46 @@ namespace SinExWebApp20328381.Controllers
 
             return View(invoiceSearch);
         }
+        public ActionResult SwitchSortOrder(string sortOrder) {
+            ViewBag.ServiceTypeParm = sortOrder == "ServiceType" ? "ServiceType_dest" : "ServiceType";
+            ViewBag.ShippedDateParm = sortOrder == "ShippedDate" ? "ShippedDate_dest" : "ShippedDate";
+            ViewBag.DeliveredDateParm = sortOrder == "DeliveredDate" ? "DeliveredDate_dest" : "DeliveredDate";
+            ViewBag.RecipentNameParm = sortOrder == "RecipentName" ? "RecipentName_dest" : "RecipentName";
+            ViewBag.OriginParm = sortOrder == "Origin" ? "Origin_dest" : "Origin";
+            ViewBag.DestinationParm = sortOrder == "Destination" ? "Destination_dest" : "Destination";
+            ViewBag.CostParm = sortOrder == "Cost" ? "Cost_dest" : "Cost";
+            return View();
+        }
+        public ActionResult GenerateInvoiceReportInvalidDateCheck(DateTime? CurrentShippedStartDate, DateTime? CurrentShippedEndDate, DateTime? ShippedStartDate, DateTime? ShippedEndDate) {
+            
+            // Populate the ShippingAccountId dropdown list.
+            
 
+            ShippedStartDate = ShippedStartDate == null ? CurrentShippedStartDate : ShippedStartDate;
+            ShippedEndDate = ShippedEndDate == null ? CurrentShippedEndDate : ShippedEndDate;
+            if (ShippedStartDate == null)
+            {
+                ViewBag.CurrentShippedStartDate = null;
+            }
+            else
+            {
+                ViewBag.CurrentShippedStartDate = Convert.ToDateTime(ShippedStartDate);
+            }
+            if (ShippedEndDate == null)
+            {
+                ViewBag.CurrentShippedEndDate = null;
+            }
+            else
+            {
+                ViewBag.CurrentShippedEndDate = Convert.ToDateTime(ShippedEndDate);
+            }
+            if ((Convert.ToDateTime(ShippedStartDate) > Convert.ToDateTime(ShippedEndDate)) || (ShippedStartDate == null && ShippedEndDate != null) || (ShippedStartDate != null && ShippedEndDate == null))
+            {
+                ViewBag.ErrorMessage = "Date range is invalid.";
+                
+            }
+            return View();
+        }
         private SelectList PopulateShippingAccountsDropdownList()
         {
             // TODO: Construct the LINQ query to retrieve the unique list of shipping account ids.
@@ -205,6 +244,7 @@ namespace SinExWebApp20328381.Controllers
         // GET: Invoices/Details/5
         public ActionResult Details(long? id)
         {
+
             if (id == null)
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
@@ -214,7 +254,41 @@ namespace SinExWebApp20328381.Controllers
             {
                 return HttpNotFound();
             }
-            return View(invoice);
+            long waybillId = invoice.WaybillId;
+            ShippingAccount CurrentShippingAccount = GetCurrentShippingAccount();
+            Shipment shipment = db.Shipments.Include(s => s.Packages).SingleOrDefault(s => (s.WaybillId == waybillId && s.ShippingAccountId == CurrentShippingAccount.ShippingAccountId));
+            //ViewBag.Status = shipment.Status;
+            if (shipment == null)
+            {
+                return HttpNotFound();
+            }
+            InvoiceDetailViewModel Res = new InvoiceDetailViewModel();
+            Res.invoice = invoice;
+            Res.shipment = invoice.shipment;
+            ShippingAccount payer = CurrentShippingAccount;
+            ShippingAccount sender = invoice.shipment.ShippingAccount;
+            string senderName = CurrentShippingAccount.CreditCardHolderName;
+
+            Res.Packages = new List<PackageInputViewModel>();
+            foreach (var Package in invoice.shipment.Packages)
+            {
+                Res.Packages.Add(PackageToPackageViewModel(Package));
+            }
+            for (int i = Res.Packages.Count; i < 10; i++)
+            {
+                Res.Packages.Add(new PackageInputViewModel());
+            }
+
+            Res.creditCardNumber = payer.CreditCardNumber.Substring(payer.CreditCardNumber.Length - 4);
+            Res.mailingAddress = sender.MailingAddressCity + sender.MailingAddressStreet + sender.MailingAddressBuilding;
+            Res.deliveryAddress = invoice.shipment.RecipientCityAddress + invoice.shipment.RecipientStreetAddress + invoice.shipment.RecipientBuildingAddress;
+            Res.NumberOfPackages = invoice.shipment.NumberOfPackages;
+            Res.payer = payer;
+            Res.sender = sender;
+            Res.senderName = senderName;
+            Res.SystemOutputSource = new FeeCheckGenerateViewModel();
+            Res.SystemOutputSource.Fees = new ServicePackageFeesController().ProcessFeeCheck(Res.shipment.ServiceType, Res.Packages);
+            return View(Res);
         }
 
         // GET: Invoices/Create
@@ -309,7 +383,7 @@ namespace SinExWebApp20328381.Controllers
             }
             base.Dispose(disposing);
         }
-        [Authorize(Roles = "Employee")]
+       // [Authorize(Roles = "Employee")]
         public ActionResult SearchWayBill()
         {
             var selectIetm = db.Shipments.Select(x => new SelectListItem() { Value = x.WaybillId.ToString(), Text = x.WaybillId.ToString() }).ToList();
@@ -376,8 +450,8 @@ namespace SinExWebApp20328381.Controllers
             invoice.TotalCostCurrency = db.Destinations.FirstOrDefault(s => s.ProvinceCode == provinceCode).CurrencyCode;
             long taxShippingAccountID = Convert.ToInt64(shipment.TaxAndDutyShippingAccountId);
             var provinceCode2 = db.ShippingAccounts.SingleOrDefault(s => s.ShippingAccountId == taxShippingAccountID).MailingAddressProvinceCode;
-            shipment.TaxCurreny = db.Destinations.FirstOrDefault(s => s.ProvinceCode == provinceCode2).CurrencyCode;
-            shipment.DutyCurrency = shipment.TaxCurreny;
+            shipment.TaxCurrency = db.Destinations.FirstOrDefault(s => s.ProvinceCode == provinceCode2).CurrencyCode;
+            shipment.DutyCurrency = shipment.TaxCurrency;
             List<PackageInputViewModel> Packages = new List<PackageInputViewModel>();
             foreach (var item in shipment.Packages)
             {
@@ -482,7 +556,7 @@ namespace SinExWebApp20328381.Controllers
             {
                 case "taxInvoice": {
                         message.Subject = "Tax and Duty Invoice";
-                        message.Body = message.Body + "<div>Duties Amounts: " + Math.Round(ConvertCurrency(invoice.shipment.DutyCurrency, invoice.shipment.Duty),2).ToString() + " "+invoice.shipment.DutyCurrency+"</div> &nbsp;<div>Tax Amounts: " + Math.Round(ConvertCurrency(invoice.shipment.TaxCurreny, invoice.shipment.Tax),2).ToString() + " " + invoice.shipment.TaxCurreny + "</div> &nbsp;<div> Authorization Code: " + invoice.shipment.TaxAuthorizationCode + "</div><br/>";
+                        message.Body = message.Body + "<div>Duties Amounts: " + Math.Round(ConvertCurrency(invoice.shipment.DutyCurrency, invoice.shipment.Duty),2).ToString() + " "+invoice.shipment.DutyCurrency+"</div> &nbsp;<div>Tax Amounts: " + Math.Round(ConvertCurrency(invoice.shipment.TaxCurrency, invoice.shipment.Tax),2).ToString() + " " + invoice.shipment.TaxCurrency + "</div> &nbsp;<div> Authorization Code: " + invoice.shipment.TaxAuthorizationCode + "</div><br/>";
 
 
                         break; }
@@ -494,7 +568,7 @@ namespace SinExWebApp20328381.Controllers
                 case "CombinedInvoice": {
                         message.Subject = "Tax, Duty and Shipment  Invoice";
                         message.Body = message.Body + "<div>Packages Total Cost: " + Math.Round(ConvertCurrency(invoice.TotalCostCurrency, invoice.TotalCost), 2).ToString() + " " + invoice.TotalCostCurrency + "</div><br/>";
-                        message.Body = message.Body + "<div>Duties Amounts: " + Math.Round(ConvertCurrency(invoice.shipment.DutyCurrency, invoice.shipment.Duty), 2).ToString() +" "+ invoice.shipment.DutyCurrency + "</div> &nbsp;<div>Tax Amounts: " + Math.Round(ConvertCurrency(invoice.shipment.TaxCurreny, invoice.shipment.Tax), 2).ToString() + " "+invoice.shipment.TaxCurreny + "</div> &nbsp;<div> Authorization Code: " + invoice.shipment.TaxAuthorizationCode + "</div><br/>";
+                        message.Body = message.Body + "<div>Duties Amounts: " + Math.Round(ConvertCurrency(invoice.shipment.DutyCurrency, invoice.shipment.Duty), 2).ToString() +" "+ invoice.shipment.DutyCurrency + "</div> &nbsp;<div>Tax Amounts: " + Math.Round(ConvertCurrency(invoice.shipment.TaxCurrency, invoice.shipment.Tax), 2).ToString() + " "+invoice.shipment.TaxCurrency + "</div> &nbsp;<div> Authorization Code: " + invoice.shipment.TaxAuthorizationCode + "</div><br/>";
                         var tempTotal = invoice.shipment.Duty + invoice.shipment.Tax + invoice.TotalCost;
                         message.Body = message.Body + "<div>Total Cost: " + Math.Round(ConvertCurrency(invoice.TotalCostCurrency, tempTotal),2).ToString() + " "+invoice.TotalCostCurrency+"</div><br/>";
                         break; }
@@ -567,7 +641,7 @@ namespace SinExWebApp20328381.Controllers
                 case "taxInvoice":
                     {
                         message.Subject = "Tax and Duty Invoice";
-                        message.Body = message.Body + "<div>Duties Amounts: " + Math.Round( invoice.shipment.Duty, 2).ToString() + " " + invoice.shipment.DutyCurrency + "</div> &nbsp;<div>Tax Amounts: " + Math.Round(invoice.shipment.Tax, 2).ToString() + " " + invoice.shipment.TaxCurreny + "</div> &nbsp;<div> Authorization Code: " + invoice.shipment.TaxAuthorizationCode + "</div><br/>";
+                        message.Body = message.Body + "<div>Duties Amounts: " + Math.Round( invoice.shipment.Duty, 2).ToString() + " " + invoice.shipment.DutyCurrency + "</div> &nbsp;<div>Tax Amounts: " + Math.Round(invoice.shipment.Tax, 2).ToString() + " " + invoice.shipment.TaxCurrency + "</div> &nbsp;<div> Authorization Code: " + invoice.shipment.TaxAuthorizationCode + "</div><br/>";
 
 
                         break;
@@ -581,7 +655,7 @@ namespace SinExWebApp20328381.Controllers
                 case "CombinedInvoice":
                     {
                         message.Subject = "Tax, Duty and Shipment  Invoice";
-                        message.Body = message.Body + "<div>Duties Amounts: " + Math.Round(invoice.shipment.Duty, 2).ToString() + " " + invoice.shipment.DutyCurrency + "</div> &nbsp;<div>Tax Amounts: " + Math.Round( invoice.shipment.Tax, 2).ToString() + " " + invoice.shipment.TaxCurreny + "</div> &nbsp;<div> Authorization Code: " + invoice.shipment.TaxAuthorizationCode + "</div><br/>";
+                        message.Body = message.Body + "<div>Duties Amounts: " + Math.Round(invoice.shipment.Duty, 2).ToString() + " " + invoice.shipment.DutyCurrency + "</div> &nbsp;<div>Tax Amounts: " + Math.Round( invoice.shipment.Tax, 2).ToString() + " " + invoice.shipment.TaxCurrency + "</div> &nbsp;<div> Authorization Code: " + invoice.shipment.TaxAuthorizationCode + "</div><br/>";
                         message.Body = message.Body + "<div>Total Cost: " + Math.Round(invoice.TotalCost, 2).ToString() + " " + invoice.TotalCostCurrency + "</div><br/>";
                         break;
                     }

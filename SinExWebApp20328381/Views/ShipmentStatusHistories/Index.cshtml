@@ -67,10 +67,8 @@
 
     <text class="text-danger">@ViewData["Status_Inform"]</text>
     <div>
-       @if (User.IsInRole("Employee"))
-       {
+       
         @Html.ActionLink("Update", "Create", new { WaybillId = ViewData["WaybillNumber"], Status = ViewData["Status"] })
-       }
     </div>
 
 

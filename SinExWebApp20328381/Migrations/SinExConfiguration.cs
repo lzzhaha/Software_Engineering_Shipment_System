@@ -152,7 +152,7 @@ namespace SinExWebApp20328381.Migrations
                 new Destination { DestinationKey = 39, City = "Yumen", ProvinceCode = "GS", CurrencyCode = "CNY" },
                 new Destination { DestinationKey = 40, City = "Zhengzhou", ProvinceCode = "HA", CurrencyCode = "CNY" }
                 );
-
+            /*
             context.Shipments.AddOrUpdate(
                 p => p.WaybillId,
                 new Shipment { WaybillId = 1, ServiceType = "Next Day 10:30", RecipientName = "Monica Mok", RecipientBuildingAddress = "Flat A 15/F Tower 2 Golden Estate", RecipientStreetAddress = "12 Mandarin Drive", RecipientCityAddress = "Shanghai", Destination = "Shanghai", Origin = "Hong Kong", RecipientPostalCode = "207345", RecipientPhoneNumber = "862167890123", RecipientEmailAddress = "comp3111_team105@cse.ust.hk", ShipmentShippingAccountId = "000000000002", TaxAndDutyShippingAccountId = "000000000002", EmailWhenDeliver = false, EmailWhenPickup = false, PickupAddress = "Flat A, 20/F, Block A, Galaxia, 275 Fung Tak Rd, Hong Kong, HK", PickupType = "immediate", ShippedDate = new DateTime(2017, 04, 06, 12, 55, 00), Duty = 0, DutyCurrency = "HKD", Tax = 0, TaxCurreny = "HKD", TaxAuthorizationCode = "8261", ShipmentAuthorizationCode = "8261", DeliveredDate = new DateTime(1900, 1, 1, 0, 0, 0), ReferenceNumber = "", NumberOfPackages = 2, Status = "PickedUp", ShippingAccountId = 1 },
@@ -175,7 +175,7 @@ namespace SinExWebApp20328381.Migrations
 
                 );
 
-            /*
+            
                  context.ShipmentStatusHistories.AddOrUpdate(
                     new ShipmentStatusHistory { ShipmentStatusHistoryId = 1, WaybillId = , Date = new DateTime(2017, 04, 06), Time = new DateTime(2017, 04, 06, 13, 35, 00), TimeValue = "13:35", Description = "Picked up ", DeliveredPlace = null, DeliveredPerson = null, Location = "Hong Kong", Remarks = "Vehicle 34 ", Status = "PickedUp" },
 
@@ -213,8 +213,8 @@ namespace SinExWebApp20328381.Migrations
                      new ShipmentStatusHistory { ShipmentStatusHistoryId = 20, WaybillId = , Date = new DateTime(2017, 05, 02), Time = new DateTime(2017, 05, 02, 10, 00, 00), TimeValue = "10:00", Description = "At local sort facility", DeliveredPlace =null , DeliveredPerson = null, Location = "", Remarks = "", Status = "PickedUp" },
                      new ShipmentStatusHistory { ShipmentStatusHistoryId = 21, WaybillId = , Date = new DateTime(2017, 05, 02), Time = new DateTime(2017, 05, 02, 10, 35, 00), TimeValue = "10:35", Description = "Left origin ", DeliveredPlace = null, DeliveredPerson = null , Location = "", Remarks = "Vehicle 667 ", Status = "PickedUp" }
                  );
-                 */
-            /*context.Invoices.AddOrUpdate(
+                 
+            context.Invoices.AddOrUpdate(
             p => p.ServiceTypeID,
             new Invoice { InvoiceId = 1,WaybillId = 1, TotalCostCurrency = "CNY", TotalCost=(decimal)280.00,ShippingAccountId=2 },
             new Invoice { InvoiceId = 2, WaybillId = 2, TotalCostCurrency = "CNY", TotalCost = (decimal)50.00, ShippingAccountId = 1 },
