@@ -25,6 +25,7 @@ namespace SinExWebApp20328381.Controllers
             return View(invoices.ToList());
         }
 
+        [Authorize(Roles =  "Customer, Employee")]
         public ActionResult GenerateInvoiceReport(long? ShippingAccountId, string sortOrder, int? CurrentShippingAccountId, int? page, DateTime? ShippedStartDate, DateTime? ShippedEndDate, DateTime? CurrentShippedStartDate, DateTime? CurrentShippedEndDate,decimal? CurrentTotalInvoiceAmount)
         {
             // Instantiate an instance of the ShipmentsReportViewModel and the ShipmentsSearchViewModel.
@@ -88,6 +89,38 @@ namespace SinExWebApp20328381.Controllers
                 return View(invoiceSearch);
             }
             // Initialize the query to retrieve shipments using the ShipmentsListViewModel.
+            var shipments = db.Shipments.Include("Invoice").Where(s=>s.ShipmentShippingAccountId== ShippingAccountId.ToString()|| s.TaxAndDutyShippingAccountId == ShippingAccountId.ToString());
+            String stringShippingAccountId = null;
+            if (System.Web.HttpContext.Current.User.IsInRole("Employee"))
+            {
+                if (ShippingAccountId == null)
+                {
+                    stringShippingAccountId = "000000000001";
+                }
+                else
+                {
+                    stringShippingAccountId = ((long)ShippingAccountId).ToString("D12");
+                }
+            }
+            else if (System.Web.HttpContext.Current.User.IsInRole("Customer"))
+            {
+                stringShippingAccountId = ((long)GetCurrentShippingAccount().ShippingAccountId).ToString("D12");
+            }
+            var invoiceQuery = from s in db.Shipments.Include("Invoice").Where(s => (s.ShipmentShippingAccountId == stringShippingAccountId || s.TaxAndDutyShippingAccountId == stringShippingAccountId))
+                               select new InvoiceListViewModel()
+                               {
+                                   WaybillId = s.WaybillId,
+                                   ServiceType = s.invoice.shipment.ServiceType,
+                                   ShippedDate = s.invoice.shipment.ShippedDate,
+                                   DeliveredDate = s.invoice.shipment.DeliveredDate,
+                                   RecipientName = s.invoice.shipment.RecipientName,
+
+                                   TotalInvoiceAmount = (s.TaxAndDutyShippingAccountId == s.ShipmentShippingAccountId) ? (s.invoice.TotalCost + s.invoice.shipment.Tax + s.invoice.shipment.Duty) : (s.TaxAndDutyShippingAccountId == stringShippingAccountId ? (s.invoice.shipment.Tax + s.invoice.shipment.Duty):(s.invoice.TotalCost)),
+                                   Origin = s.Origin,
+                                   Destination = s.Destination,
+                                   ShippingAccountId = (long)s.ShippingAccountId
+                               };
+            /*
             var invoiceQuery = from s in db.Invoices
                                 select new InvoiceListViewModel()
                                 {
@@ -101,14 +134,13 @@ namespace SinExWebApp20328381.Controllers
                                     Destination = s.shipment.Destination,
                                     ShippingAccountId = (long)s.ShippingAccountId
                                 };
+                                */
             //shipmentQuery.Where()
             // Add the condition to select a spefic shipping account if shipping account id is not null.
             if (ShippingAccountId != null || ShippedStartDate != null || ShippedEndDate != null)
             {
 
                 // TODO: Construct the LINQ query to retrive only the shipments for the specified shipping account id.
-                if (ShippingAccountId != null)
-                    invoiceQuery = invoiceQuery.Where(c => c.ShippingAccountId == ShippingAccountId);
                 if (ShippedStartDate != null)
                     invoiceQuery = invoiceQuery.Where(c => c.ShippedDate >= ShippedStartDate);
                 if (ShippedEndDate != null)
@@ -255,8 +287,8 @@ namespace SinExWebApp20328381.Controllers
                 return HttpNotFound();
             }
             long waybillId = invoice.WaybillId;
-            ShippingAccount CurrentShippingAccount = GetCurrentShippingAccount();
-            Shipment shipment = db.Shipments.Include(s => s.Packages).SingleOrDefault(s => (s.WaybillId == waybillId && s.ShippingAccountId == CurrentShippingAccount.ShippingAccountId));
+            ShippingAccount CurrentShippingAccount = invoice.shipment.ShippingAccount;
+            Shipment shipment = db.Shipments.Include(s => s.Packages).SingleOrDefault(s => (s.WaybillId == waybillId ));
             //ViewBag.Status = shipment.Status;
             if (shipment == null)
             {
@@ -265,9 +297,28 @@ namespace SinExWebApp20328381.Controllers
             InvoiceDetailViewModel Res = new InvoiceDetailViewModel();
             Res.invoice = invoice;
             Res.shipment = invoice.shipment;
-            ShippingAccount payer = CurrentShippingAccount;
+            ShippingAccount payer;
+            if (System.Web.HttpContext.Current.User.IsInRole("Employee"))
+            {
+                
+                payer = invoice.shipment.ShippingAccount;
+            }else
+            {
+                var tempId = GetCurrentShippingAccount().ShippingAccountId.ToString("D12");
+                var tempIdLong = GetCurrentShippingAccount().ShippingAccountId;
+                if (shipment.TaxAndDutyShippingAccountId == tempId)
+                {
+                    payer = db.ShippingAccounts.FirstOrDefault(s => s.ShippingAccountId == tempIdLong);
+                }
+                else
+                {
+                    long temp2 = Convert.ToInt64(shipment.ShipmentShippingAccountId);
+                    payer = db.ShippingAccounts.FirstOrDefault(s => s.ShippingAccountId == temp2);
+                }
+            }
+
             ShippingAccount sender = invoice.shipment.ShippingAccount;
-            string senderName = CurrentShippingAccount.CreditCardHolderName;
+            string senderName = invoice.shipment.ShippingAccount.CreditCardHolderName;
 
             Res.Packages = new List<PackageInputViewModel>();
             foreach (var Package in invoice.shipment.Packages)
@@ -280,8 +331,8 @@ namespace SinExWebApp20328381.Controllers
             }
 
             Res.creditCardNumber = payer.CreditCardNumber.Substring(payer.CreditCardNumber.Length - 4);
-            Res.mailingAddress = sender.MailingAddressCity + sender.MailingAddressStreet + sender.MailingAddressBuilding;
-            Res.deliveryAddress = invoice.shipment.RecipientCityAddress + invoice.shipment.RecipientStreetAddress + invoice.shipment.RecipientBuildingAddress;
+            Res.mailingAddress = sender.MailingAddressCity + ","+ sender.MailingAddressStreet + ","+sender.MailingAddressBuilding;
+            Res.deliveryAddress = invoice.shipment.RecipientCityAddress +","+ invoice.shipment.RecipientStreetAddress + ","+ invoice.shipment.RecipientBuildingAddress;
             Res.NumberOfPackages = invoice.shipment.NumberOfPackages;
             Res.payer = payer;
             Res.sender = sender;

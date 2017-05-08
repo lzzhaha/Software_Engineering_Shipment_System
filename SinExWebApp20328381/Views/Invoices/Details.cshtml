@@ -15,7 +15,7 @@
         </dt>
 
         <dd>
-            @Html.DisplayFor(model => model.shipment.ShipmentShippingAccountId)
+          @Model.payer.ShippingAccountId.ToString("D12")
         </dd>
 
         
@@ -24,7 +24,7 @@
         </dt>
 
         <dd>
-            @Html.DisplayFor(model => model.shipment.WaybillId)
+            @Model.shipment.WaybillId.ToString("D16")
         </dd>
 
 
