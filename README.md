@@ -8,4 +8,4 @@ use case, UML Diagram.
 Originally we use the bitbucket as the version controll tool. In this course, we learnt a lot of software enginnering principle and guidline,
 which exposed me to the workflow of software engineer.
 After finishing this course's project, I move the repository to this github repository.
-So the commiter named LIN,Zizheng  in the commit history is me. And the whole project is done.
+
