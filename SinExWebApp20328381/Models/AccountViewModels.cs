@@ -75,6 +75,7 @@ namespace SinExWebApp20328381.Models
 
         [Required]
         [StringLength(15, ErrorMessage = "The {0} must be at least {2} characters long.", MinimumLength = 8)]
+        [RegularExpression("^.*?[^a-zA-Z0-9].*?[^a-zA-Z0-9].*?$", ErrorMessage = "Please Enter a valid password!")]
         [DataType(DataType.Password)]
         [Display(Name = "Password")]
         public string Password { get; set; }

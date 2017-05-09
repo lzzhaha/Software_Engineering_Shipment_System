@@ -43,17 +43,20 @@ namespace SinExWebApp20328381.Models
     {
         [Required]
         [DataType(DataType.Password)]
+        [RegularExpression("^.*?[^a-zA-Z0-9].*?[^a-zA-Z0-9].*?$", ErrorMessage = "Please Enter a valid password!")]
         [Display(Name = "Current password")]
         public string OldPassword { get; set; }
 
         [Required]
-        [StringLength(100, ErrorMessage = "The {0} must be at least {2} characters long.", MinimumLength = 6)]
+        [StringLength(15, ErrorMessage = "The {0} must be at least {2} characters long.", MinimumLength = 8)]
         [DataType(DataType.Password)]
+        [RegularExpression("^.*?[^a-zA-Z0-9].*?[^a-zA-Z0-9].*?$", ErrorMessage = "Please Enter a valid password!")]
         [Display(Name = "New password")]
         public string NewPassword { get; set; }
 
         [DataType(DataType.Password)]
         [Display(Name = "Confirm new password")]
+        [RegularExpression("^.*?[^a-zA-Z0-9].*?[^a-zA-Z0-9].*?$", ErrorMessage = "Please Enter a valid password!")]
         [Compare("NewPassword", ErrorMessage = "The new password and confirmation password do not match.")]
         public string ConfirmPassword { get; set; }
     }

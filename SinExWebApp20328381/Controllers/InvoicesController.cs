@@ -106,7 +106,7 @@ namespace SinExWebApp20328381.Controllers
             {
                 stringShippingAccountId = ((long)GetCurrentShippingAccount().ShippingAccountId).ToString("D12");
             }
-            var invoiceQuery = from s in db.Shipments.Include("Invoice").Where(s => (s.ShipmentShippingAccountId == stringShippingAccountId || s.TaxAndDutyShippingAccountId == stringShippingAccountId))
+            var invoiceQuery = from s in db.Shipments.Include("Invoice").Where(s => ((s.ShipmentShippingAccountId == stringShippingAccountId || s.TaxAndDutyShippingAccountId == stringShippingAccountId)&&(s.Status== "PickedUp"||s.Status=="Delivered")))
                                select new InvoiceListViewModel()
                                {
                                    WaybillId = s.WaybillId,
